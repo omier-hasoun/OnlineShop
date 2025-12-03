@@ -31,7 +31,10 @@ public static class DependencyInjection
 
     private static IServiceCollection AddDatabaseService(this IServiceCollection services, IConfiguration config)
     {
-        string connString = config.GetConnectionString("Default") ?? throw new ArgumentNullException("Connection string 'Default' not found.");
+        string connString = string.Empty;
+
+        connString = config["CONNECTION_STRING"] ?? throw new ArgumentNullException("Environment variable 'CONNECTION_STRING' not found.");
+        // connString = config.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("Connection string 'Default' not found.");
 
         services.AddDbContext<AppDbContext>(options =>
         {
