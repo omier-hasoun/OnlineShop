@@ -5,13 +5,14 @@ namespace Presentation;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddWebApiServices(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration config)
     {
         services.AddCustomServices()
                 .AddHttpContextAccessor()
                 .AddIdentityService()
                 .AddAuthenticationService()
-                .AddAuthorizatinoService();
+                .AddAuthorizatinoService()
+                .AddRazorPages();
 
         return services;
     }

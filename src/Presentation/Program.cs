@@ -15,7 +15,7 @@ namespace Presentation
 
             var config = builder.Configuration;
 
-            builder.Services.AddWebApiServices(config)
+            builder.Services.AddPresentation(config)
                             .AddApplicationServices(config)
                             .AddInfrastructureServices(config);
 
@@ -28,7 +28,6 @@ namespace Presentation
             {
                 app.MapScalarApiReference();
                 app.MapOpenApi();
-                app.MapGet("/", () => "Hello World!");
             }
             else
             {
