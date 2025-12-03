@@ -1,0 +1,26 @@
+root = true
+
+# Global settings
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+
+# C# files
+[*.cs]
+# Organize usings
+dotnet_sort_system_directives_first = true
+
+# Naming conventions
+# Private fields must start with '_' + camelCase
+dotnet_naming_rule.private_fields_must_have_prefix.severity = warning
+dotnet_naming_rule.private_fields_must_have_prefix.symbols = private_fields
+dotnet_naming_rule.private_fields_must_have_prefix.style = underscore_camel_case
+
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+
+# The actual style: "_" + camelCase
+dotnet_naming_style.underscore_camel_case.required_prefix = _
+dotnet_naming_style.underscore_camel_case.capitalization = camel_case

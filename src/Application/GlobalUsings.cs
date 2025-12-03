@@ -1,0 +1,11 @@
+global using System;
+global using Application.Common.Abstractions;
+global using Shared.Results;
+global using Domain.Common.Abstractions;
+global using MediatR;
+global using FluentValidation;
+global using Microsoft.Extensions.Options;
+global using Microsoft.AspNetCore.Identity;
+global using Application.Common;
+global using Microsoft.EntityFrameworkCore;
+global using System.Security.Claims;

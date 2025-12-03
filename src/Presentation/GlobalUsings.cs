@@ -1,0 +1,16 @@
+global using System;
+global using System.ComponentModel;
+global using System.Text.Json.Serialization;
+global using Infrastructure.Identity;
+global using System.Security.Claims;
+global using Application.Common.Abstractions;
+global using Infrastructure.Common;
+global using Application;
+global using Infrastructure;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.AspNetCore.Authorization;
+global using Infrastructure.Data;
+global using Scalar.AspNetCore;
+global using Application.Common;
+global using Infrastructure.BackgroundServices;
+global using Microsoft.AspNetCore.Identity;
