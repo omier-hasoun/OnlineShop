@@ -10,14 +10,6 @@ namespace Presentation
         static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            IPAddress ipAddress = IPAddress.Parse("91.35.190.39");
-            builder.WebHost.ConfigureKestrel(options =>
-            {
-                options.Listen(ipAddress, 2501, options =>
-                {
-                    options.Protocols = HttpProtocols.Http2 | HttpProtocols.Http3;
-                });
-            });
 
             builder.Configuration.AddUserSecrets("7f342e59-c0e1-4ef5-9bd1-126a96fa7a5b");
 
@@ -40,10 +32,15 @@ namespace Presentation
             }
             else
             {
-                // app.UseHsts();
+                app.UseExceptionHandler("/Error");
+                app.UseHsts();
             }
 
-
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseRouting();
+            app.UseAuthorization();
+            app.MapRazorPages();
 
             app.Run();
         }

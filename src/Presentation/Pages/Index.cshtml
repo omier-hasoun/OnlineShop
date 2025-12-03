@@ -1,10 +1,106 @@
-﻿@page
-@model IndexModel
+@page
+@model Presentation.Pages.Index
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Welcome to My Online Shop";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            background-color: #343a40;
+            color: white;
+            padding: 2rem 0;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .products {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .product-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 1rem;
+            padding: 1rem;
+            width: 200px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .product-card h3 {
+            margin: 0.5rem 0;
+        }
+
+        .product-card p {
+            color: #666;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin-top: 1rem;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>My Online Shop</h1>
+        <p>Best products at the best prices!</p>
+    </header>
+
+    <section class="products">
+        @foreach (var product in Model.Products)
+        {
+            <div class="product-card">
+                <img src="@product.ImageUrl" alt="@product.Name" />
+                <h3>@product.Name</h3>
+                <p>$@product.Price</p>
+                <a href="#" class="btn"><i class="fa fa-shopping-cart"></i> Buy Now</a>
+            </div>
+        }
+    </section>
+
+    <footer>
+        &copy; 2025 My Online Shop. All rights reserved.
+    </footer>
+</body>
+
+</html>
