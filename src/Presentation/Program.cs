@@ -1,8 +1,5 @@
 
 
-using System.Net;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-
 namespace Presentation
 {
     internal class Program
@@ -11,7 +8,11 @@ namespace Presentation
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Configuration.AddUserSecrets("7f342e59-c0e1-4ef5-9bd1-126a96fa7a5b");
+            if(builder.Environment.IsProduction())
+                builder.Configuration.AddEnvironmentVariables();
+
+            if (builder.Environment.IsDevelopment())
+                builder.Configuration.AddUserSecrets("7f342e59-c0e1-4ef5-9bd1-126a96fa7a5b");
 
             var config = builder.Configuration;
 
