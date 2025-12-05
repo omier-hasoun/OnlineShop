@@ -1,18 +1,24 @@
 
 
 
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Presentation.Notification;
+
 namespace Presentation;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddPresentationServices(this IServiceCollection services, IConfiguration config)
     {
+
+
         services.AddCustomServices()
                 .AddHttpContextAccessor()
                 .AddIdentityService()
                 .AddAuthenticationService()
-                .AddAuthorizatinoService()
-                .AddRazorPages();
+                .AddAuthorizatinoService();
+
+        services.AddRazorPages();
 
         return services;
     }
@@ -20,8 +26,14 @@ public static class DependencyInjection
     private static IServiceCollection AddCustomServices(this IServiceCollection services)
     {
         // for simple dependency injection Transient/Singleton/Scoped
+        services.AddTransient<IEmailSender, EmailSender>();
+        return services;
+    }
+
+    private static IServiceCollection AddOpenApiAndScalarService(this IServiceCollection services)
+    {
         services.AddEndpointsApiExplorer();
-        services.AddOpenApi();
+        services.AddOpenApiAndScalarService();
         return services;
     }
 
@@ -58,15 +70,18 @@ public static class DependencyInjection
 
             // Claims settings.
             options.ClaimsIdentity.RoleClaimType = "role";
-            options.ClaimsIdentity.UserIdClaimType = "sub";
+            // options.ClaimsIdentity.UserIdClaimType = "sub";
             options.ClaimsIdentity.UserNameClaimType = "username";
             options.ClaimsIdentity.EmailClaimType = "email";
             options.ClaimsIdentity.SecurityStampClaimType = "security_stamp";
 
         })
         .AddRoles<Role>()
+        .AddSignInManager<SignInManager<User>>()
+        .AddUserManager<UserManager<User>>()
         .AddEntityFrameworkStores<AppDbContext>()
-        .AddApiEndpoints();
+        .AddDefaultTokenProviders();
+        // .AddDefaultUI();
 
         services.AddTransient<IEmailSender<User>, EmailSenderFaker>();
 
@@ -75,18 +90,25 @@ public static class DependencyInjection
 
     private static IServiceCollection AddAuthenticationService(this IServiceCollection services)
     {
-        services.AddAuthentication()
-                .AddCookie(IdentityConstants.ApplicationScheme, options =>
-                {
-                    options.Cookie.Domain = null; // default
-                    options.Cookie.Name = "AuthCookie";
-                    options.Cookie.SameSite = SameSiteMode.Lax;
-                    options.Cookie.HttpOnly = true;
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        services.AddAuthentication(options =>
+        {
+
+            options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+            options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+            options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+        })
+            .AddCookie(IdentityConstants.ExternalScheme)
+            .AddCookie(IdentityConstants.TwoFactorUserIdScheme)
+            .AddCookie(IdentityConstants.ApplicationScheme, options =>
+            {
+                    options.LoginPath = "/Account/Login";
+                    options.LogoutPath = "/Account/Logout";
+                    options.AccessDeniedPath = "/Account/AccessDenied";
                     options.SlidingExpiration = true;
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-                    options.Validate();
-                });
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+
+            })
+;
         return services;
     }
 

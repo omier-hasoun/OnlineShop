@@ -33,8 +33,8 @@ public static class DependencyInjection
     {
         string connString = string.Empty;
 
-        connString = config["CONNECTION_STRING"] ?? throw new ArgumentNullException("Environment variable 'CONNECTION_STRING' not found.");
-        // connString = config.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("Connection string 'Default' not found.");
+        // connString = config["CONNECTION_STRING"] ?? throw new ArgumentNullException("Environment variable 'CONNECTION_STRING' not found.");
+        connString = config.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("Connection string 'Default' not found.");
 
         services.AddDbContext<AppDbContext>(options =>
         {

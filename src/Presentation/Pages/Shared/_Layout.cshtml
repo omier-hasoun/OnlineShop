@@ -1,45 +1,294 @@
-﻿<!DOCTYPE html>
+<!-- ======================= -->
+<!-- FILE 1: _Layout.cshtml -->
+<!-- ======================= -->
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Client</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - ShopHub</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Client.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: var(--dark-card) !important;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary) !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+            .navbar-brand i {
+                color: var(--primary);
+            }
+
+            .navbar-brand:hover {
+                transform: translateY(-2px);
+            }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.25rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+            .nav-link:hover {
+                background: rgba(99, 102, 241, 0.1);
+                color: var(--primary) !important;
+            }
+
+            .nav-link.active {
+                background: var(--primary);
+                color: white !important;
+            }
+
+        .navbar-toggler {
+            border-color: var(--border-color);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(148, 163, 184, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+
+        /* Main Content */
+        .main-wrapper {
+            flex: 1 0 auto;
+        }
+
+        main {
+            padding: 2rem 0 4rem 0;
+        }
+
+        /* Footer */
+        footer {
+            flex-shrink: 0;
+            background: var(--dark-card);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+            .footer-text a {
+                color: var(--primary);
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .footer-text a:hover {
+                    color: var(--secondary);
+                }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+            .social-links a {
+                color: var(--text-secondary);
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+                background: rgba(99, 102, 241, 0.1);
+                transition: all 0.3s ease;
+            }
+
+                .social-links a:hover {
+                    background: var(--primary);
+                    color: white;
+                    transform: translateY(-3px);
+                }
+
+        /* Dropdown Menu Styling */
+        .dropdown-menu {
+            background: var(--dark-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .dropdown-item {
+            color: var(--text-secondary);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .dropdown-item:hover {
+                background: rgba(99, 102, 241, 0.1);
+                color: var(--primary);
+            }
+
+            .dropdown-item i {
+                width: 20px;
+            }
+
+        .dropdown-divider {
+            border-color: var(--border-color);
+            margin: 0.5rem 0;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-dark">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Client</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" asp-area="" asp-page="/Index">
+                    <i class="fas fa-store"></i> ShopHub
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-page="/Index">
+                                <i class="fas fa-home"></i> Home
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-shopping-bag"></i> Products
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Privacy">
+                                <i class="fas fa-shield-alt"></i> Privacy
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-shopping-cart"></i> Cart
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i> Account
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                                <!-- Show these if user is logged in -->
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle"></i> Profile</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Index" asp-page-handler="Register"><i class="fas fa-user-plus"></i> Register</a></li>
+                                }
+                            </ul>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer>
         <div class="container">
-            &copy; 2025 - Client - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            <div class="footer-content">
+                <p class="footer-text">
+                    &copy; 2025 ShopHub. All rights reserved. |
+                    <a asp-area="" asp-page="/Privacy">Privacy Policy</a>
+                </p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
         </div>
     </footer>
 
@@ -50,3 +299,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

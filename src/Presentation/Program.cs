@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Infrastructure.Data;
 
 
 namespace Presentation
@@ -8,7 +11,7 @@ namespace Presentation
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            if(builder.Environment.IsProduction())
+            if (builder.Environment.IsProduction())
                 builder.Configuration.AddEnvironmentVariables();
 
             if (builder.Environment.IsDevelopment())
@@ -16,13 +19,11 @@ namespace Presentation
 
             var config = builder.Configuration;
 
-            builder.Services.AddPresentation(config)
+            builder.Services.AddPresentationServices(config)
                             .AddApplicationServices(config)
                             .AddInfrastructureServices(config);
 
             var app = builder.Build();
-
-            app.MapIdentityApi<User>();
 
 
             if (app.Environment.IsDevelopment())
@@ -37,10 +38,16 @@ namespace Presentation
             }
 
             app.UseHttpsRedirection();
+
             app.UseStaticFiles();
+
             app.UseRouting();
+
+            app.UseAuthentication();
             app.UseAuthorization();
-            app.MapRazorPages();
+
+            app.MapRazorPages()
+               .WithStaticAssets();
 
             app.Run();
         }

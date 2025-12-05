@@ -17,6 +17,10 @@ public class Index : PageModel
             new Product { Name = "Product 3", Price = 39.99M, ImageUrl = "https://via.placeholder.com/200" }
         };
     }
+    public IActionResult OnGetRegister()
+    {
+        return Redirect("/Account/Register"); 
+    }
 }
 
 public class Product
