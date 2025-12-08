@@ -1,6 +1,3 @@
-<!-- ======================= -->
-<!-- FILE 1: _Layout.cshtml -->
-<!-- ======================= -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -50,8 +47,15 @@
         .navbar {
             background: var(--dark-card) !important;
             border-bottom: 1px solid var(--border-color);
-            padding: 1rem 0;
+            padding: 0.75rem 0;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-content {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .navbar-brand {
@@ -62,6 +66,7 @@
             align-items: center;
             gap: 0.5rem;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
 
             .navbar-brand i {
@@ -72,13 +77,71 @@
                 transform: translateY(-2px);
             }
 
+        /* Header Search */
+        .header-search {
+            flex: auto;
+            max-width: 10000px;
+            position: relative;
+            min-width: 350px;
+
+        }
+
+        .header-search-input {
+            width: 100%;
+            padding: 0.85rem 3.5rem 0.75rem 1.25rem;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+            .header-search-input:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+                background: rgba(15, 23, 42, 0.7);
+            }
+
+            .header-search-input::placeholder {
+                color: var(--text-secondary);
+            }
+
+        .header-search-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary);
+            border: none;
+            padding: 0.7rem 1rem;
+            border-radius: 7px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+            .header-search-btn:hover {
+                background: var(--primary-dark);
+            }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
         .nav-link {
             color: var(--text-secondary) !important;
             font-weight: 500;
             padding: 0.5rem 1rem !important;
-            margin: 0 0.25rem;
+            margin: 0;
             border-radius: 8px;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
 
             .nav-link:hover {
@@ -93,6 +156,7 @@
 
         .navbar-toggler {
             border-color: var(--border-color);
+            padding: 0.5rem;
         }
 
         .navbar-toggler-icon {
@@ -107,62 +171,6 @@
         main {
             padding: 2rem 0 4rem 0;
         }
-
-        /* Footer */
-        footer {
-            flex-shrink: 0;
-            background: var(--dark-card);
-            border-top: 1px solid var(--border-color);
-            padding: 2rem 0;
-            margin-top: auto;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-
-        .footer-text {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin: 0;
-        }
-
-            .footer-text a {
-                color: var(--primary);
-                text-decoration: none;
-                transition: color 0.3s ease;
-            }
-
-                .footer-text a:hover {
-                    color: var(--secondary);
-                }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-        }
-
-            .social-links a {
-                color: var(--text-secondary);
-                width: 40px;
-                height: 40px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 8px;
-                background: rgba(99, 102, 241, 0.1);
-                transition: all 0.3s ease;
-            }
-
-                .social-links a:hover {
-                    background: var(--primary);
-                    color: white;
-                    transform: translateY(-3px);
-                }
 
         /* Dropdown Menu Styling */
         .dropdown-menu {
@@ -198,44 +206,270 @@
             margin: 0.5rem 0;
         }
 
+        /* Footer */
+        footer {
+            flex-shrink: 0;
+            background: var(--dark-card);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 0 1.5rem;
+            margin-top: auto;
+        }
+
+        .footer-main {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .footer-section h4 {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+        }
+
+        .footer-section p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .footer-links li {
+                margin-bottom: 0.75rem;
+            }
+
+            .footer-links a {
+                color: var(--text-secondary);
+                text-decoration: none;
+                font-size: 0.9rem;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+                .footer-links a:hover {
+                    color: var(--primary);
+                    padding-left: 0.5rem;
+                }
+
+            .footer-links i {
+                font-size: 0.85rem;
+                width: 16px;
+            }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+            .contact-item i {
+                color: var(--primary);
+                font-size: 1.1rem;
+                margin-top: 0.2rem;
+                width: 20px;
+            }
+
+        .social-links {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+            .social-links a {
+                width: 45px;
+                height: 45px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+                background: rgba(99, 102, 241, 0.1);
+                color: var(--text-secondary);
+                transition: all 0.3s ease;
+                font-size: 1.1rem;
+            }
+
+                .social-links a:hover {
+                    background: var(--primary);
+                    color: white;
+                    transform: translateY(-3px);
+                }
+
+        .newsletter-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+            .newsletter-input:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            }
+
+            .newsletter-input::placeholder {
+                color: var(--text-secondary);
+            }
+
+        .newsletter-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+            .newsletter-btn:hover {
+                background: var(--primary-dark);
+            }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding-top: 1.5rem;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+            .footer-text a {
+                color: var(--primary);
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .footer-text a:hover {
+                    color: var(--secondary);
+                }
+
+        .payment-methods {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+            .payment-methods i {
+                font-size: 1.75rem;
+                color: var(--text-secondary);
+                opacity: 0.7;
+            }
+
         /* Responsive */
+        @@media (max-width: 991px) {
+            .navbar-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-search {
+                order: 3;
+                max-width: 100%;
+                margin-top: 1rem;
+            }
+
+            .nav-actions {
+                margin-left: 0;
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-link {
+                width: 100%;
+            }
+        }
+
         @@media (max-width: 768px) {
-            .footer-content {
+            .footer-main {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .footer-bottom {
                 flex-direction: column;
                 text-align: center;
+            }
+
+            .payment-methods {
+                justify-content: center;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .newsletter-btn {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-dark">
-            <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container navbar-expand">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">
                     <i class="fas fa-store"></i> ShopHub
                 </a>
+
+                <!-- Header Search -->
+                <div class="header-search">
+                    <input type="text" class="header-search-input" id="headerSearchInput" placeholder="Search for products..." />
+                    <button class="header-search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav nav-actions">
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-page="/Index">
                                 <i class="fas fa-home"></i> Home
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="fas fa-shopping-bag"></i> Products
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Privacy">
-                                <i class="fas fa-shield-alt"></i> Privacy
-                            </a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link" href="#">
                                 <i class="fas fa-shopping-cart"></i> Cart
@@ -246,7 +480,6 @@
                                 <i class="fas fa-user"></i> Account
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
-                                <!-- Show these if user is logged in -->
                                 @if (User.Identity?.IsAuthenticated == true)
                                 {
                                     <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle"></i> Profile</a></li>
@@ -256,8 +489,8 @@
                                 }
                                 else
                                 {
-                                    <li><a class="dropdown-item" href="#"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                                    <li><a class="dropdown-item" asp-page="/Index" asp-page-handler="Register"><i class="fas fa-user-plus"></i> Register</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Account/Login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Account/Register"><i class="fas fa-user-plus"></i> Register</a></li>
                                 }
                             </ul>
                         </li>
@@ -277,16 +510,87 @@
 
     <footer>
         <div class="container">
-            <div class="footer-content">
+            <div class="footer-main">
+                <!-- About Section -->
+                <div class="footer-section">
+                    <h4><i class="fas fa-store"></i> ShopHub</h4>
+                    <p>Your one-stop destination for premium quality products at unbeatable prices. Shop with confidence and enjoy exceptional customer service.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a asp-page="/Index"><i class="fas fa-chevron-right"></i> Home</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Shop</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                        <li><a asp-page="/Account/Register"><i class="fas fa-chevron-right"></i> Create Account</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Track Order</a></li>
+                    </ul>
+                </div>
+
+                <!-- Customer Service -->
+                <div class="footer-section">
+                    <h4>Customer Service</h4>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Help Center</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Shipping Info</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Returns & Refunds</a></li>
+                        <li><a asp-page="/Privacy"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Terms & Conditions</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="footer-section">
+                    <h4>Contact Us</h4>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Shopping Street, City, ST 12345</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+1 (555) 123-4567</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>support@shophub.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Mon - Fri: 9:00 AM - 6:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Newsletter -->
+                <div class="footer-section">
+                    <h4>Newsletter</h4>
+                    <p>Subscribe to get special offers and updates delivered to your inbox.</p>
+                    <form class="newsletter-form" onsubmit="return false;">
+                        <input type="email" class="newsletter-input" placeholder="Your email address" required />
+                        <button type="submit" class="newsletter-btn">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
                 <p class="footer-text">
-                    &copy; 2025 ShopHub. All rights reserved. |
-                    <a asp-area="" asp-page="/Privacy">Privacy Policy</a>
+                    &copy; 2025 ShopHub. All rights reserved. Made with <i class="fas fa-heart" style="color: #ef4444;"></i>
                 </p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-paypal"></i>
+                    <i class="fab fa-cc-amex"></i>
                 </div>
             </div>
         </div>
@@ -299,4 +603,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-

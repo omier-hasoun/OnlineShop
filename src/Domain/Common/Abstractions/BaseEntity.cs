@@ -3,12 +3,12 @@ namespace Domain.Common.Abstractions;
 
 public abstract class BaseEntity
 {
-    public Guid Id
-    {
-        get => field;
-        init =>
-        field = value == Guid.Empty ? Guid.CreateVersion7() : value;
-    }
+    //public Guid Id
+    //{
+    //    get => field;
+    //    init =>
+    //    field = value == Guid.Empty ? Guid.CreateVersion7() : value;
+    //}
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
 

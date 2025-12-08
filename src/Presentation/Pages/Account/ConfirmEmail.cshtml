@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model ConfirmEmailModel
 @{
     ViewData["Title"] = "Confirm email";
@@ -6,3 +6,11 @@
 
 <h1>@ViewData["Title"]</h1>
 <partial name="_StatusMessage" model="Model.StatusMessage" />
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <script>
+        setTimeout(function () {
+            window.location.href = '/';
+        }, 4000);
+    </script>
+}

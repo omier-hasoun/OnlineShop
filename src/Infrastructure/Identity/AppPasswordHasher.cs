@@ -21,6 +21,7 @@ public sealed class AppPasswordHasher : IPasswordHasher<User>
     {
         Console.WriteLine("Hashing password for user: " + user.UserName);
         return HashPassword(password);
+
     }
 
 

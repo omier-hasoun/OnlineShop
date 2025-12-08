@@ -59,7 +59,7 @@ public static class DependencyInjection
             options.User.RequireUniqueEmail = UserAccountSettings.RequireUniqueEmail;
 
             // SignIn settings.
-            options.SignIn.RequireConfirmedAccount = false;
+            options.SignIn.RequireConfirmedAccount = true;
             options.SignIn.RequireConfirmedPhoneNumber = false;
             options.SignIn.RequireConfirmedPhoneNumber = false;
 
@@ -81,7 +81,6 @@ public static class DependencyInjection
         .AddUserManager<UserManager<User>>()
         .AddEntityFrameworkStores<AppDbContext>()
         .AddDefaultTokenProviders();
-        // .AddDefaultUI();
 
         services.AddTransient<IEmailSender<User>, EmailSenderFaker>();
 
@@ -101,11 +100,11 @@ public static class DependencyInjection
             .AddCookie(IdentityConstants.TwoFactorUserIdScheme)
             .AddCookie(IdentityConstants.ApplicationScheme, options =>
             {
-                    options.LoginPath = "/Account/Login";
-                    options.LogoutPath = "/Account/Logout";
-                    options.AccessDeniedPath = "/Account/AccessDenied";
-                    options.SlidingExpiration = true;
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.LoginPath = "/Account/Login";
+                options.LogoutPath = "/Account/Logout";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.SlidingExpiration = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
 
             })
 ;
