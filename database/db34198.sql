@@ -9,6 +9,14 @@ END;
 GO
 
 BEGIN TRANSACTION;
+CREATE SEQUENCE [CustomerAddressSequence] START WITH 1 INCREMENT BY 1 NO CYCLE;
+
+CREATE SEQUENCE [ReviewSequence] START WITH 1 INCREMENT BY 1 NO CYCLE;
+
+CREATE SEQUENCE [RoleClaimSequence] START WITH 1 INCREMENT BY 1 NO CYCLE;
+
+CREATE SEQUENCE [UserClaimSequence] START WITH 1 INCREMENT BY 1 NO CYCLE;
+
 CREATE TABLE [Customers] (
     [Id] uniqueidentifier NOT NULL,
     [FirstName] VARCHAR(32) NOT NULL,
@@ -32,7 +40,7 @@ CREATE TABLE [Products] (
     [LastModifiedAt] datetimeoffset NOT NULL,
     [LastModifiedBy] CHAR(36) NOT NULL,
     CONSTRAINT [PK_Products] PRIMARY KEY ([Id]),
-    CONSTRAINT [CK_Product_Rating] CHECK (Rating between 1 and 5)
+    CONSTRAINT [CK_Product_Rating] CHECK (AverageRating between 1 and 5)
 );
 
 CREATE TABLE [Roles] (
@@ -59,25 +67,8 @@ CREATE TABLE [UserPasskeys] (
     CONSTRAINT [PK_UserPasskeys] PRIMARY KEY ([UserId], [CredentialId])
 );
 
-CREATE TABLE [Users] (
-    [Id] uniqueidentifier NOT NULL,
-    [UserName] VARCHAR(128) NOT NULL,
-    [NormalizedUserName] VARCHAR(128) NOT NULL,
-    [Email] VARCHAR(256) NOT NULL,
-    [NormalizedEmail] VARCHAR(256) NOT NULL,
-    [EmailConfirmed] bit NOT NULL,
-    [PasswordHash] VARCHAR(128) NOT NULL,
-    [SecurityStamp] CHAR(36) NOT NULL,
-    [ConcurrencyStamp] CHAR(36) NOT NULL,
-    [TwoFactorEnabled] bit NOT NULL,
-    [LockoutEnd] datetimeoffset NULL,
-    [LockoutEnabled] bit NOT NULL,
-    [AccessFailedCount] int NOT NULL,
-    CONSTRAINT [PK_Users] PRIMARY KEY ([Id])
-);
-
 CREATE TABLE [CustomerAddresses] (
-    [Id] int NOT NULL IDENTITY,
+    [Id] int NOT NULL DEFAULT (NEXT VALUE FOR [CustomerAddressSequence]),
     [Country] VARCHAR(32) NOT NULL,
     [City] VARCHAR(32) NOT NULL,
     [Street] VARCHAR(64) NOT NULL,
@@ -95,6 +86,25 @@ CREATE TABLE [Orders] (
     [Status] int NOT NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_Orders_Customers_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [Customers] ([Id]) ON DELETE CASCADE
+);
+
+CREATE TABLE [Users] (
+    [Id] uniqueidentifier NOT NULL,
+    [CustomerId] uniqueidentifier NULL,
+    [UserName] VARCHAR(128) NOT NULL,
+    [NormalizedUserName] VARCHAR(128) NOT NULL,
+    [Email] VARCHAR(256) NOT NULL,
+    [NormalizedEmail] VARCHAR(256) NOT NULL,
+    [EmailConfirmed] bit NOT NULL,
+    [PasswordHash] VARCHAR(128) NOT NULL,
+    [SecurityStamp] CHAR(36) NOT NULL,
+    [ConcurrencyStamp] CHAR(36) NOT NULL,
+    [TwoFactorEnabled] bit NOT NULL,
+    [LockoutEnd] datetimeoffset NULL,
+    [LockoutEnabled] bit NOT NULL,
+    [AccessFailedCount] int NOT NULL,
+    CONSTRAINT [PK_Users] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Users_Customers_CustomerId] FOREIGN KEY ([CustomerId]) REFERENCES [Customers] ([Id])
 );
 
 CREATE TABLE [CartItems] (
@@ -116,7 +126,7 @@ CREATE TABLE [ProductImages] (
 );
 
 CREATE TABLE [Reviews] (
-    [Id] int NOT NULL IDENTITY,
+    [Id] int NOT NULL DEFAULT (NEXT VALUE FOR [ReviewSequence]),
     [ProductId] uniqueidentifier NOT NULL,
     [CustomerId] uniqueidentifier NOT NULL,
     [Rating] int NOT NULL,
@@ -128,47 +138,12 @@ CREATE TABLE [Reviews] (
 );
 
 CREATE TABLE [RoleClaims] (
-    [Id] int NOT NULL IDENTITY,
+    [Id] int NOT NULL DEFAULT (NEXT VALUE FOR [RoleClaimSequence]),
     [RoleId] uniqueidentifier NOT NULL,
     [ClaimType] VARCHAR(32) NOT NULL,
     [ClaimValue] VARCHAR(128) NOT NULL,
     CONSTRAINT [PK_RoleClaims] PRIMARY KEY ([Id]),
     CONSTRAINT [FK_RoleClaims_Roles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles] ([Id]) ON DELETE CASCADE
-);
-
-CREATE TABLE [UserClaims] (
-    [Id] int NOT NULL IDENTITY,
-    [UserId] uniqueidentifier NOT NULL,
-    [ClaimType] NVARCHAR(64) NOT NULL,
-    [ClaimValue] NVARCHAR(64) NOT NULL,
-    CONSTRAINT [PK_UserClaims] PRIMARY KEY ([Id]),
-    CONSTRAINT [FK_UserClaims_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
-);
-
-CREATE TABLE [UserLoginProviders] (
-    [LoginProvider] VARCHAR(128) NOT NULL,
-    [ProviderKey] VARCHAR(128) NOT NULL,
-    [ProviderDisplayName] VARCHAR(32) NOT NULL,
-    [UserId] uniqueidentifier NOT NULL,
-    CONSTRAINT [PK_UserLoginProviders] PRIMARY KEY ([LoginProvider], [ProviderKey]),
-    CONSTRAINT [FK_UserLoginProviders_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
-);
-
-CREATE TABLE [UserRoles] (
-    [UserId] uniqueidentifier NOT NULL,
-    [RoleId] uniqueidentifier NOT NULL,
-    CONSTRAINT [PK_UserRoles] PRIMARY KEY ([RoleId], [UserId]),
-    CONSTRAINT [FK_UserRoles_Roles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles] ([Id]) ON DELETE CASCADE,
-    CONSTRAINT [FK_UserRoles_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
-);
-
-CREATE TABLE [UserTokens] (
-    [UserId] uniqueidentifier NOT NULL,
-    [LoginProvider] nvarchar(450) NOT NULL,
-    [Name] VARCHAR(64) NOT NULL,
-    [Value] VARCHAR(64) NOT NULL,
-    CONSTRAINT [PK_UserTokens] PRIMARY KEY ([UserId], [LoginProvider], [Name]),
-    CONSTRAINT [FK_UserTokens_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
 );
 
 CREATE TABLE [OrderItems] (
@@ -201,8 +176,43 @@ CREATE TABLE [Shipments] (
     [CarrierName] VARCHAR(32) NOT NULL,
     [Notes] VARCHAR(64) NULL,
     CONSTRAINT [PK_Shipments] PRIMARY KEY ([OrderId]),
-    CONSTRAINT [FK_Shipments_CustomerAddresses_AddressId] FOREIGN KEY ([AddressId]) REFERENCES [CustomerAddresses] ([Id]) ON DELETE CASCADE,
-    CONSTRAINT [FK_Shipments_Orders_OrderId] FOREIGN KEY ([OrderId]) REFERENCES [Orders] ([Id]) ON DELETE CASCADE
+    CONSTRAINT [FK_Shipments_CustomerAddresses_AddressId] FOREIGN KEY ([AddressId]) REFERENCES [CustomerAddresses] ([Id]),
+    CONSTRAINT [FK_Shipments_Orders_OrderId] FOREIGN KEY ([OrderId]) REFERENCES [Orders] ([Id])
+);
+
+CREATE TABLE [UserClaims] (
+    [Id] int NOT NULL DEFAULT (NEXT VALUE FOR [UserClaimSequence]),
+    [UserId] uniqueidentifier NOT NULL,
+    [ClaimType] NVARCHAR(64) NOT NULL,
+    [ClaimValue] NVARCHAR(64) NOT NULL,
+    CONSTRAINT [PK_UserClaims] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_UserClaims_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
+);
+
+CREATE TABLE [UserLoginProviders] (
+    [LoginProvider] VARCHAR(128) NOT NULL,
+    [ProviderKey] VARCHAR(128) NOT NULL,
+    [ProviderDisplayName] VARCHAR(32) NOT NULL,
+    [UserId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_UserLoginProviders] PRIMARY KEY ([LoginProvider], [ProviderKey]),
+    CONSTRAINT [FK_UserLoginProviders_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
+);
+
+CREATE TABLE [UserRoles] (
+    [UserId] uniqueidentifier NOT NULL,
+    [RoleId] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_UserRoles] PRIMARY KEY ([RoleId], [UserId]),
+    CONSTRAINT [FK_UserRoles_Roles_RoleId] FOREIGN KEY ([RoleId]) REFERENCES [Roles] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_UserRoles_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
+);
+
+CREATE TABLE [UserTokens] (
+    [UserId] uniqueidentifier NOT NULL,
+    [LoginProvider] nvarchar(450) NOT NULL,
+    [Name] VARCHAR(64) NOT NULL,
+    [Value] VARCHAR(64) NOT NULL,
+    CONSTRAINT [PK_UserTokens] PRIMARY KEY ([UserId], [LoginProvider], [Name]),
+    CONSTRAINT [FK_UserTokens_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
 );
 
 CREATE UNIQUE INDEX [IX_CartItems_ProductId] ON [CartItems] ([ProductId]);
@@ -249,10 +259,12 @@ CREATE INDEX [IX_User_NormalizedEmail] ON [Users] ([NormalizedEmail]);
 
 CREATE INDEX [IX_User_NormalizedUserName] ON [Users] ([NormalizedUserName]);
 
+CREATE UNIQUE INDEX [IX_Users_CustomerId] ON [Users] ([CustomerId]) WHERE [CustomerId] IS NOT NULL;
+
 CREATE INDEX [IX_UserTokens_LoginProvider] ON [UserTokens] ([LoginProvider]);
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20251210095149_Initial', N'10.0.0');
+VALUES (N'20251210101236_Initial', N'10.0.0');
 
 COMMIT;
 GO

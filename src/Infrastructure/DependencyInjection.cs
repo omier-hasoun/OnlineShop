@@ -1,15 +1,17 @@
 
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 
 namespace Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config, IWebHostEnvironment enviroment)
     {
         services.AddCustomServices()
-                .AddDatabaseService(config)
+                .AddDatabaseService(config, enviroment)
 
 
 
@@ -29,12 +31,14 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddDatabaseService(this IServiceCollection services, IConfiguration config)
+    private static IServiceCollection AddDatabaseService(this IServiceCollection services, IConfiguration config, IWebHostEnvironment enviroment)
     {
         string connString = string.Empty;
 
-        // connString = config["CONNECTION_STRING"] ?? throw new ArgumentNullException("Environment variable 'CONNECTION_STRING' not found.");
-        connString = config.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("Connection string 'Default' not found.");
+        if(enviroment.IsProduction() || enviroment.IsStaging())
+            connString = config["CONNECTION_STRING"] ?? throw new ArgumentNullException("Environment variable 'CONNECTION_STRING' not found.");
+        else
+            connString = config.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("Connection string 'Default' not found.");
 
         services.AddDbContext<AppDbContext>(options =>
         {

@@ -21,7 +21,7 @@ namespace Presentation
 
             builder.Services.AddPresentationServices(config)
                             .AddApplicationServices(config)
-                            .AddInfrastructureServices(config);
+                            .AddInfrastructureServices(config, builder.Environment);
 
             var app = builder.Build();
 
