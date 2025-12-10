@@ -1,5 +1,4 @@
-
-namespace Infrastructure.Data.Configs;
+namespace Infrastructure.Data.Configs.Abstractions;
 
 // inherit for a domain entity that inherits AuditableEntity to apply all the inherited fields configuration
 public abstract class AuditableEntityConfig<TEntity> : BaseEntityConfig<TEntity>

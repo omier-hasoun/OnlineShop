@@ -1,7 +1,7 @@
 
 using System.Runtime.CompilerServices;
 
-namespace Infrastructure.Data.Configs.IdentityConfigs;
+namespace Infrastructure.Data.Configs.Identity;
 
 public sealed class UserConfig : IEntityTypeConfiguration<User>
 {
@@ -46,7 +46,7 @@ public sealed class UserConfig : IEntityTypeConfiguration<User>
                 .IsRequired();
 
         builder.Property(x => x.NormalizedUserName)
-               .HasColumnType("VARCHAR(128)")//  100 in case future encrypt but the actual length should not exceed 18
+               .HasColumnType("VARCHAR(128)")//  128 in case future encrypt but the actual length should not exceed 18
                .IsRequired();
 
         builder.Property(x => x.TwoFactorEnabled)
@@ -59,8 +59,8 @@ public sealed class UserConfig : IEntityTypeConfiguration<User>
         builder.Ignore(x => x.PhoneNumber);
         builder.Ignore(x => x.PhoneNumberConfirmed);
 
-        builder.HasIndex(x => x.NormalizedUserName).HasDatabaseName("IX_NormalizedUserName");
-        builder.HasIndex(x => x.NormalizedEmail).HasDatabaseName("IX_NormalizedEmail");
+        builder.HasIndex(x => x.NormalizedUserName).HasDatabaseName("IX_User_NormalizedUserName");
+        builder.HasIndex(x => x.NormalizedEmail).HasDatabaseName("IX_User_NormalizedEmail");
 
         builder.ToTable("Users");
     }

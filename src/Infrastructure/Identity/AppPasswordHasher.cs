@@ -6,8 +6,8 @@ public sealed class AppPasswordHasher : IPasswordHasher<User>
 {
     private const int _saltSize = 16;
     private const int _hashSize = 32;
-    private const int _iterations = 400000;
-    private readonly HashAlgorithmName _algorithm = HashAlgorithmName.SHA512;
+    private const int _iterations = 120000;
+    private readonly HashAlgorithmName _algorithm = HashAlgorithmName.SHA256;
 
     private string HashPassword(string password)
     {

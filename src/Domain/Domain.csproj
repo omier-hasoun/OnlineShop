@@ -10,4 +10,12 @@
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Customers\CartItems\" />
+    <Folder Include="Orders\Payments\" />
+    <Folder Include="Orders\Shipments\" />
+    <Folder Include="Products\Inventory\" />
+    <Folder Include="Products\Reviews\" />
+  </ItemGroup>
+
 </Project>

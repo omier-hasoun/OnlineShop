@@ -1,5 +1,5 @@
 
-namespace Infrastructure.Data.Configs.IdentityConfigs;
+namespace Infrastructure.Data.Configs.Identity;
 
 public sealed class UserClaimConfig : IEntityTypeConfiguration<UserClaim>
 {

@@ -3,21 +3,16 @@ namespace Infrastructure.Data;
 
 public sealed class AppDbContext : IdentityDbContext<User, Role, Guid, UserClaim, UserRoles, UserLoginProvider, RoleClaim, UserToken, IdentityUserPasskey<Guid>>, IAppDbContext
 {
-    public override DbSet<UserClaim> UserClaims { get => base.UserClaims; set => base.UserClaims = value; }
-
-    public override DbSet<RoleClaim> RoleClaims { get => base.RoleClaims; set => base.RoleClaims = value; }
-
-    public override DbSet<UserRoles> UserRoles { get => base.UserRoles; set => base.UserRoles = value; }
-
-    public override DbSet<UserLoginProvider> UserLogins { get => base.UserLogins; set => base.UserLogins = value; }
-
-    public override DbSet<UserToken> UserTokens { get => base.UserTokens; set => base.UserTokens = value; }
-
-    public override DbSet<IdentityUserPasskey<Guid>> UserPasskeys { get => base.UserPasskeys; set => base.UserPasskeys = value; }
-
-    public override DbSet<User> Users { get => base.Users; set => base.Users = value; }
-
-    public override DbSet<Role> Roles { get => base.Roles; set => base.Roles = value; }
+    public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<ProductImage> ProductImages => Set<ProductImage>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<CustomerAddress> CustomerAddresses => Set<CustomerAddress>();
+    public DbSet<CartItem> CartItems => Set<CartItem>();
+    public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<Shipment> Shipments => Set<Shipment>();
 
     public AppDbContext(DbContextOptions options) : base(options)
     {
