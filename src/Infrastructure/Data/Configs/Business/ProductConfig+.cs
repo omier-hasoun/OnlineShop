@@ -43,10 +43,10 @@ public sealed class ProductConfig : AuditableEntityConfig<Product>
         builder.HasMany(x => x.ProductImages)
                .WithOne()
                .HasForeignKey(x => x.ProductId);
-               
+
         builder.ToTable("Products", x =>
         {
-            x.HasCheckConstraint("CK_Product_Rating", "Rating between 1 and 5");
+            x.HasCheckConstraint("CK_Product_Rating", "AverageRating between 1 and 5");
 
         });
     }
