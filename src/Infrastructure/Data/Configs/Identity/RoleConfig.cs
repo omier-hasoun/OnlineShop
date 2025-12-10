@@ -13,8 +13,11 @@ public sealed class RoleConfig : IEntityTypeConfiguration<Role>
         builder.Property(x => x.Name)
                .HasColumnType("varchar(32)");
 
-        builder.Property(x => x.ConcurrencyStamp)
+        builder.Property(x => x.NormalizedName)
                .HasColumnType("varchar(32)");
+
+        builder.Property(x => x.ConcurrencyStamp)
+               .HasColumnType("char(32)");
 
         builder.ToTable("Roles");
     }

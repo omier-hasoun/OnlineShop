@@ -15,6 +15,10 @@ public sealed class PaymentConfig : BaseEntityConfig<Payment>
         builder.HasIndex(x => x.TransactionId)
                .HasDatabaseName("IX_Payment_TransactionId");
 
+        builder.HasOne(x => x.OrderInfo)
+               .WithOne()
+               .HasForeignKey<Payment>(x => x.OrderId);
+               
         builder.ToTable("Payments");
     }
 }

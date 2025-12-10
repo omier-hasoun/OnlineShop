@@ -8,14 +8,15 @@ public sealed class UserLoginProviderConfig : IEntityTypeConfiguration<UserLogin
         builder.HasKey(x => new { x.LoginProvider, x.ProviderKey });
 
         builder.Property(x => x.LoginProvider)
+                .HasColumnType("VARCHAR(128)")
                .ValueGeneratedNever();
 
         builder.Property(x => x.ProviderKey)
                .ValueGeneratedNever()
-               .HasColumnType("VARCHAR(120)");
+               .HasColumnType("VARCHAR(128)");
 
         builder.Property(x => x.ProviderDisplayName)
-               .HasColumnType("VARCHAR(20)")
+               .HasColumnType("VARCHAR(32)")
                .IsRequired();
 
         builder.HasOne(x => x.UserInfo)

@@ -10,7 +10,7 @@ public sealed class CustomerConfig : BaseEntityConfig<Customer>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-               .ValueGeneratedOnAdd()
+               .ValueGeneratedNever()
                .HasConversion(
                    id => id.Value,
                    value => new CustomerId(value)

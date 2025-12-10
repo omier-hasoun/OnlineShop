@@ -8,7 +8,7 @@ public sealed class ProductImageConfig : BaseEntityConfig<ProductImage>
 
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)
-               .ValueGeneratedOnAdd()
+               .ValueGeneratedNever()
                .HasConversion(
                    id => id.Value,
                    value => new ProductImageId(value)

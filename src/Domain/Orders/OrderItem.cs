@@ -24,4 +24,7 @@ public sealed class OrderItem : BaseEntity
     public decimal UnitPrice { get; private set; }
     public decimal TotalPrice { get; private set; }
     public short Units { get; private set; }
+
+    public Order? OrderInfo { get; private set; }
+    public Product? ProductInfo { get; private set; }
 }

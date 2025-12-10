@@ -9,7 +9,7 @@ public sealed class ProductConfig : AuditableEntityConfig<Product>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-               .ValueGeneratedOnAdd()
+               .ValueGeneratedNever()
                .HasConversion(
                    id => id.Value,
                    value => new ProductId(value)
@@ -40,6 +40,10 @@ public sealed class ProductConfig : AuditableEntityConfig<Product>
         builder.HasIndex(x => x.Description)
                 .HasDatabaseName("IX_Product_Description");
 
+        builder.HasMany(x => x.ProductImages)
+               .WithOne()
+               .HasForeignKey(x => x.ProductId);
+               
         builder.ToTable("Products", x =>
         {
             x.HasCheckConstraint("CK_Product_Rating", "Rating between 1 and 5");

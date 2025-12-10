@@ -10,6 +10,14 @@ public sealed class UserClaimConfig : IEntityTypeConfiguration<UserClaim>
         builder.Property(x => x.Id)
                .ValueGeneratedOnAdd();
 
+        builder.Property(x => x.ClaimValue)
+               .HasColumnType("NVARCHAR(64)")
+               .IsRequired();
+
+        builder.Property(x => x.ClaimType)
+               .HasColumnType("NVARCHAR(64)")
+               .IsRequired();
+
         builder.HasOne<User>()
                .WithMany(x => x.Claims)
                .HasForeignKey(x => x.UserId)

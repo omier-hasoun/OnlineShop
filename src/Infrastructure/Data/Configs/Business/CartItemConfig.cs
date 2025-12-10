@@ -6,16 +6,16 @@ public sealed class CartItemConfig : BaseEntityConfig<CartItem>
     {
         base.Configure(builder);
 
-        builder.HasKey(x => new {x.CustomerId, x.ProductId});
+        builder.HasKey(x => new { x.CustomerId, x.ProductId });
 
 
         builder.HasOne<Customer>()
                .WithMany(x => x.CartItems)
-               .HasForeignKey(x => new {x.CustomerId, x.ProductId});
+               .HasForeignKey(x => x.CustomerId);
 
         builder.HasOne(x => x.ProductInfo)
                .WithOne()
-               .HasForeignKey<CartItem>(x => new {x.CustomerId, x.ProductId});
+               .HasForeignKey<CartItem>(x => x.ProductId);
 
         builder.ToTable("CartItems");
     }

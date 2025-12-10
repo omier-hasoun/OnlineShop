@@ -9,7 +9,7 @@ public sealed class OrderConfig : BaseEntityConfig<Order>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-               .ValueGeneratedOnAdd()
+               .ValueGeneratedNever()
                .HasConversion(
                    id => id.Value,
                    value => new OrderId(value)
@@ -19,6 +19,11 @@ public sealed class OrderConfig : BaseEntityConfig<Order>
                .HasColumnType("DECIMAL(9,2)")
                .IsRequired();
 
+        builder.HasOne(x => x.CustomerInfo)
+               .WithMany()
+               .HasForeignKey(x => x.CustomerId)
+               .IsRequired();
+               
         builder.ToTable("Orders");
     }
 }
