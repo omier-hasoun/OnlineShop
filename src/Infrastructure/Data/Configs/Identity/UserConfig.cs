@@ -52,6 +52,11 @@ public sealed class UserConfig : IEntityTypeConfiguration<User>
         builder.Property(x => x.TwoFactorEnabled)
                .IsRequired();
 
+        builder.HasOne(x => x.CustomerInfo)
+               .WithOne()
+               .HasForeignKey<User>(x => x.CustomerId)
+               .IsRequired(false);
+
         builder.HasMany(x => x.Roles)
                .WithMany()
                .UsingEntity<UserRoles>();
@@ -59,8 +64,10 @@ public sealed class UserConfig : IEntityTypeConfiguration<User>
         builder.Ignore(x => x.PhoneNumber);
         builder.Ignore(x => x.PhoneNumberConfirmed);
 
+
         builder.HasIndex(x => x.NormalizedUserName).HasDatabaseName("IX_User_NormalizedUserName");
         builder.HasIndex(x => x.NormalizedEmail).HasDatabaseName("IX_User_NormalizedEmail");
+        builder.UseTpcMappingStrategy();
 
         builder.ToTable("Users");
     }

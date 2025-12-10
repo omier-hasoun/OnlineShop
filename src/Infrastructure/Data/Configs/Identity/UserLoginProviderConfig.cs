@@ -29,6 +29,6 @@ public sealed class UserLoginProviderConfig : IEntityTypeConfiguration<UserLogin
                .HasDatabaseName("IX_ProviderDisplayName");
 
         builder.ToTable("UserLoginProviders");
-
+        builder.UseTpcMappingStrategy();
     }
 }

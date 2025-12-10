@@ -23,6 +23,7 @@ public sealed class RoleClaimConfig : IEntityTypeConfiguration<RoleClaim>
                .HasForeignKey(x => x.RoleId)
                .IsRequired()
                .OnDelete(DeleteBehavior.Cascade);
+        builder.UseTpcMappingStrategy();
 
         builder.ToTable("RoleClaims");
     }

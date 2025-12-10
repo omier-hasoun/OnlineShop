@@ -18,6 +18,7 @@ public sealed class RoleConfig : IEntityTypeConfiguration<Role>
 
         builder.Property(x => x.ConcurrencyStamp)
                .HasColumnType("char(32)");
+        builder.UseTpcMappingStrategy();
 
         builder.ToTable("Roles");
     }

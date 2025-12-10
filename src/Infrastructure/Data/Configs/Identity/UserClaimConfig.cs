@@ -23,6 +23,7 @@ public sealed class UserClaimConfig : IEntityTypeConfiguration<UserClaim>
                .HasForeignKey(x => x.UserId)
                .IsRequired()
                .OnDelete(DeleteBehavior.Cascade);
+        builder.UseTpcMappingStrategy();
 
         builder.ToTable("UserClaims");
     }

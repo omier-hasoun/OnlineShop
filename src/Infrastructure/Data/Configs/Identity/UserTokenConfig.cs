@@ -22,6 +22,7 @@ public sealed class UserTokenConfig : IEntityTypeConfiguration<UserToken>
                .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(x => new { x.LoginProvider });
+        builder.UseTpcMappingStrategy();
 
         builder.ToTable("UserTokens");
     }

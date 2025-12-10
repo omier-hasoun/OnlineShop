@@ -8,5 +8,6 @@ where TEntity : BaseEntity
     public virtual void Configure(EntityTypeBuilder<TEntity> builder)
     {
         builder.Ignore(x => x.DomainEvents);
+        builder.UseTpcMappingStrategy();
     }
 }
