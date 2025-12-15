@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Presentation.Pages.Account.Pages.Account.Manage
+namespace Presentation.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {

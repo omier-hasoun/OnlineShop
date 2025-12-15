@@ -35,8 +35,10 @@ public static class DependencyInjection
     {
         string connString = string.Empty;
 
-        if(enviroment.IsProduction() || enviroment.IsStaging())
+        if(enviroment.IsProduction())
             connString = config["CONNECTION_STRING"] ?? throw new ArgumentNullException("Environment variable 'CONNECTION_STRING' not found.");
+        else if (enviroment.IsStaging())
+            connString = Environment.GetEnvironmentVariable("CONNECTION_STRING", EnvironmentVariableTarget.User) ?? throw new ArgumentNullException("Environment variable 'CONNECTION_STRING' not found.");
         else
             connString = config.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("Connection string 'Default' not found.");
 

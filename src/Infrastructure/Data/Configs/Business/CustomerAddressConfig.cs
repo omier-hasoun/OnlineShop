@@ -14,15 +14,15 @@ public sealed class CustomerAddressConfig : BaseEntityConfig<CustomerAddress>
                );
 
         builder.Property(x => x.Country)
-               .HasColumnType("VARCHAR(32)")
+               .HasColumnType("NVARCHAR(32)")
                .IsRequired();
 
         builder.Property(x => x.City)
-               .HasColumnType("VARCHAR(32)")
+               .HasColumnType("NVARCHAR(32)")
                .IsRequired();
 
         builder.Property(x => x.Street)
-               .HasColumnType("VARCHAR(64)")
+               .HasColumnType("NVARCHAR(64)")
                .IsRequired();
 
         builder.Property(x => x.Zipcode)

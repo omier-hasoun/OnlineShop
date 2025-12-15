@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace Presentation.Pages.Account.Pages.Account.Manage
+namespace Presentation.Pages.Account.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {

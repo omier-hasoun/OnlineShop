@@ -44,7 +44,7 @@ namespace Presentation.Pages.Account
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-        public class InputModel
+        public sealed class InputModel
         {
             [Required]
             [EmailAddress]
@@ -57,15 +57,15 @@ namespace Presentation.Pages.Account
             public string UserName { get; set; }
 
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(UserAccountSettings.PasswordMaxLength, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = UserAccountSettings.PasswordMinLength)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
 
-            [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }
+            [DataType(DataType.PhoneNumber)]
+            [Display(Name = "Phone number")]
+            [StringLength(16, ErrorMessage = "The {0} must be at max {1} digits.")]
+            public string PhoneNumber { get; set; }
         }
 
 
