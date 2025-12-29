@@ -1,4 +1,4 @@
-namespace Domain.Customers.CartItems;
+namespace Domain.Products.CartItems;
 
 public sealed class CartItem : BaseEntity
 {
@@ -8,18 +8,17 @@ public sealed class CartItem : BaseEntity
 
     }
 
-    public static CartItem Create(CustomerId customerId, ProductId productId, short units)
+    internal static CartItem Create(CustomerId customerId, ProductId productId, ushort units = 1)
     {
         return new()
         {
             CustomerId = customerId,
             ProductId = productId,
-            Units = units,
+            Units = (short)units,
         };
     }
     public short Units { get; private set; }
     public CustomerId CustomerId { get; private init; }
     public ProductId ProductId { get; private init; }
 
-    public Product ProductInfo {get; private set;}
 }

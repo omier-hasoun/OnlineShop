@@ -18,5 +18,5 @@ public sealed class ProductImage : BaseEntity
     }
     public ProductImageId Id { get; private init; }
     public ProductId ProductId { get; private set; }
-    public byte SortOrder { get; set; }
+    public byte SortOrder { get; private set; }
 }

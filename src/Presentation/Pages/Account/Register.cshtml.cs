@@ -62,10 +62,6 @@ namespace Presentation.Pages.Account
             [Display(Name = "Password")]
             public string Password { get; set; }
 
-            [DataType(DataType.PhoneNumber)]
-            [Display(Name = "Phone number")]
-            [StringLength(16, ErrorMessage = "The {0} must be at max {1} digits.")]
-            public string PhoneNumber { get; set; }
         }
 
 
