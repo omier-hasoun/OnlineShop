@@ -16,6 +16,4 @@ global using Domain.Orders.Payments;
 global using Domain.Orders.Shipments;
 global using Domain.Products;
 global using Domain.Products.Reviews;
-global using Domain.Products.CartItems;
 global using Domain.Common.ValidationRules;
-

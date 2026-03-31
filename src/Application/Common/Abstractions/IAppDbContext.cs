@@ -1,20 +1,29 @@
 
 
+
+using Domain.Addresses;
+using Domain.CartItems;
+using Domain.Carts;
+using Domain.Orders.Items;
+using Domain.Products.Images;
+using Domain.Shipments;
+
 namespace Application.Common.Abstractions;
 
 public interface IAppDbContext
 {
     // add your Entities Set
-    DbSet<Customer> Customers {get; }
+    DbSet<User> Customers {get; }
     DbSet<Order> Orders {get; }
     DbSet<OrderItem> OrderItems {get; }
-    DbSet<Review> Reviews {get; }
+    DbSet<ProductReview> Reviews {get; }
     DbSet<ProductImage> ProductImages {get; }
     DbSet<Product> Products {get; }
-    DbSet<CustomerAddress> CustomerAddresses {get; }
+    DbSet<Address> CustomerAddresses {get; }
     DbSet<CartItem> CartItems {get; }
-    DbSet<Payment> Payments {get; }
+    DbSet<Transaction> Payments {get; }
     DbSet<Shipment> Shipments {get; }
+    DbSet<Cart> Carts {get; }
 
     Task<int> SaveChangesAsync(CancellationToken token);
 }

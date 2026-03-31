@@ -3,12 +3,8 @@ namespace Domain.Common.Abstractions;
 /// <summary>
 /// Inherit if an entity should be soft deleted
 /// </summary>
-public interface ISofDeletable
+public interface ISoftDeletable
 {
-    public bool IsDeleted { get; set; }
-    public Guid? DeletedBy { get; set; }
-
-    public DateTimeOffset? DeletedAt { get; set; }
-
+    public bool IsDeleted { get;  set; }
 
 }

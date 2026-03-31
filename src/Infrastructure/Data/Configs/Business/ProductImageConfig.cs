@@ -1,3 +1,6 @@
+
+using Domain.Products.Images;
+
 namespace Infrastructure.Data.Configs.Business;
 
 public sealed class ProductImageConfig : BaseEntityConfig<ProductImage>
@@ -13,6 +16,11 @@ public sealed class ProductImageConfig : BaseEntityConfig<ProductImage>
                    id => id.Value,
                    value => new ProductImageId(value)
                );
+
+
+
+
+        builder.Ignore(x => x.FileName);
 
         builder.ToTable("ProductImages", x =>
         {

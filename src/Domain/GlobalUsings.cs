@@ -7,6 +7,9 @@ global using Domain.Products;
 global using Domain.Products.Reviews;
 global using Shared.Results;
 global using Domain.Common;
-
 global using Domain.Common.ValidationRules;
-global using Domain.Products.CartItems;
+global using Domain.Carts;
+global using Shared;
+global using Domain.Carts.CartItems;
+global using Domain.Orders.OrderItems;
+global using Domain.Orders.Shipments;

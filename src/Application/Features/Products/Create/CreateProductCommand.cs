@@ -3,7 +3,7 @@ namespace Application.Features.Products.Create;
 public sealed record CreateProductCommand(
     string Name,
     string Description,
-    string MadeByCompany,
+    string Manufacturer,
     int Quantity,
-    decimal Price
+    decimal DefaultPrice
 ) : IRequest<Result<ProductId>>;

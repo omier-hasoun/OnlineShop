@@ -1,3 +1,6 @@
+using Domain.Orders;
+using Domain.Shipments;
+
 namespace Infrastructure.Data.Configs.Business;
 
 public sealed class ShipmentConfig : BaseEntityConfig<Shipment>
@@ -6,7 +9,14 @@ public sealed class ShipmentConfig : BaseEntityConfig<Shipment>
     {
         base.Configure(builder);
 
-        builder.HasKey(x => x.OrderId);
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+               .ValueGeneratedNever()
+               .HasConversion(
+                   id => id.Value,
+                   value => new ShipmentId(value)
+               );
 
         builder.Property(x => x.CarrierName)
                .HasColumnType("VARCHAR(32)")

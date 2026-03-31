@@ -1,20 +1,33 @@
 
+using Domain.Customers;
+using Domain.Orders;
+using Domain.Products;
+using Domain.Products.Reviews;
+using Domain.Carts;
+using Domain.Addresses;
+using Domain.Shipments;
+using Domain.Orders.Items;
+using Domain.Products.Images;
+using Domain.CartItems;
+using Domain.Orders.Payments;
+using Infrastructure.Data.LinkEntities;
+
 namespace Infrastructure.Data;
 
 public sealed class AppDbContext : IdentityDbContext<User, Role, Guid, UserClaim, UserRoles, UserLoginProvider, RoleClaim, UserToken, IdentityUserPasskey<Guid>>, IAppDbContext
 {
-    public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<User> Customers => Set<User>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
-    public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<ProductReview> Reviews => Set<ProductReview>();
     public DbSet<ProductImage> ProductImages => Set<ProductImage>();
     public DbSet<Product> Products => Set<Product>();
-    public DbSet<CustomerAddress> CustomerAddresses => Set<CustomerAddress>();
+    public DbSet<Address> CustomerAddresses => Set<Address>();
     public DbSet<CartItem> CartItems => Set<CartItem>();
-    public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<Transaction> Payments => Set<Transaction>();
     public DbSet<Shipment> Shipments => Set<Shipment>();
 
-    public AppDbContext(DbContextOptions options) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
 
@@ -32,16 +45,14 @@ public sealed class AppDbContext : IdentityDbContext<User, Role, Guid, UserClaim
     {
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-        // Softdelete configuration for all Entities implementing ISofDeletable
-        ConfigurePropertiesForInterface<ISofDeletable>(builder, (b, type) =>
-        {
-            b.Property(nameof(ISofDeletable.DeletedAt))
-             .IsRequired(false);
+        ConfigureIDeletionMetadata(builder);
+        ConfigureISoftDeletable(builder);
 
-            b.Property(nameof(ISofDeletable.DeletedBy))
-             .HasColumnType("CHAR(36)")
-             .IsRequired(false);
-        });
+        ConfigureIHasCreationTime(builder);
+        ConfigureIHasModificationTime(builder);
+
+        ConfigureIModificationAudited(builder);
+        ConfigureICreationAudited(builder);
 
         builder.Entity<IdentityUserPasskey<Guid>>(b =>
         {
@@ -52,7 +63,73 @@ public sealed class AppDbContext : IdentityDbContext<User, Role, Guid, UserClaim
 
     }
 
-    private static void ConfigurePropertiesForInterface<TInterface>(ModelBuilder builder, Action<EntityTypeBuilder, Type> configure)
+    private void ConfigureIDeletionMetadata(ModelBuilder builder)
+    {
+        ConfigurePropertiesForInterface<IDeletionMetadata>(builder, (b, type) =>
+        {
+            b.Property(nameof(IDeletionMetadata.DeletedAt))
+             .IsRequired();
+
+            b.Property(nameof(IDeletionMetadata.DeletedBy))
+             .HasConversion<Guid>()
+             .IsRequired();
+        });
+
+        //}//        builder.Property(x => x.CreatedBy)
+        //       .HasColumnType("CHAR(36)")
+        //       .IsRequired();
+
+        //builder.Property(x => x.LastModifiedBy)
+        //       .HasColumnType("CHAR(36)")
+        //       .IsRequired();
+
+        //builder.Property(x => x.LastModifiedAt)
+        //        .IsRequired();
+
+        //builder.Property(x => x.CreatedAt)
+        //       .IsRequired();
+    }
+    private void ConfigureIHasCreationTime(ModelBuilder builder)
+    {
+        ConfigurePropertiesForInterface<IHasCreationTime>(builder, (b, type) =>
+        {
+            b.Property(nameof(IHasCreationTime.CreatedAt))
+             .IsRequired();
+        });
+    }
+    private void ConfigureIHasModificationTime(ModelBuilder builder)
+    {
+        ConfigurePropertiesForInterface<IHasModificationTime>(builder, (b, type) =>
+        {
+            b.Property(nameof(IHasModificationTime.LastModifiedAt))
+             .IsRequired();
+        });
+    }
+    private void ConfigureICreationAudited(ModelBuilder builder)
+    {
+        ConfigurePropertiesForInterface<ICreationAudited>(builder, (b, type) =>
+        {
+            b.Property(nameof(ICreationAudited.CreatedBy))
+             .IsRequired();
+        });
+    }
+    private void ConfigureIModificationAudited(ModelBuilder builder)
+    {
+        ConfigurePropertiesForInterface<IModificationAudited>(builder, (b, type) =>
+        {
+            b.Property(nameof(IModificationAudited.LastModifiedBy))
+             .IsRequired();
+        });
+    }
+    private void ConfigureISoftDeletable(ModelBuilder builder)
+    {
+        ConfigurePropertiesForInterface<ISoftDeletable>(builder, (b, type) =>
+        {
+            b.Property(nameof(ISoftDeletable.IsDeleted))
+             .IsRequired();
+        });
+    }
+    private void ConfigurePropertiesForInterface<TInterface>(ModelBuilder builder, Action<EntityTypeBuilder, Type> configure)
     {
         foreach (var entityType in builder.Model.GetEntityTypes())
         {

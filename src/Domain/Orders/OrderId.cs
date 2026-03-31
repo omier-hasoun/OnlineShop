@@ -1,13 +1,17 @@
 
+using Domain.Addresses;
+
 namespace Domain.Orders;
 
 public readonly record struct OrderId
 {
-    public Guid Value { get; }
-    public OrderId(Guid value)
+    public long Value { get; }
+    public static implicit operator long(OrderId orderId) => orderId.Value;
+    public static implicit operator OrderId(long value) => new(value);
+    public OrderId(long value)
     {
-        if (Value == default)
-            throw new ArgumentException("OrderId cannot be the default Guid.", nameof(Value));
+        if (Value <= 0)
+            throw new ArgumentException("OrderId is invalid.", nameof(Value));
         Value = value;
     }
 }

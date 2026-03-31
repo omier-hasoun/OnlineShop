@@ -2,12 +2,14 @@
 namespace Domain.Products;
 public readonly record struct ProductId
 {
-    public Guid Value { get; }
+    public long Value { get; }
 
-    public ProductId(Guid value)
+    public static implicit operator long(ProductId productId) => productId.Value;
+    public static implicit operator ProductId(long value) => new ProductId(value);
+    public ProductId(long value)
     {
-        if (value == default)
-            throw new ArgumentException("ProductId cannot be the default Guid.", nameof(value));
+        if (value <= 0)
+            throw new ArgumentException("ProductId is invalid.", nameof(value));
 
         Value = value;
     }

@@ -1,13 +1,10 @@
+
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Application.Features.Products.Create;
 
-public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Result<ProductId>>
+public sealed class CreateProductCommandHandler(IAppDbContext context, [FromKeyedServices(IdProviderTypes.Snowflake)]IIdProvider<long> idGen) : IRequestHandler<CreateProductCommand, Result<ProductId>>
 {
-    private readonly IAppDbContext _context;
-    public CreateProductCommandHandler(IAppDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<Result<ProductId>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
         if (ProductNameAlreadyExists(request.Name))
@@ -16,11 +13,11 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
         }
 
         var createProductResult = Product.Create(
+            idGen.GetNewId(),
             request.Name,
             request.Description,
-            request.MadeByCompany,
-            request.Price,
-            request.Quantity
+            request.Manufacturer,
+            request.DefaultPrice
         );
 
         if (createProductResult.Failed)
@@ -28,9 +25,9 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
             return createProductResult.Errors;
         }
 
-        _context.Products.Add(createProductResult.Value);
+        context.Products.Add(createProductResult.Value);
 
-        var result = await _context.SaveChangesAsync(cancellationToken);
+        var result = await context.SaveChangesAsync(cancellationToken);
 
         return result > 0
             ? createProductResult.Value.Id
@@ -39,6 +36,6 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
 
     private bool ProductNameAlreadyExists(string name)
     {
-        return _context.Products.Any(p => p.Name == name);
+        return context.Products.Any(p => p.Name == name);
     }
 }

@@ -1,4 +1,6 @@
 
+using Infrastructure.Data.LinkEntities;
+
 namespace Infrastructure.Data.Configs.Identity;
 
 public sealed class UserRolesConfig : IEntityTypeConfiguration<UserRoles>

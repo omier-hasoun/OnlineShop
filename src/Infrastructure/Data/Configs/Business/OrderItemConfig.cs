@@ -1,3 +1,7 @@
+
+
+using Domain.Orders.Items;
+
 namespace Infrastructure.Data.Configs.Business;
 
 public sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
@@ -6,7 +10,11 @@ public sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
     {
         base.Configure(builder);
 
-        builder.HasKey(x => new { x.OrderId, x.ProductId });
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+               .HasConversion(id => id.Value, value => new OrderItemId(value))
+               .ValueGeneratedNever();
 
         builder.Property(x => x.UnitPrice)
                .HasColumnType("DECIMAL(9,2)")

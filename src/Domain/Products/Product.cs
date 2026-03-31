@@ -1,82 +1,68 @@
 
 
-
-
 namespace Domain.Products;
 
-public sealed class Product : AuditableEntity
+public sealed class Product : BaseEntity, IFullAudited, ISoftDeletable
+
 {
     private Product()
     {
     }
 
-    public static Result<Product> Create(string name, string description, string madeByCompany, decimal price, int quantity, ProductId id = default)
+    public static Result<Product> Create(ProductId id, string name, string description, string manufacturer, decimal defaultPrice)
     {
         return new Product
         {
-            Id = id == default ? new ProductId(Guid.CreateVersion7()) : id,
+            Id = id,
             Name = name,
             Description = description,
-            Price = price,
-            MadeByCompany = madeByCompany,
-            LastRestockedAt = TimeService.UtcNow,
-            Quantity = quantity,
+            DefaultPrice = defaultPrice,
+            Manufacturer = manufacturer,
         };
     }
+
 
     public ProductId Id { get; private init; }
     public string Name { get; private set; } = null!;
     public string Description { get; private set; } = null!;
-    public string MadeByCompany { get; private set; } = null!;
+    public string Manufacturer { get; private set; } = null!;
     public float? AverageRating { get; } = null;
-    public int ReviewsCount { get; } = 0;
-    public int Quantity { get; private set; }
-    public DateTimeOffset LastRestockedAt { get; private set; }
-    public decimal Price { get; private set; }
+    public decimal DefaultPrice { get; private set; }
 
-    public ICollection<ProductImage> ProductImages { get; private set; } = [];
-    public ICollection<Review> Reviews { get; private set; } = [];
+    public ICollection<ProductReview> Reviews { get; private set; } = [];
+    public bool IsDeleted { get; set; }
+    public UserId CreatedBy { get; set; }
+    public UserId LastModifiedBy { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime LastModifiedAt { get; set; }
 
-
-    public Result<Updated> Restock(int amount)
+    public Result<Updated> ChangeDefaultPrice(decimal newPrice)
     {
-        if (amount <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(amount), "Restock amount must be greater than zero.");
-        }
-
-        Quantity += amount;
-        LastRestockedAt = TimeService.UtcNow;
-
-        return Result.Updated;
-    }
-
-    public Result<Updated> ChangePrice(decimal newPrice)
-    {
-        if (newPrice < ProductRules.PriceMinValue || newPrice > ProductRules.PriceMaxValue)
+        if (newPrice < ProductRules.MinDefaultPriceValue || newPrice > ProductRules.MaxDefaultPriceValue)
         {
             return ProductErrors.PriceOutOfRange;
         }
 
-        Price = newPrice;
+        DefaultPrice = newPrice;
         return Result.Updated;
     }
 
-    // public Result<CartItem> CreateCartItem(CustomerId customerId, ushort units)
-    // {
-    //     if (units == 0)
-    //     {
-
-    //     }
-    //     if (units > Quantity)
-    //     {
-    //         return ProductErrors.CartItemErrors.UnitsOutOfRange;
-    //     }
-
-    //     Quantity -= (int)units;
-    //     return CartItem.Create(
-    //         customerId: customerId,
-    //         productId: this.Id,
-    //         units: (short)units);
-    // }
+    //public Result<Updated> UpdateProductImages(ICollection<ProductImage> newImages)
+    //{
+    //    if (newImages.Count < ProductRules.MinProductImagesCount || newImages.Count > ProductRules.MaxProductImagesCount)
+    //    {
+    //        return ProductErrors.ImagesOutOfRange;
+    //    }
+    //    EnsureImagesSortOrderIsSequential(ref newImages);
+    //    ProductImages = newImages;
+    //    return Result.Updated;
+    //}
+    //private static void EnsureImagesSortOrderIsSequential(ref ICollection<ProductImage> images)
+    //{
+    //    byte sortOrder = 1;
+    //    foreach (var image in images.OrderBy(i => i.SortOrder))
+    //    {
+    //        image.UpdateSortOrder(sortOrder++);
+    //    }
+    //}
 }

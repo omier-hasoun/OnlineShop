@@ -1,5 +1,7 @@
 
 using System.Runtime.CompilerServices;
+using Domain.Customers;
+using Infrastructure.Data.LinkEntities;
 
 namespace Infrastructure.Data.Configs.Identity;
 
@@ -51,11 +53,6 @@ public sealed class UserConfig : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.TwoFactorEnabled)
                .IsRequired();
-
-        builder.HasOne(x => x.CustomerInfo)
-               .WithOne()
-               .HasForeignKey<User>(x => x.CustomerId)
-               .IsRequired(false);
 
         builder.HasMany(x => x.Roles)
                .WithMany()

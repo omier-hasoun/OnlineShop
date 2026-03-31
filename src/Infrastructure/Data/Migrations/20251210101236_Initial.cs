@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -106,14 +106,14 @@ namespace Infrastructure.Data.Migrations
                     City = table.Column<string>(type: "VARCHAR(32)", nullable: false),
                     Street = table.Column<string>(type: "VARCHAR(64)", nullable: false),
                     Zipcode = table.Column<string>(type: "VARCHAR(8)", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CustomerAddresses", x => x.Id);
                     table.ForeignKey(
                         name: "FK_CustomerAddresses_Customers_CustomerId",
-                        column: x => x.CustomerId,
+                        column: x => x.UserId,
                         principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -124,7 +124,7 @@ namespace Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PlacedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "DECIMAL(9,2)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false)
@@ -134,7 +134,7 @@ namespace Infrastructure.Data.Migrations
                     table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Orders_Customers_CustomerId",
-                        column: x => x.CustomerId,
+                        column: x => x.UserId,
                         principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -145,7 +145,7 @@ namespace Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UserName = table.Column<string>(type: "VARCHAR(128)", nullable: false),
                     NormalizedUserName = table.Column<string>(type: "VARCHAR(128)", nullable: false),
                     Email = table.Column<string>(type: "VARCHAR(256)", nullable: false),
@@ -164,7 +164,7 @@ namespace Infrastructure.Data.Migrations
                     table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Users_Customers_CustomerId",
-                        column: x => x.CustomerId,
+                        column: x => x.UserId,
                         principalTable: "Customers",
                         principalColumn: "Id");
                 });
@@ -173,16 +173,16 @@ namespace Infrastructure.Data.Migrations
                 name: "CartItems",
                 columns: table => new
                 {
-                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Units = table.Column<short>(type: "smallint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CartItems", x => new { x.CustomerId, x.ProductId });
+                    table.PrimaryKey("PK_CartItems", x => new { x.UserId, x.ProductId });
                     table.ForeignKey(
                         name: "FK_CartItems_Customers_CustomerId",
-                        column: x => x.CustomerId,
+                        column: x => x.UserId,
                         principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -220,7 +220,7 @@ namespace Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false, defaultValueSql: "NEXT VALUE FOR [ReviewSequence]"),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "NVARCHAR(128)", nullable: false)
                 },
@@ -230,7 +230,7 @@ namespace Infrastructure.Data.Migrations
                     table.CheckConstraint("CK_Review_Rating", "Rating between 1 and 5");
                     table.ForeignKey(
                         name: "FK_Reviews_Customers_CustomerId",
-                        column: x => x.CustomerId,
+                        column: x => x.UserId,
                         principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -430,7 +430,7 @@ namespace Infrastructure.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_CustomerAddresses_CustomerId",
                 table: "CustomerAddresses",
-                column: "CustomerId",
+                column: "UserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -451,7 +451,7 @@ namespace Infrastructure.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_CustomerId",
                 table: "Orders",
-                column: "CustomerId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payment_TransactionId",
@@ -481,7 +481,7 @@ namespace Infrastructure.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_CustomerId",
                 table: "Reviews",
-                column: "CustomerId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_ProductId",
@@ -538,9 +538,9 @@ namespace Infrastructure.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Users_CustomerId",
                 table: "Users",
-                column: "CustomerId",
+                column: "UserId",
                 unique: true,
-                filter: "[CustomerId] IS NOT NULL");
+                filter: "[UserId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserTokens_LoginProvider",

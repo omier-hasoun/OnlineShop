@@ -1,3 +1,6 @@
+using Domain.CartItems;
+
+
 namespace Infrastructure.Data.Configs.Business;
 
 public sealed class CartItemConfig : BaseEntityConfig<CartItem>
@@ -6,17 +9,16 @@ public sealed class CartItemConfig : BaseEntityConfig<CartItem>
     {
         base.Configure(builder);
 
-        builder.HasKey(x => new { x.CustomerId, x.ProductId });
+        builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Id)
+               .HasConversion(id => id.Value, value => new CartItemId(value))
+               .ValueGeneratedNever();
 
-        builder.HasOne<Customer>()
-               .WithMany(x => x.CartItems)
-               .HasForeignKey(x => x.CustomerId);
+        builder.ToTable("CartItems", x =>
+        {
+            x.HasCheckConstraint("CK_CartItems_Quantity", "[Quantity] between 1 and 2000");
+        });
 
-        builder.HasOne(x => x.ProductInfo)
-               .WithOne()
-               .HasForeignKey<CartItem>(x => x.ProductId);
-
-        builder.ToTable("CartItems");
     }
 }

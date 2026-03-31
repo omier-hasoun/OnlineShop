@@ -1,6 +1,8 @@
+using Domain.Common;
+
 namespace Application.Common.Abstractions;
 
 public interface IUserContext
 {
-    Guid Id { get; }
+    UserId Id { get; }
 }

@@ -7,15 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Products\Inventory\**" />
+    <EmbeddedResource Remove="Products\Inventory\**" />
+    <None Remove="Products\Inventory\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Customers\CartItems\" />
-    <Folder Include="Orders\Payments\" />
-    <Folder Include="Orders\Shipments\" />
-    <Folder Include="Products\Inventory\" />
-    <Folder Include="Products\Reviews\" />
+    <Folder Include="Products\ProductVariants\" />
   </ItemGroup>
 
 </Project>

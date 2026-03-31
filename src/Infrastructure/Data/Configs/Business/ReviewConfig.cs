@@ -1,8 +1,10 @@
+using Domain.Products.Reviews;
+
 namespace Infrastructure.Data.Configs.Business;
 
-public sealed class ReviewConfig : BaseEntityConfig<Review>
+public sealed class ReviewConfig : BaseEntityConfig<ProductReview>
 {
-    public override void Configure(EntityTypeBuilder<Review> builder)
+    public override void Configure(EntityTypeBuilder<ProductReview> builder)
     {
         base.Configure(builder);
 
@@ -11,7 +13,7 @@ public sealed class ReviewConfig : BaseEntityConfig<Review>
                .ValueGeneratedOnAdd()
                .HasConversion(
                    id => id.Value,
-                   value => new ReviewId(value)
+                   value => new ProductReviewId(value)
                );
 
         builder.Property(x => x.Comment)
@@ -23,10 +25,6 @@ public sealed class ReviewConfig : BaseEntityConfig<Review>
                .HasForeignKey(x => x.ProductId)
                .IsRequired();
 
-        builder.HasOne(x => x.CustomerInfo)
-               .WithMany()
-               .HasForeignKey(x => x.CustomerId)
-               .IsRequired();
 
         builder.ToTable("Reviews", x =>
         {

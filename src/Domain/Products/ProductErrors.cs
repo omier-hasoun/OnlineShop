@@ -11,29 +11,25 @@ public static class ProductErrors
     public static Error DescriptionRequired =>
         Error.Validation("Product.Description.Required", "Product description is required.");
     public static Error MadeByCompanyRequired =>
-        Error.Validation("Product.MadeByCompany.Required", "Product made by company is required.");
+        Error.Validation("Product.Manufacturer.Required", "Product manufacturer is required.");
     public static Error PriceRequired =>
         Error.Validation("Product.Price.Required", "Product price is required.");
     public static Error QuantityRequired =>
         Error.Validation("Product.Quantity.Required", "Product quantity is required.");
 
     public static Error PriceOutOfRange =>
-        Error.Validation("Product.Price.OutOfRange", $"Product price must be at least {ProductRules.PriceMinValue} and at max {ProductRules.PriceMaxValue}.");
+        Error.Validation("Product.Price.OutOfRange", $"Product price must be at least {ProductRules.MinDefaultPriceValue} and at max {ProductRules.MaxDefaultPriceValue}.");
 
     public static Error NameOutOfRange =>
-        Error.Validation("Product.Name.OutOfRange", $"Product name must be between {ProductRules.NameMinLength} and {ProductRules.NameMaxLength} characters long.");
+        Error.Validation("Product.Name.OutOfRange", $"Product name must be between {ProductRules.MinNameLength} and {ProductRules.MaxNameLength} characters long.");
 
     public static Error DescriptionOutOfRange =>
-        Error.Validation("Product.Description.OutOfRange", $"Product description must be between {ProductRules.DescriptionMinLength} and {ProductRules.DescriptionMaxLength} characters long.");
+        Error.Validation("Product.Description.OutOfRange", $"Product description must be between {ProductRules.MinDescriptionLength} and {ProductRules.MaxDescriptionLength} characters long.");
 
-    public static Error MadeByCompanyOutOfRange =>
-        Error.Validation("Product.MadeByCompany.OutOfRange", $"Product made by company must be between {ProductRules.MadeByCompanyMinLength} and {ProductRules.MadeByCompanyMaxLength} characters long.");
+    public static Error ManufacturerOutOfRange =>
+        Error.Validation("Product.Manufacturer.OutOfRange", $"Product Manufacturer must be between {ProductRules.MinManufacturerLength} and {ProductRules.MaxManufacturerLength} characters long.");
 
+    public static Error ImagesOutOfRange =>
+        Error.Validation("Product.Images.OutOfRange", $"A product can have between {ProductRules.MinProductImagesCount} and {ProductRules.MaxProductImagesCount} images.");
 
-
-    public static class CartItemErrors
-    {
-        public static Error UnitsOutOfRange =>
-            Error.Forbidden("Product.Order.InsufficientStock", "Insufficient stock to fulfill the order.");
-    }
 }

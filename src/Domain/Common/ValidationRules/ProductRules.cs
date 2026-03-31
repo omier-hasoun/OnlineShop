@@ -1,22 +1,34 @@
 namespace Domain.Common.ValidationRules;
 
-public static class ProductRules
+public static partial class ProductRules
 {
-    public const int NameMaxLength = 64;
-    public const int NameMinLength = 3;
-    public const int DescriptionMinLength = 32;
-    public const int DescriptionMaxLength = 256;
-    public const int MadeByCompanyMinLength = 1;
-    public const int MadeByCompanyMaxLength = 32;
-    public const int PriceMinValue = 5;
-    public const int PriceMaxValue = 10_000_000;
+    // Name length limits
+    public const byte MinNameLength = 3;
+    public const byte MaxNameLength = 64;
 
-    public static class ReviewRules
-    {
-        public const int CommentMinLength = 10;
-        public const int CommentMaxLength = 128;
-        public const int RatingMaxValue = 5;
-        public const int RatingMinValue = 1;
-    }
+    // Description length limits
+    public const byte MinDescriptionLength = 32;
+    public const short MaxDescriptionLength = 256;
+
+    // Manufacturer / "MadeByCompany" length limits
+    public const byte MinManufacturerLength = 1;
+    public const byte MaxManufacturerLength = 64;
+
+    // Price limits
+    public const byte MinDefaultPriceValue = 5;
+    public const int MaxDefaultPriceValue = 10_000_000;
+
+    // Quantity limits
+    public const byte MinQuantityValue = 0;
+    public static readonly short MaxQuantityValue = short.MaxValue;
+
+    // Product images count limits
+    public const byte MinProductImagesCount = 1;
+    public const byte MaxProductImagesCount = 30;
+
+    // Rating limits
+    public const byte MinRatingValue = 1;
+    public const byte MaxRatingValue = 5;
+
 
 }
