@@ -1,5 +1,6 @@
 
-using Domain.Products.Images;
+
+using Domain.Products.ProductImages;
 
 namespace Infrastructure.Data.Configs.Business;
 

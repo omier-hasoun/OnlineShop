@@ -1,4 +1,4 @@
-using Domain.Common.Enums;
+
 
 namespace Domain.Transactions;
 
@@ -33,10 +33,5 @@ public sealed class Transaction : BaseEntity
     public string? Notes { get; private set; } = null!;
 
     public decimal TransferAmount { get; private set; }
-    public CurrencyCode Currency { get; private set; } = CurrencyCode.USD;
-
-
-
-
 
 }

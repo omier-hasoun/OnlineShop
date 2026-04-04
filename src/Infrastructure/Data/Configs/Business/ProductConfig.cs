@@ -17,11 +17,7 @@ public sealed class ProductConfig : BaseEntityConfig<Product>
                    value => new ProductId(value)
                );
 
-        builder.Property(x => x.DefaultPrice)
-               .HasColumnType("DECIMAL(9,2)")
-               .IsRequired();
-
-        builder.Property(x => x.Name)
+        builder.Property(x => x.Title)
                .HasColumnType("VARCHAR(64)")
                .IsRequired();
 
@@ -29,7 +25,7 @@ public sealed class ProductConfig : BaseEntityConfig<Product>
                .HasColumnType("VARCHAR(256)")
                .IsRequired();
 
-        builder.Property(x => x.Manufacturer)
+        builder.Property(x => x.Brand)
                .HasColumnType("VARCHAR(32)")
                .IsRequired();
 
@@ -37,10 +33,10 @@ public sealed class ProductConfig : BaseEntityConfig<Product>
         //       .HasConversion<byte>()
         //       .IsRequired();
 
-        builder.HasIndex(x => x.Name)
+        builder.HasIndex(x => x.Title)
                .HasDatabaseName("IX_Product_Name");
 
-        builder.HasIndex(x => x.Manufacturer)
+        builder.HasIndex(x => x.Brand)
                .HasDatabaseName("IX_Product_MadeByCompany");
 
         builder.HasIndex(x => x.Description)

@@ -30,12 +30,6 @@ public sealed class ShipmentConfig : BaseEntityConfig<Shipment>
                .HasColumnType("VARCHAR(64)")
                .IsRequired(false);
 
-        builder.HasOne<Order>()
-               .WithOne(x => x.ShipmentInfo)
-               .HasForeignKey<Shipment>(x => x.OrderId)
-               .OnDelete(DeleteBehavior.NoAction)
-               .IsRequired();
-
         builder.HasOne(x => x.AddressInfo)
                .WithOne()
                .HasForeignKey<Shipment>(x => x.AddressId)

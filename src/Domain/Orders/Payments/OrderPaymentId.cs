@@ -1,4 +1,3 @@
-using Domain.Orders.Items;
 
 namespace Domain.Orders.Payments;
 

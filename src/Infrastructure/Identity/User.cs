@@ -1,9 +1,7 @@
 
-using Domain.Users;
-
 namespace Infrastructure.Identity;
 
-public sealed class User : IdentityUser<UserId>
+public sealed class User : IdentityUser<Guid>
 {
     public ICollection<UserClaim> Claims { get; private set; } = [];
     public UserLoginProvider? LinkedLoginProvider { get; private set;}

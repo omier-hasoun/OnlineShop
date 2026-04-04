@@ -1,4 +1,4 @@
-using Domain.Products.Reviews;
+using Domain.Products.ProductReviews;
 
 namespace Infrastructure.Data.Configs.Business;
 
@@ -19,12 +19,6 @@ public sealed class ReviewConfig : BaseEntityConfig<ProductReview>
         builder.Property(x => x.Comment)
                .HasColumnType("NVARCHAR(128)")
                .IsRequired();
-
-        builder.HasOne(x => x.ProductInfo)
-               .WithMany(x => x.Reviews)
-               .HasForeignKey(x => x.ProductId)
-               .IsRequired();
-
 
         builder.ToTable("Reviews", x =>
         {

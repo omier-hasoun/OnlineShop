@@ -1,5 +1,7 @@
 
 
+global using Domain.Products.ProductReviews;
+
 namespace Domain.Products;
 
 public sealed class Product : BaseEntity, IFullAudited, ISoftDeletable
@@ -9,43 +11,36 @@ public sealed class Product : BaseEntity, IFullAudited, ISoftDeletable
     {
     }
 
-    public static Result<Product> Create(ProductId id, string name, string description, string manufacturer, decimal defaultPrice)
+    public static Result<Product> Create(ProductId id, string title, string description, string brand)
     {
+        var product = new Product();
         return new Product
         {
             Id = id,
-            Name = name,
+            Title = title,
             Description = description,
-            DefaultPrice = defaultPrice,
-            Manufacturer = manufacturer,
+            Brand = brand,
+            
         };
     }
 
 
     public ProductId Id { get; private init; }
-    public string Name { get; private set; } = null!;
+    public string Title { get; private set; } = null!;
     public string Description { get; private set; } = null!;
-    public string Manufacturer { get; private set; } = null!;
-    public float? AverageRating { get; } = null;
-    public decimal DefaultPrice { get; private set; }
+    public string Brand { get; private set; } = null!;
+    public float AverageRating { get; private set; }
+    public bool IsSerialized { get; private set; }
 
-    public ICollection<ProductReview> Reviews { get; private set; } = [];
+    private readonly List<ProductReview>? _reviews = [];
+    public IReadOnlyCollection<ProductReview>? Reviews { get { return _reviews is null ? null: _reviews.AsReadOnly(); } } 
+
+
     public bool IsDeleted { get; set; }
     public UserId CreatedBy { get; set; }
     public UserId LastModifiedBy { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
-
-    public Result<Updated> ChangeDefaultPrice(decimal newPrice)
-    {
-        if (newPrice < ProductRules.MinDefaultPriceValue || newPrice > ProductRules.MaxDefaultPriceValue)
-        {
-            return ProductErrors.PriceOutOfRange;
-        }
-
-        DefaultPrice = newPrice;
-        return Result.Updated;
-    }
 
     //public Result<Updated> UpdateProductImages(ICollection<ProductImage> newImages)
     //{

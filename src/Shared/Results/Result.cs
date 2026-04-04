@@ -19,6 +19,19 @@ public static class Result
     public static Created Created => default;
     public static Updated Updated => default;
     public static Deleted Deleted => default;
+
+    public static Result<Success> ValidateAll(params Func<Result<Success>>[] validators)
+    {
+        foreach (var validator in validators)
+        {
+            var result = validator();
+            if (result.Failed)
+            {
+                return result;
+            }
+        }
+        return Result.Success;
+    }
 }
 
 

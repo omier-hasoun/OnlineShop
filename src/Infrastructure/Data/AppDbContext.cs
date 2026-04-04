@@ -1,16 +1,14 @@
 
-using Domain.Customers;
 using Domain.Orders;
 using Domain.Products;
-using Domain.Products.Reviews;
-using Domain.Carts;
 using Domain.Addresses;
 using Domain.Shipments;
-using Domain.Orders.Items;
-using Domain.Products.Images;
 using Domain.CartItems;
 using Domain.Orders.Payments;
 using Infrastructure.Data.LinkEntities;
+using Domain.Orders.OrderItems;
+using Domain.Products.ProductImages;
+using Domain.Products.ProductReviews;
 
 namespace Infrastructure.Data;
 
@@ -24,7 +22,6 @@ public sealed class AppDbContext : IdentityDbContext<User, Role, Guid, UserClaim
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Address> CustomerAddresses => Set<Address>();
     public DbSet<CartItem> CartItems => Set<CartItem>();
-    public DbSet<Transaction> Payments => Set<Transaction>();
     public DbSet<Shipment> Shipments => Set<Shipment>();
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)

@@ -17,7 +17,7 @@ public sealed class OrderConfig : BaseEntityConfig<Order>
                    value => new OrderId(value)
                );
 
-        builder.Property(x => x.TotalAmount)
+        builder.Property(x => x.TotalItemsPrice)
                .HasColumnType("DECIMAL(9,2)")
                .IsRequired();
                

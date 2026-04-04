@@ -1,6 +1,4 @@
 
-using System.Runtime.CompilerServices;
-using Domain.Customers;
 using Infrastructure.Data.LinkEntities;
 
 namespace Infrastructure.Data.Configs.Identity;

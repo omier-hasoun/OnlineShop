@@ -10,6 +10,7 @@ public readonly record struct UserId
 
     public static implicit operator Guid(UserId userId) => userId.Value;
     public static implicit operator UserId(Guid value) => new UserId(value);
+
     public UserId(Guid value)
     {
         if (value.Version != 7 || value == default)
@@ -17,4 +18,5 @@ public readonly record struct UserId
 
         Value = value;
     }
+
 }

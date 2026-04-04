@@ -1,3 +1,4 @@
+using Application.Services.Shipping;
 using Shippo;
 using Shippo.Models.Components;
 namespace Infrastructure.ExternalServices.Shipping.Shippo;

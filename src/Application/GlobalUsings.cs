@@ -9,11 +9,8 @@ global using Microsoft.AspNetCore.Identity;
 global using Application.Common;
 global using Microsoft.EntityFrameworkCore;
 global using System.Security.Claims;
-global using Domain.Customers;
-global using Domain.Customers.Addresses;
+
 global using Domain.Orders;
 global using Domain.Orders.Payments;
-global using Domain.Orders.Shipments;
 global using Domain.Products;
-global using Domain.Products.Reviews;
-global using Domain.Common.ValidationRules;
+global using Domain.Common.EntitiesRules;

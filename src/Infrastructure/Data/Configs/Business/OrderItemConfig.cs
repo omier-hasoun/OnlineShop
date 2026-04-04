@@ -1,6 +1,6 @@
 
 
-using Domain.Orders.Items;
+using Domain.Orders.OrderItems;
 
 namespace Infrastructure.Data.Configs.Business;
 
@@ -25,12 +25,12 @@ public sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
                .IsRequired();
 
         builder.HasOne(x => x.OrderInfo)
-               .WithMany(x => x.OrderItems)
+               .WithMany(x => x.Items)
                .HasForeignKey(x => x.OrderId);
 
-        builder.HasOne(x => x.ProductInfo)
+        builder.HasOne(x => x.ProductVariantInfo)
                .WithMany()
-               .HasForeignKey(x => x.ProductId);
+               .HasForeignKey(x => x.ProductVariantId);
 
         builder.ToTable("OrderItems");
     }

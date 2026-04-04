@@ -19,10 +19,6 @@ public sealed class AddressConfig : BaseEntityConfig<Address>
                )
                .ValueGeneratedNever();
 
-        builder.Property(x => x.CountryCode)
-               .HasColumnType("CHAR")
-               .IsRequired();
-
         builder.Property(x => x.City)
                .HasColumnType("NVARCHAR")
                .IsRequired();
