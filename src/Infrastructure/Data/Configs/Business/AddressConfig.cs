@@ -1,6 +1,6 @@
 
+using Domain.Common.Entities.Addresses;
 
-using Domain.Addresses;
 
 namespace Infrastructure.Data.Configs.Business;
 

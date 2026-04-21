@@ -5,7 +5,7 @@ namespace Infrastructure.ExternalServices.Shipping.Shippo;
 
 public sealed class ShippoService(IShippoSDK shippo) : IShippingGateway
 {
-    public Task<Result<Domain.Shipments.Shipment>> CreateShipmentAsync()
+    public Task<Result<Domain.Orders.Shipments.Shipment>> CreateShipmentAsync()
     {
         //Shipment shipment = shippo.Shipments.CreateAsync();
 

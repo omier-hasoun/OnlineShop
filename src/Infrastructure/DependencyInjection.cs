@@ -1,21 +1,31 @@
 
 using IdGen;
-using Infrastructure.IdGenerators;
+using App = Application.Common.Abstractions;
+using Infrastructure.AppIdGenerators.Primitives;
+using Infrastructure.Common.Exceptions;
+using Infrastructure.Data.Interceptors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Infrastructure.Common.Abstractions;
+using Infrastructure.AppIdGenerators;
+using Domain.Products;
+using Domain.Orders;
+using Domain.Customers;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Infrastructure.BackgroundServices;
 
 
-namespace Infrastructure;
+namespace Infrastructure; 
 
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config, IWebHostEnvironment enviroment)
     {
         services.AddCustomServices()
-                .AddDatabaseService(config, enviroment)
+                .AddEfCoreServices(config, enviroment)
                 .AddIdGenServices(config)
-                .AddIdProviderServices()
+                .AddIdGeneratorsServices()
 
 
 
@@ -26,28 +36,30 @@ public static class DependencyInjection
 
     private static IServiceCollection AddCustomServices(this IServiceCollection services)
     {
-        // for simple dependency injection Transient/Singleton/Scoped
-        services.AddSingleton(TimeProvider.System);
-        
-        services.AddScoped<IPasswordHasher<User>, UserPasswordHasher>();
 
         return services;
     }
 
-    private static IServiceCollection AddIdProviderServices(this IServiceCollection services)
+    private static IServiceCollection AddIdGeneratorsServices(this IServiceCollection services)
     {
-        services.AddKeyedSingleton<IIdProvider<long>, SnowflakeIdProvider>(IdProviderTypes.Snowflake);
-        services.AddKeyedSingleton<IIdProvider<Guid>, GuidVersion7IdProvider>(IdProviderTypes.GuidVersion7);
+        services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<Guid>, GuidV7Generator>("GuidV7");
+        services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<long>, SnowflakeGenerator>("Snowflake");
+
+        services.AddSingleton<App.IIdGenerator<UserId>, UserIdGenerator>();
+        services.AddSingleton<App.IIdGenerator<ProductId>, ProductIdGenerator>();
+        services.AddSingleton<App.IIdGenerator<OrderId>, OrderIdGenerator>();
+
 
         return services;
     }
 
     private static IServiceCollection AddIdGenServices(this IServiceCollection services, IConfiguration config)
     {
-        string strMachineId = config["MACHINE_ID"]! ?? throw new ArgumentException("Enviroment variable 'MACHINE_ID' was not found");
+
+        string strMachineId = config["MACHINE_ID"]! ?? throw new MachineIdWasNotProvidedException();
         int machineId = int.Parse(strMachineId);
 
-        services.AddSingleton<IIdGenerator<long>, IdGenerator>(x =>
+        services.AddKeyedSingleton<IdGen.IIdGenerator<long>, IdGen.IdGenerator>("", (x, d) =>
         {
             var options = new IdGeneratorOptions()
             {
@@ -57,21 +69,25 @@ public static class DependencyInjection
             };
             return new IdGenerator(machineId, options);
         });
+
+
+
         return services;
     }
 
-    private static IServiceCollection AddDatabaseService(this IServiceCollection services, IConfiguration config, IWebHostEnvironment enviroment)
+    private static IServiceCollection AddEfCoreServices(this IServiceCollection services, IConfiguration config, IWebHostEnvironment environment)
     {
-        string connString = string.Empty;
+        string? connString;
 
-        if (enviroment.IsDevelopment() == false)
-            connString = config["CONNECTION_STRING"]!;
+        bool isProductionOrStaging = environment.IsDevelopment() == false;
+        if (isProductionOrStaging)
+            connString = config["CONNECTION_STRING"];
         else
             connString = config.GetConnectionString("DefaultConnection")!;
 
-        if(connString == null)
+        if (connString == null)
         {
-            throw new InvalidOperationException("Connection string was not provided.");
+            throw new ConnectionStringWasNotProvidedException();
         }
 
 
@@ -81,6 +97,11 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IAppDbContext, AppDbContext>();
+
+        //interceptors
+        services.AddScoped<ISaveChangesInterceptor, AuditedEntitySaveChangesInterceptor>();
+        services.AddScoped<ISaveChangesInterceptor, SoftDeleteEntitySaveChangesInterceptor>();
+
         return services;
     }
 

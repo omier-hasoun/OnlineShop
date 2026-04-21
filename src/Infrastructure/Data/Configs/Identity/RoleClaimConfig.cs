@@ -18,11 +18,11 @@ public sealed class RoleClaimConfig : IEntityTypeConfiguration<RoleClaim>
                .HasColumnType("VARCHAR(128)")
                .IsRequired();
 
-        builder.HasOne(x => x.Role)
-               .WithMany(x => x.RoleClaims)
-               .HasForeignKey(x => x.RoleId)
-               .IsRequired()
-               .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasOne(x => x.Role)
+        //       .WithMany(x => x.RoleClaims)
+        //       .HasForeignKey(x => x.RoleId)
+        //       .IsRequired()
+        //       .OnDelete(DeleteBehavior.Cascade);
         builder.UseTpcMappingStrategy();
 
         builder.ToTable("RoleClaims");

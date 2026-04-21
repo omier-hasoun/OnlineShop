@@ -1,5 +1,5 @@
 using Domain.Orders;
-using Domain.Shipments;
+using Domain.Orders.Shipments;
 
 namespace Infrastructure.Data.Configs.Business;
 
@@ -29,12 +29,6 @@ public sealed class ShipmentConfig : BaseEntityConfig<Shipment>
         builder.Property(x => x.Notes)
                .HasColumnType("VARCHAR(64)")
                .IsRequired(false);
-
-        builder.HasOne(x => x.AddressInfo)
-               .WithOne()
-               .HasForeignKey<Shipment>(x => x.AddressId)
-                .OnDelete(DeleteBehavior.NoAction)
-               .IsRequired();
 
         builder.HasIndex(x => x.TrackingNumber)
                .HasDatabaseName("IX_Shipment_TrackingNumber");

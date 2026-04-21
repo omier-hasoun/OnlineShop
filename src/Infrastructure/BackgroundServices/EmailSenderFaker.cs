@@ -1,11 +1,14 @@
 
 
 
+using Application.Common.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+
 namespace Infrastructure.BackgroundServices;
 
-public sealed class EmailSenderFaker: IEmailSender<User>
+public sealed class EmailSenderFaker: IEmailSender<AppUser>, IEmailSender
 {
-    public Task SendConfirmationLinkAsync(User user, string email, string confirmationLink)
+    public Task SendConfirmationLinkAsync(AppUser user, string email, string confirmationLink)
     {
 
         if(user.EmailConfirmed)
@@ -17,7 +20,7 @@ public sealed class EmailSenderFaker: IEmailSender<User>
         return Task.CompletedTask;
     }
 
-    public Task SendPasswordResetLinkAsync(User user, string email, string resetLink)
+    public Task SendPasswordResetLinkAsync(AppUser user, string email, string resetLink)
     {
 
         Console.WriteLine(@$"/////Send password reset: {resetLink}\\\\\\");
@@ -25,10 +28,17 @@ public sealed class EmailSenderFaker: IEmailSender<User>
         return Task.CompletedTask;
     }
 
-    public Task SendPasswordResetCodeAsync(User user, string email, string resetCode)
+    public Task SendPasswordResetCodeAsync(AppUser user, string email, string resetCode)
     {
         Console.WriteLine($"Reset code: {resetCode}");
         return Task.CompletedTask;
     }
 
+    public Task SendEmailAsync(string email, string subject, string htmlMessage)
+    {
+        // Implement your email sending logic here.
+        Console.WriteLine($"Sending email to {email} with subject '{subject}'");
+        Console.WriteLine($"Message: {htmlMessage}");
+        return Task.CompletedTask;
+    }
 }

@@ -1,4 +1,4 @@
-using Domain.Products.ProductReviews;
+using Domain.ProductReviews;
 
 namespace Infrastructure.Data.Configs.Business;
 

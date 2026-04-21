@@ -1,11 +1,10 @@
 
-using Infrastructure.Data.LinkEntities;
 
 namespace Infrastructure.Data.Configs.Identity;
 
-public sealed class UserRolesConfig : IEntityTypeConfiguration<UserRoles>
+public sealed class UserRolesConfig : IEntityTypeConfiguration<IdentityUserRole<Guid>>
 {
-    public void Configure(EntityTypeBuilder<UserRoles> builder)
+    public void Configure(EntityTypeBuilder<IdentityUserRole<Guid>> builder)
     {
         builder.HasKey(x => new { x.RoleId, x.UserId });
 

@@ -1,8 +1,8 @@
-using Api.Notification;
-using Application.Common;
+using Application.Common.Identity;
 using Infrastructure.BackgroundServices;
+using Infrastructure.Common.Hashing;
+using Infrastructure.Common.Rules;
 using Infrastructure.Data;
-using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
@@ -17,10 +17,10 @@ public static class DependencyInjection
 
         services.AddCustomServices()
                 .AddHttpContextAccessor()
-                .AddOpenApiAndScalarService()
-                .AddIdentityService()
-                .AddAuthenticationService()
-                .AddAuthorizatinoService();
+                .AddOpenApiAndScalarServices()
+                .AddIdentityServices()
+                .AddAuthenticationServices()
+                .AddAuthorizationServices();
 
         return services;
     }
@@ -28,37 +28,38 @@ public static class DependencyInjection
     private static IServiceCollection AddCustomServices(this IServiceCollection services)
     {
         // for simple dependency injection Transient/Singleton/Scoped
-        services.AddTransient<IEmailSender, EmailSender>();
+        services.AddTransient<IEmailSender, EmailSenderFaker>();
+
         return services;
     }
 
-    private static IServiceCollection AddOpenApiAndScalarService(this IServiceCollection services)
+    private static IServiceCollection AddOpenApiAndScalarServices(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
         services.AddOpenApi();
         return services;
     }
 
-    private static IServiceCollection AddIdentityService(this IServiceCollection services)
+    private static IServiceCollection AddIdentityServices(this IServiceCollection services)
     {
-        services.AddIdentityCore<User>(options =>
+        services.AddIdentityCore<AppUser>(options =>
         {
             // Password settings.
-            options.Password.RequiredLength = UserAccountSettings.PasswordMinLength;
-            options.Password.RequireDigit = UserAccountSettings.PasswordRequireDigits;
-            options.Password.RequireUppercase = UserAccountSettings.PasswordRequireUppercase;
-            options.Password.RequiredUniqueChars = UserAccountSettings.PasswordRequiredUniqueChars;
-            options.Password.RequireNonAlphanumeric = UserAccountSettings.PasswordRequireNonAlphanumeric;
-            options.Password.RequireLowercase = UserAccountSettings.PasswordRequireLowercase;
+            options.Password.RequiredLength = AppUserRules.MinPasswordLength;
+            options.Password.RequireDigit = AppUserRules.PasswordRequireDigits;
+            options.Password.RequireUppercase = AppUserRules.PasswordRequireUppercase;
+            options.Password.RequiredUniqueChars = AppUserRules.PasswordRequiredUniqueChars;
+            options.Password.RequireNonAlphanumeric = AppUserRules.PasswordRequireNonAlphanumeric;
+            options.Password.RequireLowercase = AppUserRules.PasswordRequireLowercase;
 
             // Lockout settings.
-            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(UserAccountSettings.DefaultLockoutMinutes);
-            options.Lockout.MaxFailedAccessAttempts = UserAccountSettings.MaxFailedAccessAttempts;
-            options.Lockout.AllowedForNewUsers = UserAccountSettings.AllowLockOutForNewUsers;
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(AppUserRules.DefaultLockoutMinutes);
+            options.Lockout.MaxFailedAccessAttempts = AppUserRules.MaxFailedAccessAttempts;
+            options.Lockout.AllowedForNewUsers = AppUserRules.AllowLockOutForNewUsers;
 
             // User settings.
-            options.User.AllowedUserNameCharacters = UserAccountSettings.AllowedUserNameChars;
-            options.User.RequireUniqueEmail = UserAccountSettings.RequireUniqueEmail;
+            options.User.AllowedUserNameCharacters = AppUserRules.AllowedUserNameChars;
+            options.User.RequireUniqueEmail = AppUserRules.RequireUniqueEmail;
 
             // SignIn settings.
             options.SignIn.RequireConfirmedAccount = true;
@@ -66,7 +67,7 @@ public static class DependencyInjection
             options.SignIn.RequireConfirmedPhoneNumber = false;
 
             // Identity stores settings.
-            options.Stores.MaxLengthForKeys = 128;
+            options.Stores.MaxLengthForKeys = 50;
             options.Stores.ProtectPersonalData = false;
             options.Stores.SchemaVersion = IdentitySchemaVersions.Version1;
 
@@ -79,18 +80,19 @@ public static class DependencyInjection
 
         })
         .AddRoles<Role>()
-        .AddSignInManager<SignInManager<User>>()
-        .AddUserManager<UserManager<User>>()
+        .AddSignInManager<SignInManager<AppUser>>()
+        .AddUserManager<UserManager<AppUser>>()
         .AddEntityFrameworkStores<AppDbContext>()
         .AddApiEndpoints()
         .AddDefaultTokenProviders();
 
-        services.AddTransient<IEmailSender<User>, EmailSenderFaker>();
+        services.AddTransient<IEmailSender<AppUser>, EmailSenderFaker>();
+        services.AddScoped<IPasswordHasher<AppUser>, UserPasswordHasher>();
 
         return services;
     }
 
-    private static IServiceCollection AddAuthenticationService(this IServiceCollection services)
+    private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)
     {
         services.AddAuthentication(options =>
         {
@@ -113,7 +115,7 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddAuthorizatinoService(this IServiceCollection services)
+    private static IServiceCollection AddAuthorizationServices(this IServiceCollection services)
     {
         services.AddAuthorization();
         return services;

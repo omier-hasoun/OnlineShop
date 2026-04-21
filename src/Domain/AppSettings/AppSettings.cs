@@ -1,31 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Domain.AppSettings;
 
-public sealed class AppSettings : BaseEntity, IFullAudited
+public sealed class AppSettings : AggregateRoot<AppSettingsId>, IHasModificationTime
 {
-    private AppSettings()
+    private AppSettings(AppSettingsId key, string value, string? description, DateTime lastModifiedAt) : base(key)
     {
+        Description = description ?? string.Empty;
+        Value = value;
+        LastModifiedAt = lastModifiedAt;
     }
 
-    public static Result<AppSettings> Create(AppSettingsId id, string key, string value)
-    {
-            return new AppSettings
-            {
-                Id = id,
-                Key = key,
-                Value = value,
-            };
-    }
-    public AppSettingsId Id { get; private set; }
-    public string Key { get; private init; } = null!;
+    // no creation feature, can only be created in db because it needs to integrate with the code
+
+    //public static Result<AppSettings> Create(AppSettingsId key, string value, string? description)
+    //{
+
+    //    return new AppSettings(key, value, description, TimeService.UtcNow);
+    //}
+    public AppSettingsId Key { get { return Id; } }// To be clear that the id it self is the key of the value
     public string Value { get; private set; } = null!;
-
-    public UserId CreatedBy { get; set; }
-    public UserId LastModifiedBy { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public string Description { get; private set; } = null!;
     public DateTime LastModifiedAt { get; set; }
 
 }

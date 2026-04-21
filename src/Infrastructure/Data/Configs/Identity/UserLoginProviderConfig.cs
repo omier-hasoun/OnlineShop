@@ -1,4 +1,6 @@
 
+using Application.Common.Identity;
+
 namespace Infrastructure.Data.Configs.Identity;
 
 public sealed class UserLoginProviderConfig : IEntityTypeConfiguration<UserLoginProvider>
@@ -19,11 +21,11 @@ public sealed class UserLoginProviderConfig : IEntityTypeConfiguration<UserLogin
                .HasColumnType("VARCHAR(32)")
                .IsRequired();
 
-        builder.HasOne(x => x.UserInfo)
-               .WithOne(x => x.LinkedLoginProvider)
-               .HasForeignKey<UserLoginProvider>(x => x.UserId)
-               .IsRequired()
-               .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasOne(x => x.UserInfo)
+        //       .WithOne(x => x.LinkedLoginProvider)
+        //       .HasForeignKey<UserLoginProvider>(x => x.UserId)
+        //       .IsRequired()
+        //       .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(x => x.ProviderDisplayName)
                .HasDatabaseName("IX_ProviderDisplayName");

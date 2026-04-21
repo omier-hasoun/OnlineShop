@@ -25,7 +25,7 @@ public sealed class ProductConfig : BaseEntityConfig<Product>
                .HasColumnType("VARCHAR(256)")
                .IsRequired();
 
-        builder.Property(x => x.Brand)
+        builder.Property(x => x.BrandId)
                .HasColumnType("VARCHAR(32)")
                .IsRequired();
 
@@ -36,7 +36,7 @@ public sealed class ProductConfig : BaseEntityConfig<Product>
         builder.HasIndex(x => x.Title)
                .HasDatabaseName("IX_Product_Name");
 
-        builder.HasIndex(x => x.Brand)
+        builder.HasIndex(x => x.BrandId)
                .HasDatabaseName("IX_Product_MadeByCompany");
 
         builder.HasIndex(x => x.Description)

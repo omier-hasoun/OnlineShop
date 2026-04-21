@@ -1,30 +1,35 @@
 
-using System.ComponentModel.DataAnnotations;
-using Domain.Orders.OrderItems;
-using Shared.Validators;
+
+
 
 
 namespace Domain.Orders;
 
-public sealed class Order : BaseEntity, IHasCreationTime
+public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
 {
 
-    private Order()
+    private Order(OrderId id, UserId customerId, decimal totalItemsPrice, decimal shippingFees, IReadOnlyList<OrderItem> items, DateTime createdAt)
+        : base(id)
     {
+        CustomerId = customerId;
+        TotalItemsPrice = totalItemsPrice;
+        ShippingFees = shippingFees;
+        Items = items;
+        CreatedAt = createdAt;
     }
-    public static decimal CalculateTotalItemsPrice(IReadOnlyList<OrderItem> items)
+    private static decimal CalculateTotalItemsPrice(IReadOnlyList<OrderItem> items)
     {
         if(items == null)
             return 0;
 
         return items.Sum(item => item.TotalPrice);
     }
-    public static Result<Order> Create(OrderId id, UserId userId, decimal shippingFees, IReadOnlyList<OrderItem> Items)
+    public static Result<Order> Create(OrderId id, UserId customerId, decimal shippingFees, IReadOnlyList<OrderItem> items)
     {
-        var totalItemsPrice = CalculateTotalItemsPrice(Items);
+        var totalItemsPrice = CalculateTotalItemsPrice(items);
 
         var result = Result.ValidateAll(
-            () => ValidateOrderItems(Items),
+            () => ValidateOrderItems(items),
             () => ValidateShippingFees(shippingFees),
             () => ValidateTotalItemsPrice(totalItemsPrice)
             );
@@ -35,27 +40,28 @@ public sealed class Order : BaseEntity, IHasCreationTime
         }
 
 
-        return new Order()
-        {
-            Id = id,
-            UserId = userId,
-            CreatedAt = TimeService.UtcNow,
-            ShippingFees = shippingFees,
-            TotalItemsPrice = totalItemsPrice,
-            Items = Items
-        };
+        return new Order(id, customerId, totalItemsPrice, shippingFees, items, TimeService.UtcNow);
     }
-    public OrderId Id { get; private init; }
-    public UserId UserId { get; private init; }
+    public UserId CustomerId { get; private init; }
     public decimal TotalItemsPrice { get; private set; }
     public decimal ShippingFees { get; private set; }
     public DateTime CreatedAt { get; set; }
 
-    public IReadOnlyList<OrderItem> Items { get; private set; }
+
+    private List<OrderPayment> _payments = [];
+    public IReadOnlyList<OrderPayment> Payments { get { return _payments; } private set { _payments = value.ToList(); } }
+
+
+    private List<OrderItem> _items = [];
+    public IReadOnlyList<OrderItem> Items { get { return _items; } private set { _items = value.ToList(); } }
+
+
+    private List<Shipment> _shipments = [];
+    public IReadOnlyList<Shipment> Shipments { get { return _shipments; } private set { _shipments = value.ToList(); } }
 
     private static Result<Success> ValidateShippingFees(decimal shippingFees)
     {
-        if(DataValidator.IsOutOfRange(shippingFees, OrderRules.MinShippingFeesValue, OrderRules.MaxShippingFeesValue))
+        if(ValidationHelper.IsOutOfRange(shippingFees, OrderRules.MinShippingFeesValue, OrderRules.MaxShippingFeesValue))
         {
             return OrderErrors.ShippingFeesOutOfRange;
         }
@@ -64,7 +70,7 @@ public sealed class Order : BaseEntity, IHasCreationTime
     }
     private static Result<Success> ValidateTotalItemsPrice(decimal totalItemsPrice)
     {
-        if (DataValidator.IsOutOfRange(totalItemsPrice, OrderRules.MinTotalItemsPriceValue, OrderRules.MaxTotalItemsPriceValue))
+        if (ValidationHelper.IsOutOfRange(totalItemsPrice, OrderRules.MinTotalItemsPriceValue, OrderRules.MaxTotalItemsPriceValue))
         {
             return OrderErrors.TotalItemsPriceOutOfRange;
         }
@@ -72,12 +78,10 @@ public sealed class Order : BaseEntity, IHasCreationTime
     }
     private static Result<Success> ValidateOrderItems(IReadOnlyList<OrderItem> orderItems)
     {
-        if (orderItems is null || DataValidator.IsOutOfRange(orderItems.Count, OrderRules.MinOrderItemsCount, OrderRules.MaxOrderItemsCount))
+        if (orderItems is null || ValidationHelper.IsOutOfRange(orderItems.Count, OrderRules.MinOrderItemsCount, OrderRules.MaxOrderItemsCount))
         {
             return OrderErrors.OrderItemsCountOutOfRange;
         }
         return Result.Success;
     }
-
-
 }

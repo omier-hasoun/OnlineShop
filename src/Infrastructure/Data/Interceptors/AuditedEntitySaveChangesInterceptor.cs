@@ -3,7 +3,7 @@
 
 namespace Infrastructure.Data.Interceptors;
 
-public sealed class AuditedEntitySaveChangesInterceptor : SaveChangesInterceptor
+internal sealed class AuditedEntitySaveChangesInterceptor : SaveChangesInterceptor
 {
     private readonly IUserContext _user;
 

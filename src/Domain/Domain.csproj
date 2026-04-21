@@ -16,4 +16,9 @@
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Brands\Services\" />
+    <Folder Include="Common\Exceptions\" />
+  </ItemGroup>
+
 </Project>

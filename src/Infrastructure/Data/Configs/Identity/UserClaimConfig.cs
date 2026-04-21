@@ -18,7 +18,7 @@ public sealed class UserClaimConfig : IEntityTypeConfiguration<UserClaim>
                .HasColumnType("NVARCHAR(64)")
                .IsRequired();
 
-        builder.HasOne<User>()
+        builder.HasOne<AppUser>()
                .WithMany(x => x.Claims)
                .HasForeignKey(x => x.UserId)
                .IsRequired()

@@ -1,4 +1,5 @@
-using Domain.CartItems;
+
+using Domain.Customers.CartItems;
 
 
 namespace Infrastructure.Data.Configs.Business;

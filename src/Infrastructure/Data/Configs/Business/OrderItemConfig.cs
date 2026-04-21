@@ -24,13 +24,13 @@ public sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
                .HasColumnType("DECIMAL(9,2)")
                .IsRequired();
 
-        builder.HasOne(x => x.OrderInfo)
-               .WithMany(x => x.Items)
-               .HasForeignKey(x => x.OrderId);
+        //builder.HasOne(x => x.OrderInfo)
+        //       .WithMany(x => x.Items)
+        //       .HasForeignKey(x => x.OrderId);
 
-        builder.HasOne(x => x.ProductVariantInfo)
-               .WithMany()
-               .HasForeignKey(x => x.ProductVariantId);
+        //builder.HasOne(x => x.ProductVariantInfo)
+        //       .WithMany()
+        //       .HasForeignKey(x => x.ProductVariantId);
 
         builder.ToTable("OrderItems");
     }

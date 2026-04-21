@@ -1,5 +1,5 @@
 
-using Domain.Orders.Payments;
+using Domain.Orders.OrderPayments;
 using Domain.Transactions;
 
 namespace Infrastructure.Data.Configs.Business;

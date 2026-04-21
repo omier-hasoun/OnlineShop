@@ -1,5 +1,5 @@
+using Application.Common.Identity;
 using Infrastructure.Data;
-using Infrastructure.Identity;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -50,11 +50,11 @@ namespace Api
             app.UseAuthorization();
 
             // Change this line:
-            app.MapIdentityApi<User>();
+            app.MapIdentityApi<AppUser>();
 
             // To this:
             app.MapGroup("/auth")
-               .MapIdentityApi<User>()
+               .MapIdentityApi<AppUser>()
                .WithTags("Authentication");
 
             app.Run();

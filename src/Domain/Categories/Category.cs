@@ -1,24 +1,19 @@
 
 namespace Domain.Categories;
 
-public class Category
+public class Category : AggregateRoot<CategoryId>
 {
-    private Category()
+    private Category(CategoryId id, string name, CategoryId? parentCategoryId) : base(id)
     {
-    
+        Name = name;
+        ParentCategoryId = parentCategoryId;
     }
     
-    public static Result<Category> Create(CategoryId id, string name, CategoryId? parentCategoryId = null)
+    public static Result<Category> Create(CategoryId id, string name, CategoryId? parentCategoryId)
     {
-        return new Category
-        {
-            Id = id,
-            Name = name,
-            ParentCategoryId = parentCategoryId,
-        };
+        return new Category(id, name, parentCategoryId);
     }
     
-    public CategoryId Id { get; private init; }
     public CategoryId? ParentCategoryId { get; private set; }
     public string Name { get; private set; } = null!;
 }

@@ -1,4 +1,6 @@
 
+using Application.Common.Identity;
+
 namespace Infrastructure.Data.Configs.Identity;
 
 public sealed class UserTokenConfig : IEntityTypeConfiguration<UserToken>
@@ -15,11 +17,11 @@ public sealed class UserTokenConfig : IEntityTypeConfiguration<UserToken>
                .HasColumnType("VARCHAR(64)")
                .IsRequired();
 
-        builder.HasOne(x => x.UserInfo)
-               .WithMany(x => x.Tokens)
-               .HasForeignKey(x => x.UserId)
-               .IsRequired()
-               .OnDelete(DeleteBehavior.Cascade);
+        //builder.HasOne(x => x.UserInfo)
+        //       .WithMany(x => x.Tokens)
+        //       .HasForeignKey(x => x.UserId)
+        //       .IsRequired()
+        //       .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(x => new { x.LoginProvider });
         builder.UseTpcMappingStrategy();

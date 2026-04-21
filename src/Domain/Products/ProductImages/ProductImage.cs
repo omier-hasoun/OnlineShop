@@ -1,27 +1,29 @@
 namespace Domain.Products.ProductImages;
 
-public sealed class ProductImage : BaseEntity
+public sealed class ProductImage : BaseEntity<ProductImageId>
 {
 
-    private ProductImage()
+    private ProductImage(ProductImageId id, ProductId productId, ProductVariantId? productVariantId, string fileName, byte sortOrder, int fileSize) : base(id)
     {
+        ProductId = productId;
+        ProductVariantId = productVariantId;
+        FileName = fileName;
+        SortOrder = sortOrder;
+        FileSize = fileSize;
     }
 
-    public static ProductImage Create(ProductImageId id, ProductId productId, string fileName, byte sortOrder)
+    public static Result<ProductImage> Create(ProductImageId id, ProductId productId, ProductVariantId? productVariantId, string fileName, byte sortOrder, int fileSize)
     {
-        return new()
-        {
-            Id = id,
-            ProductId = productId,
-            FileName = fileName,
-            SortOrder = sortOrder <= 0 ? (byte)1 : sortOrder,
-        };
+        return new ProductImage(id, productId, productVariantId, fileName, sortOrder, fileSize);
     }
 
-    public ProductImageId Id { get; private init; }
-    public ProductId ProductId { get; private set; }
+    public ProductId ProductId { get; private init; }
+    public ProductVariantId? ProductVariantId { get; private init; }
+
     public byte SortOrder { get; private set; }
     public string FileName { get; private set; } = null!;
+    public int FileSize { get; private set; }
+
     internal void UpdateSortOrder(byte sortOrder)
     {
         SortOrder = sortOrder;
