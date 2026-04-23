@@ -1,3 +1,4 @@
+using Domain.Common.EntitiesRules;
 using Domain.Orders;
 using Domain.Orders.Shipments;
 
@@ -19,19 +20,36 @@ public sealed class ShipmentConfig : BaseEntityConfig<Shipment>
                );
 
         builder.Property(x => x.CarrierName)
-               .HasColumnType("VARCHAR(32)")
+               .HasColumnType("NVARCHAR(50)")
+               .IsRequired();
+
+        builder.Property(x => x.AddressFrom)
+               .HasColumnType("NVARCHAR(500)")
+               .IsRequired();
+
+        builder.Property(x => x.AddressTo)
+               .HasColumnType("NVARCHAR(500)")
                .IsRequired();
 
         builder.Property(x => x.TrackingNumber)
-               .HasColumnType("VARCHAR(36)")
-               .IsRequired();
-
-        builder.Property(x => x.Notes)
-               .HasColumnType("VARCHAR(64)")
+               .HasColumnType("VARCHAR")
+               .HasMaxLength(100)
                .IsRequired(false);
 
-        builder.HasIndex(x => x.TrackingNumber)
-               .HasDatabaseName("IX_Shipment_TrackingNumber");
+        builder.Property(x => x.Notes)
+               .HasColumnType("VARCHAR")
+               .HasMaxLength(ShipmentRules.MaxNotesLength)
+               .IsRequired(false);
+
+        builder.Property(x => x.Status)
+               .HasColumnType("VARCHAR(50)")
+               .HasConversion<string>()
+               .IsRequired();
+
+        builder.HasOne<Order>()
+               .WithMany(x => x.Shipments)
+               .HasForeignKey(x => x.OrderId)
+               .IsRequired();
 
         builder.ToTable("Shipments");
 

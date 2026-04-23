@@ -1,6 +1,11 @@
 
 
+using System.Text.Json;
+using Domain.Orders;
 using Domain.Orders.OrderItems;
+using Domain.Products.ProductVariants;
+using Infrastructure.Common.EfCore.ValueComparers;
+using Infrastructure.Common.EfCore.ValueConverters;
 
 namespace Infrastructure.Data.Configs.Business;
 
@@ -10,6 +15,9 @@ public sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
     {
         base.Configure(builder);
 
+        builder.Ignore(x => x.TotalPrice);
+        builder.Ignore(x => x.SerialNumbers);
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
@@ -17,20 +25,28 @@ public sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
                .ValueGeneratedNever();
 
         builder.Property(x => x.UnitPrice)
-               .HasColumnType("DECIMAL(9,2)")
                .IsRequired();
 
-        builder.Property(x => x.TotalPrice)
-               .HasColumnType("DECIMAL(9,2)")
+        builder.Property(x => x.Status)
+               .HasColumnType("VARCHAR(50)")
+               .HasConversion<string>()
                .IsRequired();
 
-        //builder.HasOne(x => x.OrderInfo)
-        //       .WithMany(x => x.Items)
-        //       .HasForeignKey(x => x.OrderId);
+        builder.Property("_serialNumbers")
+               .HasColumnName("SerialNumbers")
+               .HasColumnType("NVARCHAR(3000)")
+               .HasConversion<JsonValueConverter<List<string>>>(new JsonListValueComparer())
+               .IsRequired(false);
 
-        //builder.HasOne(x => x.ProductVariantInfo)
-        //       .WithMany()
-        //       .HasForeignKey(x => x.ProductVariantId);
+        builder.HasOne<Order>()
+               .WithMany(x => x.Items)
+               .HasForeignKey(x => x.OrderId)
+               .IsRequired();
+
+        builder.HasOne<ProductVariant>()
+               .WithMany()
+               .HasForeignKey(x => x.ProductVariantId)
+               .IsRequired();
 
         builder.ToTable("OrderItems");
     }

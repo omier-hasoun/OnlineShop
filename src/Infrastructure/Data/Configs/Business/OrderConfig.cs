@@ -1,3 +1,4 @@
+using Domain.Customers;
 using Domain.Orders;
 
 namespace Infrastructure.Data.Configs.Business;
@@ -18,9 +19,16 @@ public sealed class OrderConfig : BaseEntityConfig<Order>
                );
 
         builder.Property(x => x.TotalItemsPrice)
-               .HasColumnType("DECIMAL(9,2)")
                .IsRequired();
-               
+
+        builder.Property(x => x.ShippingFees)
+               .IsRequired();
+
+        builder.HasOne<Customer>()
+               .WithMany()
+               .HasForeignKey(x => x.CustomerId)
+               .IsRequired();
+
         builder.ToTable("Orders");
     }
 }

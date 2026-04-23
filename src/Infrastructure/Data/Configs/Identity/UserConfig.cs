@@ -57,6 +57,7 @@ public sealed class UserConfig : IEntityTypeConfiguration<AppUser>
 
         builder.Ignore(x => x.PhoneNumber);
         builder.Ignore(x => x.PhoneNumberConfirmed);
+        builder.Ignore(x => x.UserId);// UserId is readonly, return the Guid Id value its just a strongly type UserId for the domain
 
 
         builder.HasIndex(x => x.NormalizedUserName).HasDatabaseName("IX_User_NormalizedUserName");

@@ -11,7 +11,7 @@ using Domain.AppSettings;
 using Domain.Warehouses;
 using Domain.PaymentProviders;
 using Domain.Categories;
-using Domain.ProductStocks;
+using Domain.ProductsStock;
 using Domain.ReturnItemRequests;
 using Domain.Common.Entities.Addresses;
 using Domain.Customers.CartItems;
@@ -20,16 +20,16 @@ using Domain.ProductReviews;
 using Domain.ReturnItemRequests.Attachments;
 using Domain.Transactions;
 using Domain.Customers;
-using Domain.ReturnItemRequestReviews;
-using Domain.UserPaymentMethodLogs;
-using Application.Common.Identity;
+using Domain.ReturnItemRequestsReviews;
+using Domain.UsersPaymentMethodsLogs;
+using Infrastructure.Common.EfCore.ValueConverters;
+using Infrastructure.Common.EfCore.ValueComparers;
 
 
 namespace Infrastructure.Data;
 
 public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserClaim, IdentityUserRole<Guid>, UserLoginProvider, RoleClaim, UserToken, IdentityUserPasskey<Guid>>, IAppDbContext
 {
-    public DbSet<AppUser> Customers => Set<AppUser>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<ProductReview> Reviews => Set<ProductReview>();
@@ -53,74 +53,61 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     public DbSet<CustomerShippingAddress> CustomerShippingAddresses => Set<CustomerShippingAddress>();
     public DbSet<ReturnItemRequestReview> ReturnItemRequestReviews => Set<ReturnItemRequestReview>();
     public DbSet<UserPaymentMethodLog> UserPaymentMethodLogs => Set<UserPaymentMethodLog>();
-
-
-    #region notSupported
-    private string _notSupportedMessage = "The invoked DbSet not supported, just ignore it dont remove them";
-    public override DbSet<RoleClaim> RoleClaims { get => throw new NotSupportedException(_notSupportedMessage); set { throw new NotSupportedException(_notSupportedMessage); } }
-    public override DbSet<IdentityUserPasskey<Guid>> UserPasskeys { get => throw new NotSupportedException(_notSupportedMessage); set => throw new NotSupportedException(_notSupportedMessage); }
-    #endregion
+    public DbSet<Customer> Customers => Set<Customer>();
 
 
 
-    private readonly IServiceProvider _serviceProvider;
+    //#region notSupported
+    //private string _notSupportedMessage = "The invoked DbSet not supported, just ignore it dont remove them";
+    //public override DbSet<RoleClaim> RoleClaims { get => throw new NotSupportedException(_notSupportedMessage); set { throw new NotSupportedException(_notSupportedMessage); } }
+    //public override DbSet<IdentityUserPasskey<Guid>> UserPasskeys { get => throw new NotSupportedException(_notSupportedMessage); set => throw new NotSupportedException(_notSupportedMessage); }
 
-    public AppDbContext(DbContextOptions<AppDbContext> options, IServiceProvider sp) : base(options)
+    //#endregion
+
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        _serviceProvider = sp;
     }
-
     public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
     {
 
         return await base.SaveChangesAsync(ct);
     }
 
-
-
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        // order is important here so be aware when you modify this.
-        optionsBuilder.AddInterceptors(
-            _serviceProvider.GetRequiredService<SoftDeleteEntitySaveChangesInterceptor>(),
-            _serviceProvider.GetRequiredService<AuditedEntitySaveChangesInterceptor>()
-            );
-
-       
-    }
-
     protected override void OnModelCreating(ModelBuilder builder)
     {
+
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-        ConfigureIDeletionMetadata(builder);
+
         ConfigureISoftDeleted(builder);
 
         ConfigureIHasCreationTime(builder);
         ConfigureIHasModificationTime(builder);
-
         ConfigureIModificationAudited(builder);
         ConfigureICreationAudited(builder);
+
+        ApplySoftDeleteQueryFilterOnAllMembersOfISoftDelete(builder);
 
         builder.Ignore<IdentityUserPasskey<Guid>>();
         builder.Ignore<RoleClaim>();
 
-        ApplySoftDeleteQueryFilterOnAllChilds(builder);
     }
 
-
-
-
-
-
-
-
-
-
-    private static void ApplySoftDeleteQueryFilterOnAllChilds(ModelBuilder builder)
+    protected override void ConfigureConventions(ModelConfigurationBuilder builder)
     {
-        foreach(var entityType in builder.Model.GetEntityTypes())
+        builder.Properties<UserId>()
+                .HaveConversion<UserIdConverter>();
+
+        builder.Properties<decimal>()
+               .HavePrecision(18, 4);
+
+
+    }
+
+    private static void ApplySoftDeleteQueryFilterOnAllMembersOfISoftDelete(ModelBuilder builder)
+    {
+        var types = builder.Model.GetEntityTypes().ToList();
+        foreach (var entityType in types)
         {
             
             if(typeof(ISoftDeleted).IsAssignableFrom(entityType.ClrType))
@@ -133,22 +120,11 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
 
     }
     private static void ApplySoftDeleteQueryFilter<TEntity>(ModelBuilder builder)
-        where TEntity : class, ISoftDeleted
+        where TEntity : class, IEntity, ISoftDeleted
     {
         builder.Entity<TEntity>().HasQueryFilter(e => e.IsDeleted == false);
     }
-    private static void ConfigureIDeletionMetadata(ModelBuilder builder)
-    {
-        ConfigurePropertiesForInterface<IDeletionMetadata>(builder, (b, type) =>
-        {
-            b.Property(nameof(IDeletionMetadata.DeletedAt))
-             .IsRequired();
 
-            b.Property(nameof(IDeletionMetadata.DeletedBy))
-             .HasConversion<Guid>()
-             .IsRequired();
-        });
-    }
     private static void ConfigureIHasCreationTime(ModelBuilder builder)
     {
         ConfigurePropertiesForInterface<IHasCreationTime>(builder, (b, type) =>
@@ -163,6 +139,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
         {
             b.Property(nameof(IHasModificationTime.LastModifiedAt))
              .IsRequired();
+
         });
     }
     private static void ConfigureICreationAudited(ModelBuilder builder)
@@ -171,6 +148,11 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
         {
             b.Property(nameof(ICreationAudited.CreatedBy))
              .IsRequired();
+
+            b.HasOne(typeof(Customer))
+             .WithMany()
+             .HasForeignKey(nameof(ICreationAudited.CreatedBy))
+             .OnDelete(DeleteBehavior.Restrict);
         });
     }
     private static void ConfigureIModificationAudited(ModelBuilder builder)
@@ -179,6 +161,13 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
         {
             b.Property(nameof(IModificationAudited.LastModifiedBy))
              .IsRequired();
+            
+            b.HasOne(typeof(Customer))
+             .WithMany()
+             .HasForeignKey(nameof(IModificationAudited.LastModifiedBy))
+             .OnDelete(DeleteBehavior.Restrict);
+
+
         });
     }
     private static void ConfigureISoftDeleted(ModelBuilder builder)
@@ -189,9 +178,11 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
              .IsRequired();
         });
     }
-    private static void ConfigurePropertiesForInterface<TInterface>(ModelBuilder builder, Action<EntityTypeBuilder, Type> configure)
+    internal static void ConfigurePropertiesForInterface<TInterface>(ModelBuilder builder, Action<EntityTypeBuilder, Type> configure)
     {
-        foreach (var entityType in builder.Model.GetEntityTypes())
+        var entityTypes = builder.Model.GetEntityTypes().ToList();
+
+        foreach (var entityType in entityTypes)
         {
             if (typeof(TInterface).IsAssignableFrom(entityType.ClrType))
             {

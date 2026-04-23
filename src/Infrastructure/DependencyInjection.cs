@@ -1,19 +1,20 @@
 
+using Domain.Customers;
+using Domain.Orders;
+using Domain.Products;
 using IdGen;
-using App = Application.Common.Abstractions;
+using Infrastructure.AppIdGenerators;
 using Infrastructure.AppIdGenerators.Primitives;
+using Infrastructure.BackgroundServices;
+using Infrastructure.Common.Abstractions;
 using Infrastructure.Common.Exceptions;
 using Infrastructure.Data.Interceptors;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore.Diagnostics.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Infrastructure.Common.Abstractions;
-using Infrastructure.AppIdGenerators;
-using Domain.Products;
-using Domain.Orders;
-using Domain.Customers;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Infrastructure.BackgroundServices;
+using App = Application.Common.Abstractions;
 
 
 namespace Infrastructure; 
@@ -59,7 +60,7 @@ public static class DependencyInjection
         string strMachineId = config["MACHINE_ID"]! ?? throw new MachineIdWasNotProvidedException();
         int machineId = int.Parse(strMachineId);
 
-        services.AddKeyedSingleton<IdGen.IIdGenerator<long>, IdGen.IdGenerator>("", (x, d) =>
+        services.AddSingleton<IdGen.IIdGenerator<long>, IdGen.IdGenerator>((p) =>
         {
             var options = new IdGeneratorOptions()
             {
@@ -91,16 +92,18 @@ public static class DependencyInjection
         }
 
 
-        services.AddDbContext<AppDbContext>(options =>
+        services.AddDbContext<AppDbContext>((sp, options) =>
         {
-            options.UseSqlServer(connString);
+            options.UseSqlServer(connString).AddInterceptors(
+            sp.GetRequiredService<SoftDeleteEntitySaveChangesInterceptor>(),
+            sp.GetRequiredService<AuditedEntitySaveChangesInterceptor>());
         });
 
         services.AddScoped<IAppDbContext, AppDbContext>();
 
         //interceptors
-        services.AddScoped<ISaveChangesInterceptor, AuditedEntitySaveChangesInterceptor>();
-        services.AddScoped<ISaveChangesInterceptor, SoftDeleteEntitySaveChangesInterceptor>();
+        services.AddScoped<AuditedEntitySaveChangesInterceptor>();
+        services.AddScoped<SoftDeleteEntitySaveChangesInterceptor>();
 
         return services;
     }

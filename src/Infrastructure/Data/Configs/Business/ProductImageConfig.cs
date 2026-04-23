@@ -1,6 +1,8 @@
 
 
+using Domain.Products;
 using Domain.Products.ProductImages;
+using Domain.Products.ProductVariants;
 
 namespace Infrastructure.Data.Configs.Business;
 
@@ -18,14 +20,27 @@ public sealed class ProductImageConfig : BaseEntityConfig<ProductImage>
                    value => new ProductImageId(value)
                );
 
+        builder.Property(x => x.FileName)
+               .HasColumnType("VARCHAR(40)")// the file name should be a guid + . + extension
+               .IsRequired();
 
+        builder.Property(x => x.FileSize)// in bytes
+               .HasColumnType("INT")
+               .IsRequired();
 
+        builder.HasOne<ProductVariant>()
+               .WithMany()
+               .HasForeignKey(x => x.ProductVariantId)
+               .IsRequired(false);
 
-        builder.Ignore(x => x.FileName);
+        builder.HasOne<Product>()
+               .WithMany(x => x.Images)
+               .HasForeignKey(x => x.ProductId)
+               .IsRequired();
+
 
         builder.ToTable("ProductImages", x =>
-        {
-            x.HasCheckConstraint("CK_ProductImage_SortOrder", "SortOrder between 1 and 32");
+        { 
 
         });
     }
