@@ -5,6 +5,5 @@ public static class CustomerRules
 {
     public const byte MaxAddressesPerCustomer = 2;
 
-    public const byte MaxCartItemsPerCustomer = 50;
-
+    public const byte MaxCountOfCartItems = 50;
 }

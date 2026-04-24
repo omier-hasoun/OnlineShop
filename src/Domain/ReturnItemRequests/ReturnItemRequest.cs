@@ -1,13 +1,19 @@
 
 
 
+using Domain.Common.ValueObjects;
+
 namespace Domain.ReturnItemRequests;
 
 public sealed class ReturnItemRequest : AggregateRoot<ReturnItemRequestId>, IHasCreationTime
 {
+    private ReturnItemRequest()
+    {
+        
+    }
 
     private ReturnItemRequest(ReturnItemRequestId id, OrderItemId orderItemId, ReturnItemRequestReasonType reasonType, string? customerMessage, ReturnItemRequestType type,
-        ReturnItemRequestStatus status, short returnedQuantity, IReadOnlyCollection<ReturnItemRequestAttachment> attachments)
+        ReturnItemRequestStatus status, short returnedQuantity)
         : base(id)
     {
         OrderItemId = orderItemId;
@@ -16,12 +22,11 @@ public sealed class ReturnItemRequest : AggregateRoot<ReturnItemRequestId>, IHas
         Type = type;
         Status = status;
         ReturnedQuantity = returnedQuantity;
-        Attachments = attachments;
     }
 
-    public static Result<ReturnItemRequest> Create(ReturnItemRequestId id, OrderItemId orderItemId, ReturnItemRequestReasonType reasonType, string? customerMessage, ReturnItemRequestType type, short returnedQuantity, IReadOnlyCollection<ReturnItemRequestAttachment> attachments)
+    public static Result<ReturnItemRequest> Create(ReturnItemRequestId id, OrderItemId orderItemId, ReturnItemRequestReasonType reasonType, string? customerMessage, ReturnItemRequestType type, short returnedQuantity)
     {
-        return new ReturnItemRequest(id, orderItemId, reasonType, customerMessage, type, ReturnItemRequestStatus.PendingArrival, returnedQuantity, attachments);
+        return new ReturnItemRequest(id, orderItemId, reasonType, customerMessage, type, ReturnItemRequestStatus.PendingArrival, returnedQuantity);
     }
     public OrderItemId OrderItemId { get; private init; }
     public ReturnItemRequestType Type { get; private set; }
@@ -31,7 +36,7 @@ public sealed class ReturnItemRequest : AggregateRoot<ReturnItemRequestId>, IHas
     public string? CustomerMessage { get; private set; }
     public ReturnItemRequestStatus Status { get; private set; }
 
-    public decimal ShippingFees { get; private set; }
+    public Money ShippingFees { get; }
     public short ReturnedQuantity { get; private set; }
 
     public DateTime CreatedAt {  get; set; }

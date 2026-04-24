@@ -24,8 +24,7 @@ internal sealed class UserPaymentMethodLogConfig : BaseEntityConfig<UserPaymentM
         builder.Property("_details")
                .HasColumnName("Details")
                .HasColumnType("NVARCHAR(3000)")
-               .HasConversion<JsonValueConverter<Dictionary<string, string>>>(new JsonDictionaryValueComparer())
-               .IsRequired(false);
+               .HasConversion<JsonConverter<Dictionary<string, string>>>(new JsonDictionaryValueComparer());
 
         builder.Property(x => x.ProviderBrandName)
                .HasColumnType("NVARCHAR(50)")

@@ -3,18 +3,19 @@
 
 
 
+using Domain.Common.ValueObjects;
+
 namespace Domain.Orders;
 
 public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
 {
 
-    private Order(OrderId id, UserId customerId, decimal totalItemsPrice, decimal shippingFees, IReadOnlyList<OrderItem> items, DateTime createdAt)
+    private Order(OrderId id, UserId customerId, Money totalItemsPrice, Money shippingFees, DateTime createdAt)
         : base(id)
     {
         CustomerId = customerId;
         TotalItemsPrice = totalItemsPrice;
         ShippingFees = shippingFees;
-        Items = items;
         CreatedAt = createdAt;
     }
     private static decimal CalculateTotalItemsPrice(IReadOnlyList<OrderItem> items)
@@ -22,29 +23,28 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
         if(items == null)
             return 0;
 
-        return items.Sum(item => item.TotalPrice);
+        return items.Sum(item => item.TotalPrice.Value);
     }
-    public static Result<Order> Create(OrderId id, UserId customerId, decimal shippingFees, IReadOnlyList<OrderItem> items)
-    {
-        var totalItemsPrice = CalculateTotalItemsPrice(items);
+    //public static Result<Order> Create(OrderId id, UserId customerId, decimal shippingFees)
+    //{
 
-        var result = Result.ValidateAll(
-            () => ValidateOrderItems(items),
-            () => ValidateShippingFees(shippingFees),
-            () => ValidateTotalItemsPrice(totalItemsPrice)
-            );
+    //    var result = Result.ValidateAll(
+    //        //() => ValidateOrderItems(items),
+    //        () => ValidateShippingFees(shippingFees),
+    //        //() => ValidateTotalItemsPrice(totalItemsPrice)
+    //        );
 
-        if (result.Failed)
-        {
-            return result.Errors;
-        }
+    //    if (result.Failed)
+    //    {
+    //        return result.Errors;
+    //    }
 
 
-        return new Order(id, customerId, totalItemsPrice, shippingFees, items, TimeService.UtcNow);
-    }
+    //    return new Order(id, customerId, totalItemsPrice, shippingFees, items, TimeService.UtcNow);
+    //}
     public UserId CustomerId { get; private init; }
-    public decimal TotalItemsPrice { get; private set; }
-    public decimal ShippingFees { get; private set; }
+    public Money TotalItemsPrice { get; private set; }
+    public Money ShippingFees { get; private set; }
     public DateTime CreatedAt { get; set; }
 
 

@@ -1,5 +1,5 @@
 
-
+using Domain.Customers.CustomerShippingAddresses;
 
 namespace Domain.Customers;
 
@@ -16,6 +16,7 @@ public sealed class Customer : AggregateRoot<UserId>, ISoftDeleted
 
         return new Customer(Id, isDeleted: false);
     }
+
     public UserId UserId { get {  return Id; }  }
 
     public bool IsDeleted { get; private set; }
@@ -29,52 +30,61 @@ public sealed class Customer : AggregateRoot<UserId>, ISoftDeleted
     public IReadOnlyCollection<CartItem> CartItems { get { return _cartItems.AsReadOnly(); } private set { _cartItems = value.ToList(); } }
 
 
-    public Result<AddressId> AddNewShippingAddress(AddressId id, bool isDefault, UserId userId, string fullName, string phoneNumber, string countryCode, string houseNo,
-        string city, string postalCode, string addressLine1, string? addressLine2, string? stateProvince,
-        decimal? longitude, decimal? latitude, string? notes)
+    private Result<Success> AddShippingAddress(CustomerShippingAddressId shippingAddressId, AddressId addressId, bool isDefault)
     {
         if (_shippingAddresses.Count >= CustomerRules.MaxAddressesPerCustomer)
         {
             return Error.Validation("MaxReached");
         }
 
-        var createAddressResult = CustomerShippingAddress.Create(id, isDefault, userId, fullName, phoneNumber, countryCode, houseNo, city, postalCode, addressLine1, addressLine2, stateProvince, longitude, latitude, notes);
+        var createAddressResult = CustomerShippingAddress.Create(shippingAddressId, this.Id, addressId, isDefault);
 
         if (createAddressResult.Failed)
         {
             return createAddressResult.Errors;
         }
-        var address = createAddressResult.Value;
+        var shippingaddress = createAddressResult.Value;
 
-        if (address.IsDefault)
+        if (isDefault)
         {
-            SetAllShippingAddressesToNonDefault();
+            UnsetDefaultFromAllShippingAddresses();
         }
 
-        _shippingAddresses.Add(address);
+        _shippingAddresses.Add(shippingaddress);
 
-        return address.Id;
+        return Result.Success;
     }
 
-    public Result<Success> SetAsDefaultShippingAddress(AddressId addressId)
+    public Result<Success> AddDefaultShippingAddress(CustomerShippingAddressId shippingAddressId, AddressId addressId)
     {
-        SetAllShippingAddressesToNonDefault();
 
-        var newDefaultAddress = _shippingAddresses.FirstOrDefault(x => x.Id == addressId);
+        return AddShippingAddress(shippingAddressId, addressId, isDefault: true);
+    }
+
+    public Result<Success> AddShippingAddress(CustomerShippingAddressId shippingAddressId, AddressId addressId)
+    {
+        return AddShippingAddress(shippingAddressId, addressId, isDefault: false);
+    }
+
+    public Result<Success> SetAsDefaultShippingAddress(CustomerShippingAddressId shippingAddressId)
+    {
+
+        var newDefaultAddress = _shippingAddresses.FirstOrDefault(x => x.Id == shippingAddressId);
 
         if (newDefaultAddress is null)
         {
             return Error.NotFound("");//should change
         }
 
-        newDefaultAddress.UpdateIsDefault(true);
+        UnsetDefaultFromAllShippingAddresses();
+        newDefaultAddress.SetAsDefault();
 
         return Result.Success;
     }
 
-    public Result<Success> RemoveShippingAddress(AddressId addressId)
+    public Result<Success> RemoveShippingAddress(CustomerShippingAddressId shippingAddressId)
     {
-        var address = _shippingAddresses.FirstOrDefault(y => y.Id == addressId);
+        var address = _shippingAddresses.FirstOrDefault(y => y.Id == shippingAddressId);
 
         if (address is null)
         {
@@ -86,8 +96,8 @@ public sealed class Customer : AggregateRoot<UserId>, ISoftDeleted
         return Result.Success;
     }
 
-    public void SetAllShippingAddressesToNonDefault()
+    public void UnsetDefaultFromAllShippingAddresses()
     {
-        _shippingAddresses.ForEach(address => address.UpdateIsDefault(false));
+        _shippingAddresses.ForEach(address => address.UnsetDefault());
     }
 }

@@ -23,8 +23,8 @@ public static class ProductErrors
     public static Error DescriptionOutOfRange =>
         Error.Validation("Product.Description.OutOfRange", $"Product description must be between {ProductRules.MinDescriptionLength} and {ProductRules.MaxDescriptionLength} characters long.");
 
-    public static Error BrandOutOfRange =>
-        Error.Validation("Product.Manufacturer.OutOfRange", $"Product Manufacturer must be between {ProductRules.MinBrandLength} and {ProductRules.MaxBrandLength} characters long.");
+    //public static Error BrandOutOfRange =>
+    //    Error.Validation("Product.Manufacturer.OutOfRange", $"Product Manufacturer must be between {ProductRules.Min} and {ProductRules.MaxBrandLength} characters long.");
 
     public static Error ImagesOutOfRange =>
         Error.Validation("Product.Images.OutOfRange", $"A product can have between {ProductRules.MinProductImagesCount} and {ProductRules.MaxProductImagesCount} images.");

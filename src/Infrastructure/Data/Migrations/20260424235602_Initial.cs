@@ -11,8 +11,28 @@ namespace Infrastructure.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateSequence(
-                name: "UserClaimSequence");
+            migrationBuilder.CreateTable(
+                name: "Addresses",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false),
+                    FullName = table.Column<string>(type: "NVARCHAR(100)", maxLength: 100, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "VARCHAR(25)", maxLength: 25, nullable: false),
+                    CountryCode = table.Column<string>(type: "NVARCHAR(2)", fixedLength: true, maxLength: 2, nullable: false),
+                    City = table.Column<string>(type: "NVARCHAR(200)", maxLength: 200, nullable: false),
+                    PostalCode = table.Column<string>(type: "NVARCHAR(15)", maxLength: 15, nullable: false),
+                    AddressLine1 = table.Column<string>(type: "NVARCHAR(255)", maxLength: 255, nullable: false),
+                    AddressLine2 = table.Column<string>(type: "NVARCHAR(100)", maxLength: 100, nullable: true),
+                    GeoLocation_Latitude = table.Column<decimal>(type: "DECIMAL(9,6)", nullable: true),
+                    GeoLocation_Longitude = table.Column<decimal>(type: "DECIMAL(9,6)", nullable: true),
+                    Notes = table.Column<string>(type: "NVARCHAR(100)", maxLength: 100, nullable: true),
+                    StateProvince = table.Column<string>(type: "NVARCHAR(100)", maxLength: 100, nullable: true),
+                    HouseNo = table.Column<string>(type: "NVARCHAR(10)", maxLength: 10, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Addresses", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AppSettings",
@@ -92,6 +112,20 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "VARCHAR(50)", nullable: false),
+                    NormalizedName = table.Column<string>(type: "VARCHAR(50)", nullable: false),
+                    ConcurrencyStamp = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Transactions",
                 columns: table => new
                 {
@@ -102,7 +136,7 @@ namespace Infrastructure.Data.Migrations
                     SenderType = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     ReceiverId = table.Column<string>(type: "VARCHAR(100)", nullable: false),
                     ReceiverType = table.Column<string>(type: "VARCHAR(50)", nullable: false),
-                    TransferAmount = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
+                    TransferAmount = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     Notes = table.Column<string>(type: "NVARCHAR(1000)", nullable: true),
                     Status = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -113,29 +147,26 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserLoginProviders",
+                name: "Users",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "VARCHAR(128)", nullable: false),
-                    ProviderKey = table.Column<string>(type: "VARCHAR(128)", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "VARCHAR(32)", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Email = table.Column<string>(type: "VARCHAR(254)", nullable: false),
+                    NormalizedEmail = table.Column<string>(type: "VARCHAR(254)", nullable: false),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "VARCHAR(255)", nullable: false),
+                    SecurityStamp = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ConcurrencyStamp = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "VARCHAR(30)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserLoginProviders", x => new { x.LoginProvider, x.ProviderKey });
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserRoles",
-                columns: table => new
-                {
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserRoles", x => new { x.RoleId, x.UserId });
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -146,7 +177,7 @@ namespace Infrastructure.Data.Migrations
                     ProviderBrandName = table.Column<string>(type: "NVARCHAR(50)", nullable: false),
                     ProviderCustomerId = table.Column<string>(type: "VARCHAR(100)", nullable: false),
                     IsBlacklisted = table.Column<bool>(type: "bit", nullable: false),
-                    Details = table.Column<string>(type: "NVARCHAR(3000)", nullable: true)
+                    Details = table.Column<string>(type: "NVARCHAR(3000)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -154,31 +185,44 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Addresses",
+                name: "Warehouses",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false),
-                    FullName = table.Column<string>(type: "NVARCHAR(100)", maxLength: 100, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "NVARCHAR(25)", maxLength: 25, nullable: false),
-                    CountryCode = table.Column<string>(type: "NVARCHAR(2)", fixedLength: true, maxLength: 2, nullable: false),
-                    City = table.Column<string>(type: "NVARCHAR(200)", maxLength: 200, nullable: false),
-                    PostalCode = table.Column<string>(type: "NVARCHAR(15)", maxLength: 15, nullable: false),
-                    AddressLine1 = table.Column<string>(type: "NVARCHAR(255)", maxLength: 255, nullable: false),
-                    AddressLine2 = table.Column<string>(type: "NVARCHAR(100)", maxLength: 100, nullable: true),
-                    Longitude = table.Column<decimal>(type: "DECIMAL(9,6)", precision: 18, scale: 4, nullable: true),
-                    Latitude = table.Column<decimal>(type: "DECIMAL(9,6)", precision: 18, scale: 4, nullable: true),
-                    Notes = table.Column<string>(type: "NVARCHAR(100)", maxLength: 100, nullable: true),
-                    StateProvince = table.Column<string>(type: "NVARCHAR(100)", maxLength: 100, nullable: true),
-                    HouseNo = table.Column<string>(type: "NVARCHAR(10)", maxLength: 10, nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false),
-                    IsDefault = table.Column<bool>(type: "bit", nullable: true),
-                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    AddressId = table.Column<long>(type: "bigint", nullable: false),
+                    Name = table.Column<string>(type: "NVARCHAR(50)", nullable: false),
+                    CountryCode = table.Column<string>(type: "CHAR(2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Addresses", x => x.Id);
+                    table.PrimaryKey("PK_Warehouses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Addresses_Customers_CustomerId",
+                        name: "FK_Warehouses_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CustomerShippingAddresses",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false),
+                    AddressId = table.Column<long>(type: "bigint", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsDefault = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CustomerShippingAddresses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CustomerShippingAddresses_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CustomerShippingAddresses_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "Id",
@@ -191,8 +235,8 @@ namespace Infrastructure.Data.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TotalItemsPrice = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
-                    ShippingFees = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
+                    TotalItemsPrice = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    ShippingFees = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -217,8 +261,8 @@ namespace Infrastructure.Data.Migrations
                     Description = table.Column<string>(type: "NVARCHAR(300)", maxLength: 300, nullable: false),
                     AverageRating = table.Column<double>(type: "FLOAT", nullable: false),
                     MaxQuantityPerCustomer = table.Column<short>(type: "SMALLINT", nullable: false),
-                    DefaultOriginalPrice = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
-                    DefaultDiscountPrice = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
+                    DefaultOriginalPrice = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    DefaultDiscountPrice = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     DefaultDiscountPercentage = table.Column<byte>(type: "TINYINT", nullable: false),
                     ContainsAlcohol = table.Column<bool>(type: "bit", nullable: false),
                     IsDangerousGood = table.Column<bool>(type: "bit", nullable: false),
@@ -263,53 +307,85 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "UserClaims",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LinkedLoginProviderLoginProvider = table.Column<string>(type: "VARCHAR(128)", nullable: false),
-                    LinkedLoginProviderProviderKey = table.Column<string>(type: "VARCHAR(128)", nullable: false),
-                    UserName = table.Column<string>(type: "VARCHAR(128)", nullable: false),
-                    NormalizedUserName = table.Column<string>(type: "VARCHAR(128)", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    Email = table.Column<string>(type: "VARCHAR(256)", nullable: false),
-                    NormalizedEmail = table.Column<string>(type: "VARCHAR(256)", nullable: false),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "VARCHAR(128)", nullable: false),
-                    SecurityStamp = table.Column<string>(type: "CHAR(36)", nullable: false),
-                    ConcurrencyStamp = table.Column<string>(type: "CHAR(36)", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClaimType = table.Column<string>(type: "VARCHAR(100)", nullable: false),
+                    ClaimValue = table.Column<string>(type: "NVARCHAR(255)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_UserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_UserLoginProviders_LinkedLoginProviderLoginProvider_LinkedLoginProviderProviderKey",
-                        columns: x => new { x.LinkedLoginProviderLoginProvider, x.LinkedLoginProviderProviderKey },
-                        principalTable: "UserLoginProviders",
-                        principalColumns: new[] { "LoginProvider", "ProviderKey" },
+                        name: "FK_UserClaims_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserLoginProviders",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "VARCHAR(255)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "VARCHAR(255)", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "VARCHAR(50)", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLoginProviders", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_UserLoginProviders_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRoles", x => new { x.RoleId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_UserRoles_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserRoles_Users_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Warehouses",
+                name: "UserTokens",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false),
-                    AddressId = table.Column<long>(type: "bigint", nullable: false),
-                    Name = table.Column<string>(type: "NVARCHAR(50)", nullable: false),
-                    CountryCode = table.Column<string>(type: "CHAR(2)", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LoginProvider = table.Column<string>(type: "VARCHAR(255)", nullable: false),
+                    Name = table.Column<string>(type: "VARCHAR(100)", nullable: false),
+                    Value = table.Column<string>(type: "VARCHAR(255)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Warehouses", x => x.Id);
+                    table.PrimaryKey("PK_UserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
-                        name: "FK_Warehouses_Addresses_AddressId",
-                        column: x => x.AddressId,
-                        principalTable: "Addresses",
+                        name: "FK_UserTokens_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -413,8 +489,8 @@ namespace Infrastructure.Data.Migrations
                     Height = table.Column<int>(type: "int", nullable: false),
                     Length = table.Column<int>(type: "int", nullable: false),
                     Weight = table.Column<int>(type: "int", nullable: false),
-                    OriginalPrice = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
-                    DiscountPrice = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
+                    OriginalPrice = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    DiscountPrice = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     DiscountPercentage = table.Column<byte>(type: "TINYINT", nullable: false),
                     Sku = table.Column<string>(type: "VARCHAR(50)", maxLength: 50, nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -433,66 +509,6 @@ namespace Infrastructure.Data.Migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Roles",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Name = table.Column<string>(type: "varchar(32)", nullable: true),
-                    NormalizedName = table.Column<string>(type: "varchar(32)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "char(32)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Roles_Users_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false, defaultValueSql: "NEXT VALUE FOR [UserClaimSequence]"),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ClaimType = table.Column<string>(type: "NVARCHAR(64)", nullable: false),
-                    ClaimValue = table.Column<string>(type: "NVARCHAR(64)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserClaims_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserTokens",
-                columns: table => new
-                {
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "VARCHAR(64)", nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Value = table.Column<string>(type: "VARCHAR(64)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
-                    table.ForeignKey(
-                        name: "FK_UserTokens_Users_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -531,7 +547,7 @@ namespace Infrastructure.Data.Migrations
                     OrderId = table.Column<long>(type: "bigint", nullable: false),
                     ProductVariantId = table.Column<long>(type: "bigint", nullable: false),
                     Quantity = table.Column<short>(type: "smallint", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     Status = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     SerialNumbers = table.Column<string>(type: "NVARCHAR(3000)", nullable: true)
                 },
@@ -617,7 +633,7 @@ namespace Infrastructure.Data.Migrations
                     ReasonType = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     CustomerMessage = table.Column<string>(type: "NVARCHAR(150)", maxLength: 150, nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    ShippingFees = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
+                    ShippingFees = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     ReturnedQuantity = table.Column<short>(type: "smallint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -663,7 +679,7 @@ namespace Infrastructure.Data.Migrations
                     LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DecisionType = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     DecisionReason = table.Column<string>(type: "NVARCHAR(255)", maxLength: 255, nullable: false),
-                    AdditionalFees = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false)
+                    AdditionalFees = table.Column<decimal>(type: "decimal(18,4)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -689,13 +705,6 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_CustomerId",
-                table: "Addresses",
-                column: "CustomerId",
-                unique: true,
-                filter: "[IsDefault] = 1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CartItems_CustomerId",
                 table: "CartItems",
                 column: "CustomerId");
@@ -710,6 +719,19 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_Categorys_ParentCategoryId",
                 table: "Categorys",
                 column: "ParentCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Addresses_CustomerId",
+                table: "CustomerShippingAddresses",
+                column: "CustomerId",
+                unique: true,
+                filter: "[IsDefault] = 1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CustomerShippingAddresses_AddressId",
+                table: "CustomerShippingAddresses",
+                column: "AddressId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",
@@ -813,11 +835,6 @@ namespace Infrastructure.Data.Migrations
                 column: "LastModifiedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Roles_AppUserId",
-                table: "Roles",
-                column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Shipments_OrderId",
                 table: "Shipments",
                 column: "OrderId");
@@ -828,34 +845,21 @@ namespace Infrastructure.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProviderDisplayName",
+                name: "IX_UserLoginProviders_UserId",
                 table: "UserLoginProviders",
-                column: "ProviderDisplayName");
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRoles_AppUserId",
+                table: "UserRoles",
+                column: "AppUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_NormalizedEmail",
                 table: "Users",
-                column: "NormalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_User_NormalizedUserName",
-                table: "Users",
-                column: "NormalizedUserName");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_LinkedLoginProviderLoginProvider_LinkedLoginProviderProviderKey",
-                table: "Users",
-                columns: new[] { "LinkedLoginProviderLoginProvider", "LinkedLoginProviderProviderKey" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserTokens_AppUserId",
-                table: "UserTokens",
-                column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserTokens_LoginProvider",
-                table: "UserTokens",
-                column: "LoginProvider");
+                column: "NormalizedEmail",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Warehouses_AddressId",
@@ -872,6 +876,9 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "CartItems");
+
+            migrationBuilder.DropTable(
+                name: "CustomerShippingAddresses");
 
             migrationBuilder.DropTable(
                 name: "OrderPayments");
@@ -895,13 +902,13 @@ namespace Infrastructure.Data.Migrations
                 name: "ReturnItemRequestsReviews");
 
             migrationBuilder.DropTable(
-                name: "Roles");
-
-            migrationBuilder.DropTable(
                 name: "Shipments");
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
+
+            migrationBuilder.DropTable(
+                name: "UserLoginProviders");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");
@@ -922,6 +929,9 @@ namespace Infrastructure.Data.Migrations
                 name: "ReturnItemRequests");
 
             migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
@@ -929,9 +939,6 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderItems");
-
-            migrationBuilder.DropTable(
-                name: "UserLoginProviders");
 
             migrationBuilder.DropTable(
                 name: "Orders");
@@ -950,9 +957,6 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Customers");
-
-            migrationBuilder.DropSequence(
-                name: "UserClaimSequence");
         }
     }
 }

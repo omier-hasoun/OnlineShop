@@ -5,22 +5,21 @@ public sealed class OrderPayment : BaseEntity<TransactionId>
 {
 
 
-    private OrderPayment(TransactionId id, OrderId orderId, UserPaymentMethodLogId paymentMethodLogId, string invoiceFileName) : base(id)
+    private OrderPayment(TransactionId id, OrderId orderId, UserPaymentMethodLogId userPaymentMethodLogId, string invoiceFileName) : base(id)
     {
-        TransactionId = id;
         OrderId = orderId;
-        PaymentMethodLogId = paymentMethodLogId;
+        UserPaymentMethodLogId = userPaymentMethodLogId;
         InvoiceFileName = invoiceFileName;
     }
 
-    public static Result<OrderPayment> Create(TransactionId id, OrderId orderId, UserPaymentMethodLogId paymentMethodLogId, string invoiceFileNam)
+    public static Result<OrderPayment> Create(TransactionId id, OrderId orderId, UserPaymentMethodLogId userPaymentMethodLogId, string invoiceFileNam)
     {
-        return new OrderPayment(id, orderId, paymentMethodLogId, invoiceFileNam);
+        return new OrderPayment(id, orderId, userPaymentMethodLogId, invoiceFileNam);
     }
 
-    public TransactionId TransactionId { get; private init; }
+    public TransactionId TransactionId { get { return Id; } }
     public OrderId OrderId { get; private init; }
-    public UserPaymentMethodLogId PaymentMethodLogId { get; private init; }
+    public UserPaymentMethodLogId UserPaymentMethodLogId { get; private init; }
     public string InvoiceFileName { get; private set; } = null!;
 
 }

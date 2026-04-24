@@ -35,7 +35,7 @@ public sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
         builder.Property("_serialNumbers")
                .HasColumnName("SerialNumbers")
                .HasColumnType("NVARCHAR(3000)")
-               .HasConversion<JsonValueConverter<List<string>>>(new JsonListValueComparer())
+               .HasConversion<JsonConverter<List<string>>>(new JsonListValueComparer())
                .IsRequired(false);
 
         builder.HasOne<Order>()

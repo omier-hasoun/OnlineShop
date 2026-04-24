@@ -14,7 +14,7 @@ global using Domain.Warehouses;
 global using Domain.Brands;
 global using Domain.Products.ProductImages;
 global using Domain.PaymentProviders;
-global using Domain.UserPaymentMethodLogs;
+global using Domain.UsersPaymentMethodsLogs;
 global using Domain.Orders.OrderItems;
 global using Domain.Orders.OrderPayments;
 global using Shared.Helpers;

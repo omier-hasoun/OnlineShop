@@ -1,27 +1,32 @@
+using Application.Common.Identity;
 using Domain.AppSettings;
 using Domain.Brands;
 using Domain.Categories;
 using Domain.Common.Entities.Addresses;
+using Domain.Customers;
+using Domain.Customers.CartItems;
 using Domain.Orders.OrderItems;
 using Domain.Orders.Shipments;
 using Domain.PaymentProviders;
+using Domain.ProductReviews;
 using Domain.Products.ProductImages;
 using Domain.Products.ProductVariants;
-using Domain.ProductStocks;
+using Domain.ProductsStock;
+using Domain.ReturnItemRequestsReviews;
 using Domain.ReturnItemRequests;
-using Domain.Customers.CartItems;
-using Domain.Warehouses;
-using Domain.ProductReviews;
-using Domain.Customers;
-using Domain.UserPaymentMethodLogs;
-using Domain.ReturnItemRequestReviews;
 using Domain.ReturnItemRequests.Attachments;
 using Domain.Transactions;
+using Domain.UsersPaymentMethodsLogs;
+using Domain.Warehouses;
+using Domain.Customers.CustomerShippingAddresses;
 
 namespace Application.Common.Abstractions;
 
 public interface IAppDbContext
+
 {
+    public DbSet<AppUser> Users {get; }
+
     DbSet<Order> Orders {get; }
     DbSet<OrderItem> OrderItems {get; }
     DbSet<ProductReview> ProductReviews {get; }
@@ -40,7 +45,7 @@ public interface IAppDbContext
     DbSet<ReturnItemRequestAttachment> ReturnRequestAttachments { get; }
 
     DbSet<Transaction> Transactions { get; }
-
+    DbSet<Customer> Customers { get; }
     DbSet<Address> Addresses {get; }
     DbSet<CustomerShippingAddress> CustomerShippingAddresses { get; }
 

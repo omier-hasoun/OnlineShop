@@ -11,7 +11,6 @@ using Domain.AppSettings;
 using Domain.Warehouses;
 using Domain.PaymentProviders;
 using Domain.Categories;
-using Domain.ProductsStock;
 using Domain.ReturnItemRequests;
 using Domain.Common.Entities.Addresses;
 using Domain.Customers.CartItems;
@@ -24,6 +23,9 @@ using Domain.ReturnItemRequestsReviews;
 using Domain.UsersPaymentMethodsLogs;
 using Infrastructure.Common.EfCore.ValueConverters;
 using Infrastructure.Common.EfCore.ValueComparers;
+using Domain.ProductsStock;
+using Domain.Common.ValueObjects;
+using Domain.Customers.CustomerShippingAddresses;
 
 
 namespace Infrastructure.Data;
@@ -98,8 +100,8 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
         builder.Properties<UserId>()
                 .HaveConversion<UserIdConverter>();
 
-        builder.Properties<decimal>()
-               .HavePrecision(18, 4);
+        builder.Properties<Money>()
+               .HaveConversion<MoneyConverter>();
 
 
     }

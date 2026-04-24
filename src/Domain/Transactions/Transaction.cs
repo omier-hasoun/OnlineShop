@@ -1,12 +1,14 @@
 
 
+using Domain.Common.ValueObjects;
+
 namespace Domain.Transactions;
 
 public sealed class Transaction : AggregateRoot<TransactionId>, IHasCreationTime
 {
 
 
-    private Transaction(TransactionId id, string externalTransactionId, string paymentProviderName, decimal transferAmount, string senderId,
+    private Transaction(TransactionId id, string externalTransactionId, string paymentProviderName, Money transferAmount, string senderId,
         string receiverId, TransactionPersonType senderType, TransactionPersonType receiverType, TransactionStatus status, string? notes, DateTime createdAt)
         : base(id)
     {
@@ -22,7 +24,7 @@ public sealed class Transaction : AggregateRoot<TransactionId>, IHasCreationTime
         CreatedAt = createdAt;
     }
 
-    public static Result<Transaction> Create(TransactionId id, string externalTransactionId, string paymentProviderName, decimal transferAmount, string senderId,
+    public static Result<Transaction> Create(TransactionId id, string externalTransactionId, string paymentProviderName, Money transferAmount, string senderId,
         string receiverId, TransactionPersonType senderType, TransactionPersonType receiverType, TransactionStatus status, string? notes)
     {
         return new Transaction(id, externalTransactionId, paymentProviderName, transferAmount, senderId, receiverId, senderType, receiverType, status, notes, TimeService.UtcNow);
@@ -34,7 +36,7 @@ public sealed class Transaction : AggregateRoot<TransactionId>, IHasCreationTime
     public TransactionPersonType SenderType { get; private set; }
     public string ReceiverId { get; private set; } = null!;
     public TransactionPersonType ReceiverType { get; private set; }
-    public decimal TransferAmount { get; private set; }
+    public Money TransferAmount { get; }
     public string? Notes { get; private set; } = null!;
     public TransactionStatus Status { get; private set; }
     public DateTime CreatedAt { get; set; }

@@ -1,6 +1,6 @@
 
 
-namespace Domain.ProductStocks;
+namespace Domain.ProductsStock;
 
 public readonly record struct ProductStockId
 {

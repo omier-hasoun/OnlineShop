@@ -21,6 +21,4 @@ public sealed class Warehouse : AggregateRoot<WarehouseId>
 
     public string Name { get; private set; } = null!;
     public string CountryCode { get; private set; } = null!;
-
-    public Address AddressInfo { get; private set; } = null!;
 } 

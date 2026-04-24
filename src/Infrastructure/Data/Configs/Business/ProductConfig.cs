@@ -58,7 +58,7 @@ public sealed class ProductConfig : BaseEntityConfig<Product>
         builder.Property("_attributes")
                .HasColumnName("Attributes")
                .HasColumnType("NVARCHAR(3000)")
-               .HasConversion<JsonValueConverter<List<string>>>(new JsonListValueComparer())
+               .HasConversion<JsonConverter<List<string>>>(new JsonListValueComparer())
                .IsRequired(false);
 
         builder.HasOne<Brand>()

@@ -62,7 +62,7 @@ public sealed class AddressConfig : BaseEntityConfig<Address>
                .IsRequired();
 
         builder.Property(x => x.PhoneNumber)
-               .HasColumnType("NVARCHAR")
+               .HasColumnType("VARCHAR")
                .HasMaxLength(AddressRules.MaxPhoneNumberLength)
                .IsRequired();
 
@@ -71,15 +71,18 @@ public sealed class AddressConfig : BaseEntityConfig<Address>
                .HasMaxLength(AddressRules.MaxStateProvinceLength)
                .IsRequired(false);
 
-        builder.Property(x => x.Latitude)
-               .HasColumnType("DECIMAL(9,6)")
-               .IsRequired(false);
+        builder.OwnsOne(x => x.GeoLocation, locationBuilder =>
+        {
+            locationBuilder.Property(l => l.Latitude)
+                           .HasColumnType("DECIMAL(9,6)")
+                           .IsRequired();
 
-        builder.Property(x => x.Longitude)
-               .HasColumnType("DECIMAL(9,6)")
-               .IsRequired(false);
+            locationBuilder.Property(l => l.Longitude)
+                           .HasColumnType("DECIMAL(9,6)")
+                           .IsRequired();
+        });
 
-        builder.UseTphMappingStrategy();
+        //builder.UseTphMappingStrategy();
 
         builder.ToTable("Addresses");
 

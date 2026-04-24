@@ -1,9 +1,10 @@
+//using Api.Services;
+using Api.Services;
 using Application.Common.Identity;
 using Infrastructure.BackgroundServices;
 using Infrastructure.Common.Hashing;
 using Infrastructure.Common.Rules;
-using Infrastructure.Data;
-using Microsoft.AspNetCore.Identity;
+
 using Microsoft.AspNetCore.Identity.UI.Services;
 
 
@@ -29,7 +30,7 @@ public static class DependencyInjection
     {
         // for simple dependency injection Transient/Singleton/Scoped
         services.AddTransient<IEmailSender, EmailSenderFaker>();
-
+        services.AddScoped<IUserContext, UserContext>();
         return services;
     }
 

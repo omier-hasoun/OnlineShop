@@ -1,5 +1,5 @@
 
-namespace Domain.UserPaymentMethodLogs;
+namespace Domain.UsersPaymentMethodsLogs;
 
 public readonly record struct UserPaymentMethodLogId
 {

@@ -41,7 +41,7 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
         builder.Property("_specifications")
                .HasColumnName("Specifications")
                .HasColumnType("NVARCHAR(3000)")
-               .HasConversion<JsonValueConverter<Dictionary<string, string>>>(new JsonDictionaryValueComparer())
+               .HasConversion<JsonConverter<Dictionary<string, string>>>(new JsonDictionaryValueComparer())
                .IsRequired(false);
 
         builder.HasIndex(x => x.Sku)

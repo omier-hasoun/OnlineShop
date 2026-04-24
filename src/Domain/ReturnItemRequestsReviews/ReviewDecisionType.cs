@@ -1,4 +1,4 @@
-namespace Domain.ReturnItemRequestReviews;
+namespace Domain.ReturnItemRequestsReviews;
 
 public enum ReviewDecisionType
 {

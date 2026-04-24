@@ -1,6 +1,4 @@
 
-using Application.Common.Identity;
-
 namespace Infrastructure.Data.Configs.Identity;
 
 public sealed class UserLoginProviderConfig : IEntityTypeConfiguration<UserLoginProvider>
@@ -10,27 +8,17 @@ public sealed class UserLoginProviderConfig : IEntityTypeConfiguration<UserLogin
         builder.HasKey(x => new { x.LoginProvider, x.ProviderKey });
 
         builder.Property(x => x.LoginProvider)
-                .HasColumnType("VARCHAR(128)")
+                .HasColumnType("VARCHAR(255)")
                .ValueGeneratedNever();
 
         builder.Property(x => x.ProviderKey)
                .ValueGeneratedNever()
-               .HasColumnType("VARCHAR(128)");
+               .HasColumnType("VARCHAR(255)");
 
         builder.Property(x => x.ProviderDisplayName)
-               .HasColumnType("VARCHAR(32)")
+               .HasColumnType("VARCHAR(50)")
                .IsRequired();
 
-        //builder.HasOne(x => x.UserInfo)
-        //       .WithOne(x => x.LinkedLoginProvider)
-        //       .HasForeignKey<UserLoginProvider>(x => x.UserId)
-        //       .IsRequired()
-        //       .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasIndex(x => x.ProviderDisplayName)
-               .HasDatabaseName("IX_ProviderDisplayName");
-
         builder.ToTable("UserLoginProviders");
-        builder.UseTpcMappingStrategy();
     }
 }

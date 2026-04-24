@@ -13,7 +13,10 @@ public abstract class BaseEntity<TId> : IEntity where TId : struct, IEquatable<T
     {
         this.Id = Id;
     }
+    protected BaseEntity()
+    {
 
+    }
     public void AddDomainEvent(IDomainEvent domainEvent)
     {
         if (domainEvent is null)

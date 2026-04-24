@@ -8,8 +8,6 @@ public sealed class UserRolesConfig : IEntityTypeConfiguration<IdentityUserRole<
     {
         builder.HasKey(x => new { x.RoleId, x.UserId });
 
-        builder.UseTpcMappingStrategy();
-
         builder.ToTable("UserRoles");
     }
 }

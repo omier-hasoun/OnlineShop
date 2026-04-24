@@ -1,8 +1,7 @@
 using Application.Common.Identity;
 using Infrastructure.Data;
 
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+
 using Scalar.AspNetCore;
 
 
@@ -14,7 +13,7 @@ namespace Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            if (builder.Environment.IsProduction())
+            if (builder.Environment.IsProduction() || builder.Environment.IsStaging())
                 builder.Configuration.AddEnvironmentVariables();
 
             if (builder.Environment.IsDevelopment())
@@ -24,10 +23,10 @@ namespace Api
 
             builder.Services.AddApiServices(config)
                             .AddApplicationServices(config)
-                            .AddInfrastructureServices(config, builder.Environment);
+                            .AddInfrastructureServices(config,  builder.Environment);
 
             var app = builder.Build();
-            
+
 
             if (app.Environment.IsDevelopment())
             {
@@ -49,15 +48,16 @@ namespace Api
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // Change this line:
-            app.MapIdentityApi<AppUser>();
-
             // To this:
             app.MapGroup("/auth")
                .MapIdentityApi<AppUser>()
                .WithTags("Authentication");
 
+            AppDbContext context = app.Services.GetRequiredService<AppDbContext>();
             app.Run();
+
+
+
         }
     }
 }

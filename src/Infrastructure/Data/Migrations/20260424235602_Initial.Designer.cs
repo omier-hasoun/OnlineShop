@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260423112035_Initial")]
+    [Migration("20260424235602_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -25,8 +25,6 @@ namespace Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.HasSequence("UserClaimSequence");
-
             modelBuilder.Entity("Application.Common.Identity.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -35,27 +33,15 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsRequired()
-                        .HasColumnType("CHAR(36)");
+                    b.Property<Guid>("ConcurrencyStamp")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(256)");
+                        .HasColumnType("VARCHAR(254)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LinkedLoginProviderLoginProvider")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(128)");
-
-                    b.Property<string>("LinkedLoginProviderProviderKey")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(128)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -65,40 +51,31 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("NormalizedEmail")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(128)");
+                        .HasColumnType("VARCHAR(254)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(128)");
+                        .HasColumnType("VARCHAR(255)");
 
-                    b.Property<string>("SecurityStamp")
-                        .IsRequired()
-                        .HasColumnType("CHAR(36)");
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("VARCHAR(30)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("SecurityStamp")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(128)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
+                        .IsUnique()
                         .HasDatabaseName("IX_User_NormalizedEmail");
 
-                    b.HasIndex("NormalizedUserName")
-                        .HasDatabaseName("IX_User_NormalizedUserName");
-
-                    b.HasIndex("LinkedLoginProviderLoginProvider", "LinkedLoginProviderProviderKey");
-
                     b.ToTable("Users", (string)null);
-
-                    b.UseTpcMappingStrategy();
                 });
 
             modelBuilder.Entity("Application.Common.Identity.Role", b =>
@@ -106,43 +83,37 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AppUserId")
+                    b.Property<Guid>("ConcurrencyStamp")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("char(32)");
-
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(32)");
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(50)");
 
                     b.Property<string>("NormalizedName")
-                        .HasColumnType("varchar(32)");
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(50)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId");
-
                     b.ToTable("Roles", (string)null);
-
-                    b.UseTpcMappingStrategy();
                 });
 
             modelBuilder.Entity("Application.Common.Identity.UserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValueSql("NEXT VALUE FOR [UserClaimSequence]");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseSequence(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR(64)");
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<string>("ClaimValue")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR(64)");
+                        .HasColumnType("NVARCHAR(255)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -152,33 +123,29 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserClaims", (string)null);
-
-                    b.UseTpcMappingStrategy();
                 });
 
             modelBuilder.Entity("Application.Common.Identity.UserLoginProvider", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("VARCHAR(128)");
+                        .HasColumnType("VARCHAR(255)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("VARCHAR(128)");
+                        .HasColumnType("VARCHAR(255)");
 
                     b.Property<string>("ProviderDisplayName")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(32)");
+                        .HasColumnType("VARCHAR(50)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.HasIndex("ProviderDisplayName")
-                        .HasDatabaseName("IX_ProviderDisplayName");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("UserLoginProviders", (string)null);
-
-                    b.UseTpcMappingStrategy();
                 });
 
             modelBuilder.Entity("Application.Common.Identity.UserToken", b =>
@@ -187,27 +154,18 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("VARCHAR(255)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("VARCHAR(64)");
-
-                    b.Property<Guid?>("AppUserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(64)");
+                        .HasColumnType("VARCHAR(255)");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("LoginProvider");
-
                     b.ToTable("UserTokens", (string)null);
-
-                    b.UseTpcMappingStrategy();
                 });
 
             modelBuilder.Entity("Domain.AppSettings.AppSettings", b =>
@@ -317,11 +275,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("NVARCHAR")
                         .IsFixedLength();
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(34)
-                        .HasColumnType("nvarchar(34)");
-
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -332,14 +285,6 @@ namespace Infrastructure.Data.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("NVARCHAR");
 
-                    b.Property<decimal?>("Latitude")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("DECIMAL(9,6)");
-
-                    b.Property<decimal?>("Longitude")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("DECIMAL(9,6)");
-
                     b.Property<string>("Notes")
                         .HasMaxLength(100)
                         .HasColumnType("NVARCHAR");
@@ -347,7 +292,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(25)
-                        .HasColumnType("NVARCHAR");
+                        .HasColumnType("VARCHAR");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
@@ -361,10 +306,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Addresses", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Address");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Domain.Customers.CartItems.CartItem", b =>
@@ -411,6 +352,33 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Customers", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Customers.CustomerShippingAddresses.CustomerShippingAddress", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("AddressId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique();
+
+                    b.HasIndex("CustomerId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Addresses_CustomerId")
+                        .HasFilter("[IsDefault] = 1");
+
+                    b.ToTable("CustomerShippingAddresses", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Orders.Order", b =>
                 {
                     b.Property<long>("Id")
@@ -423,11 +391,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("ShippingFees")
-                        .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("TotalItemsPrice")
-                        .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");
@@ -456,7 +422,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("VARCHAR(50)");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("_serialNumbers")
@@ -639,11 +604,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("TINYINT");
 
                     b.Property<decimal>("DefaultDiscountPrice")
-                        .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("DefaultOriginalPrice")
-                        .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("Description")
@@ -738,7 +701,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("TINYINT");
 
                     b.Property<decimal>("DiscountPrice")
-                        .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<bool>("DisplayBaseProductImages")
@@ -754,7 +716,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("OriginalPrice")
-                        .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<long>("ProductId")
@@ -864,7 +825,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("smallint");
 
                     b.Property<decimal>("ShippingFees")
-                        .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<int>("Status")
@@ -887,7 +847,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("AdditionalFees")
-                        .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -959,7 +918,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("VARCHAR(50)");
 
                     b.Property<decimal>("TransferAmount")
-                        .HasPrecision(18, 4)
                         .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");
@@ -984,6 +942,7 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("VARCHAR(100)");
 
                     b.Property<string>("_details")
+                        .IsRequired()
                         .HasColumnType("NVARCHAR(3000)")
                         .HasColumnName("Details");
 
@@ -1024,63 +983,37 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("RoleId", "UserId");
-
-                    b.ToTable("UserRoles", (string)null);
-
-                    b.UseTpcMappingStrategy();
-                });
-
-            modelBuilder.Entity("Domain.Customers.CustomerShippingAddress", b =>
-                {
-                    b.HasBaseType("Domain.Common.Entities.Addresses.Address");
-
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid>("AppUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("bit");
+                    b.HasKey("RoleId", "UserId");
 
-                    b.HasIndex("CustomerId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Addresses_CustomerId")
-                        .HasFilter("[IsDefault] = 1");
+                    b.HasIndex("AppUserId");
 
-                    b.HasDiscriminator().HasValue("CustomerShippingAddress");
-                });
-
-            modelBuilder.Entity("Application.Common.Identity.AppUser", b =>
-                {
-                    b.HasOne("Application.Common.Identity.UserLoginProvider", "LinkedLoginProvider")
-                        .WithMany()
-                        .HasForeignKey("LinkedLoginProviderLoginProvider", "LinkedLoginProviderProviderKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("LinkedLoginProvider");
-                });
-
-            modelBuilder.Entity("Application.Common.Identity.Role", b =>
-                {
-                    b.HasOne("Application.Common.Identity.AppUser", null)
-                        .WithMany("Roles")
-                        .HasForeignKey("AppUserId");
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Application.Common.Identity.UserClaim", b =>
                 {
                     b.HasOne("Application.Common.Identity.AppUser", null)
                         .WithMany("Claims")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("Application.Common.Identity.UserLoginProvider", b =>
+                {
+                    b.HasOne("Application.Common.Identity.AppUser", null)
+                        .WithOne("LinkedLoginProvider")
+                        .HasForeignKey("Application.Common.Identity.UserLoginProvider", "UserId");
                 });
 
             modelBuilder.Entity("Application.Common.Identity.UserToken", b =>
                 {
                     b.HasOne("Application.Common.Identity.AppUser", null)
                         .WithMany("Tokens")
-                        .HasForeignKey("AppUserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Categories.Category", b =>
@@ -1088,6 +1021,30 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("Domain.Categories.Category", null)
                         .WithMany()
                         .HasForeignKey("ParentCategoryId");
+                });
+
+            modelBuilder.Entity("Domain.Common.Entities.Addresses.Address", b =>
+                {
+                    b.OwnsOne("Domain.Common.ValueObjects.GeoLocation", "GeoLocation", b1 =>
+                        {
+                            b1.Property<long>("AddressId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<decimal>("Latitude")
+                                .HasColumnType("DECIMAL(9,6)");
+
+                            b1.Property<decimal>("Longitude")
+                                .HasColumnType("DECIMAL(9,6)");
+
+                            b1.HasKey("AddressId");
+
+                            b1.ToTable("Addresses");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AddressId");
+                        });
+
+                    b.Navigation("GeoLocation");
                 });
 
             modelBuilder.Entity("Domain.Customers.CartItems.CartItem", b =>
@@ -1103,6 +1060,23 @@ namespace Infrastructure.Data.Migrations
                         .HasForeignKey("ProductVariantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Customers.CustomerShippingAddresses.CustomerShippingAddress", b =>
+                {
+                    b.HasOne("Domain.Common.Entities.Addresses.Address", "Address")
+                        .WithOne()
+                        .HasForeignKey("Domain.Customers.CustomerShippingAddresses.CustomerShippingAddress", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Customers.Customer", null)
+                        .WithMany("ShippingAddresses")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("Domain.Orders.Order", b =>
@@ -1282,15 +1256,21 @@ namespace Infrastructure.Data.Migrations
                     b.HasOne("Domain.Common.Entities.Addresses.Address", null)
                         .WithOne()
                         .HasForeignKey("Domain.Warehouses.Warehouse", "AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Customers.CustomerShippingAddress", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Customers.Customer", null)
-                        .WithMany("ShippingAddresses")
-                        .HasForeignKey("CustomerId")
+                    b.HasOne("Application.Common.Identity.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Application.Common.Identity.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1299,7 +1279,7 @@ namespace Infrastructure.Data.Migrations
                 {
                     b.Navigation("Claims");
 
-                    b.Navigation("Roles");
+                    b.Navigation("LinkedLoginProvider");
 
                     b.Navigation("Tokens");
                 });

@@ -1,9 +1,11 @@
 
-namespace Domain.ReturnItemRequestReviews;
+using Domain.Common.ValueObjects;
+
+namespace Domain.ReturnItemRequestsReviews;
 
 public sealed class ReturnItemRequestReview : AggregateRoot<ReturnItemRequestId>, IFullAudited
 {
-    public ReturnItemRequestReview(ReturnItemRequestId Id, UserId createdBy, UserId lastModifiedBy, DateTime createdAt, DateTime lastModifiedAt, ReviewDecisionType decisionType, string decisionReason, decimal additionalFees)
+    public ReturnItemRequestReview(ReturnItemRequestId Id, UserId createdBy, UserId lastModifiedBy, DateTime createdAt, DateTime lastModifiedAt, ReviewDecisionType decisionType, string decisionReason, Money additionalFees)
         : base(Id)
     {
         CreatedBy = createdBy;
@@ -15,7 +17,7 @@ public sealed class ReturnItemRequestReview : AggregateRoot<ReturnItemRequestId>
         AdditionalFees = additionalFees;
     }
 
-    public static Result<ReturnItemRequestReview> Create(ReturnItemRequestId Id, ReviewDecisionType decisionType, string decisionReason, decimal additionalFees)
+    public static Result<ReturnItemRequestReview> Create(ReturnItemRequestId Id, ReviewDecisionType decisionType, string decisionReason, Money additionalFees)
     {
         UserId createdBy = UserId.EmptyInstance;
         UserId lastModifiedBy = createdBy;
@@ -34,7 +36,7 @@ public sealed class ReturnItemRequestReview : AggregateRoot<ReturnItemRequestId>
 
     public ReviewDecisionType DecisionType { get; private set; }
     public string DecisionReason { get; private set; }
-    public decimal AdditionalFees { get; private set; }
+    public Money AdditionalFees { get; private set; }
 
 
 }

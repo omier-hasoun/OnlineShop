@@ -11,19 +11,12 @@ public sealed class UserClaimConfig : IEntityTypeConfiguration<UserClaim>
                .ValueGeneratedOnAdd();
 
         builder.Property(x => x.ClaimValue)
-               .HasColumnType("NVARCHAR(64)")
+               .HasColumnType("NVARCHAR(255)")
                .IsRequired();
 
         builder.Property(x => x.ClaimType)
-               .HasColumnType("NVARCHAR(64)")
+               .HasColumnType("VARCHAR(100)")
                .IsRequired();
-
-        builder.HasOne<AppUser>()
-               .WithMany(x => x.Claims)
-               .HasForeignKey(x => x.UserId)
-               .IsRequired()
-               .OnDelete(DeleteBehavior.Cascade);
-        builder.UseTpcMappingStrategy();
 
         builder.ToTable("UserClaims");
     }

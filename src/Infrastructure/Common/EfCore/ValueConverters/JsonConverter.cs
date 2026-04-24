@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Common.EfCore.ValueConverters;
 
-internal sealed class JsonValueConverter<T> : ValueConverter<T,string>
+internal sealed class JsonConverter<T> : ValueConverter<T,string>
 {
-    public JsonValueConverter()
+    public JsonConverter()
         : base(     
             (T value) => JsonSerializer.Serialize(value, (JsonSerializerOptions)null!),
             (string value) => JsonSerializer.Deserialize<T>(value, (JsonSerializerOptions)null!)!)

@@ -1,9 +1,8 @@
-namespace Domain.ProductStocks;
+namespace Domain.ProductsStock;
 
-public sealed class ProductStock : AggregateRoot<ProductStockId>
+public sealed class ProductStock : IEntity // i want to a composite id in this entity, i cant do that if i inherit BaseEntity 
 {
-    private ProductStock(ProductStockId id, WarehouseId warehouseId, ProductVariantId productVariantId, int quantity, int reservedQuantity)
-        : base(id)
+    private ProductStock(WarehouseId warehouseId, ProductVariantId productVariantId, int quantity, int reservedQuantity)
     {
         WarehouseId = warehouseId;
         ProductVariantId = productVariantId;
@@ -11,17 +10,19 @@ public sealed class ProductStock : AggregateRoot<ProductStockId>
         ReservedQuantity = reservedQuantity;
     }
 
-    public static Result<ProductStock> Create(ProductStockId id, WarehouseId warehouseId, ProductVariantId productVariantId, int quantity)
+    public static Result<ProductStock> Create(WarehouseId warehouseId, ProductVariantId productVariantId, int quantity)
     {
 
-        return new ProductStock(id, warehouseId, productVariantId, quantity, 0);
+        return new ProductStock(warehouseId, productVariantId, quantity, 0);
     }
 
     public WarehouseId WarehouseId { get; private init; }
     public ProductVariantId ProductVariantId { get; private init; }
     public int Quantity { get; private set; }
-
     public int ReservedQuantity { get; private set; }
+
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly() ;
+    private readonly List<IDomainEvent> _domainEvents = [];
 
     public Result<Success> ReserveItem(short quantity)
     {
@@ -60,12 +61,31 @@ public sealed class ProductStock : AggregateRoot<ProductStockId>
         return Result.Success;
     }
 
-    public Result<Success> AddStock(int quantity)
+    public Result<Success> Restock(int quantity)
     {
         if (quantity <= 0)
         {
         }
         return Result.Success;
+    }
+
+
+    public void AddDomainEvent(IDomainEvent domainEvent)
+    {
+        if (domainEvent is null)
+            return;
+
+        _domainEvents.Add(domainEvent);
+    }
+
+    public void RemoveDomainEvent(IDomainEvent domainEvent)
+    {
+        _domainEvents.Remove(domainEvent);
+    }
+
+    public void ClearDomainEvents()
+    {
+        _domainEvents.Clear();
     }
 
 }

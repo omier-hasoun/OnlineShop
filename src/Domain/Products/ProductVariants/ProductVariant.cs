@@ -1,17 +1,22 @@
 
+using Domain.Common.ValueObjects;
+
 namespace Domain.Products.ProductVariants;
 
 public sealed class ProductVariant : BaseEntity<ProductVariantId>, ISoftDeleted
 {
-    private ProductVariant(ProductVariantId id, ProductId productId, decimal originalPrice, byte discountPercentage, decimal currentPrice,
-        int width, int height, int length, int weight, string sku, bool isDeleted, bool displayBaseProductImages, Dictionary<string, string> specifications)
+    private ProductVariant()
+    {
+    }
+    private ProductVariant(ProductVariantId id, ProductId productId, Money originalPrice, byte discountPercentage, Money discountPrice,
+        int width, int height, int length, int weight, string sku, bool isDeleted, bool displayBaseProductImages, IReadOnlyDictionary<string, string> specifications)
         : base(id)
     {
         ProductId = productId;
                 
         OriginalPrice = originalPrice;
         DiscountPercentage = discountPercentage;
-        DiscountPrice = currentPrice;
+        DiscountPrice = discountPrice;
             
         Width = width;
         Height = height;
@@ -23,16 +28,16 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>, ISoftDeleted
         IsDeleted = isDeleted;
         DisplayBaseProductImages = displayBaseProductImages;
 
-        _specifications = specifications;
+        _specifications = specifications.ToDictionary();
     }
 
-    public static Result<ProductVariant> Create(ProductVariantId id, ProductId productId, decimal originalPrice,
-        int width, int height, int length, int weight, string sku, bool displayBaseProductImages, Dictionary<string, string> specifications)
+    public static Result<ProductVariant> Create(ProductVariantId id, ProductId productId, Money originalPrice,
+        int width, int height, int length, int weight, string sku, bool displayBaseProductImages, IReadOnlyDictionary<string, string> specifications)
     {
         //defaults
         bool isDeleted = false;
         byte discountPercentage = 0;
-        decimal discountPrice = originalPrice;
+        Money discountPrice = originalPrice;
 
 
         return new ProductVariant(id, productId, originalPrice, discountPercentage, discountPrice,
@@ -46,8 +51,8 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>, ISoftDeleted
     public int Length { get; private set; }
     public int Weight { get; private set; }
 
-    public decimal OriginalPrice { get; private set; }
-    public decimal DiscountPrice { get; private set; }
+    public Money OriginalPrice { get; }
+    public Money DiscountPrice { get; }
     public byte DiscountPercentage { get; private set;}
 
     public string Sku { get; private set; } = null!;
@@ -57,7 +62,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>, ISoftDeleted
     public bool DisplayBaseProductImages { get; private set; }
 
 
-    Dictionary<string, string> _specifications = [];
+    private Dictionary<string, string> _specifications = [];
     public IReadOnlyDictionary<string, string> Specifications { get { return _specifications.AsReadOnly(); } private set { _specifications = value is null ?[] :value.ToDictionary(); } }
 
     private static decimal CalculateDiscountPrice(decimal originalPrice, byte discountPercentage = 0)

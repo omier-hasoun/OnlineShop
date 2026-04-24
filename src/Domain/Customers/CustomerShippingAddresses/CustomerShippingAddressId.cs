@@ -1,0 +1,17 @@
+
+namespace Domain.Customers.CustomerShippingAddresses;
+
+public readonly record struct CustomerShippingAddressId
+{    
+    public long Value { get; }
+
+    public static implicit operator long(CustomerShippingAddressId addressId) => addressId.Value;
+    public static implicit operator CustomerShippingAddressId(long value) => new(value);
+    public CustomerShippingAddressId(long value)
+    {
+        if (value <= 0)
+            throw new ArgumentException("CustomerShippingAddressId must be a positive integer.", nameof(value));
+
+        Value = value;
+    }
+}

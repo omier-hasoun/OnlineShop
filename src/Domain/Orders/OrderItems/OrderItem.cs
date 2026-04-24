@@ -1,11 +1,12 @@
 
 using System.ComponentModel;
+using Domain.Common.ValueObjects;
 
 namespace Domain.Orders.OrderItems;
 
 public sealed class OrderItem : BaseEntity<OrderItemId>
 {
-    private OrderItem(OrderItemId id, OrderId orderId, ProductVariantId productVariantId, short quantity, decimal unitPrice, OrderItemStatus status)
+    private OrderItem(OrderItemId id, OrderId orderId, ProductVariantId productVariantId, short quantity, Money unitPrice, OrderItemStatus status)
         : base(id)
     {
         OrderId = orderId;
@@ -14,7 +15,7 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
         UnitPrice = unitPrice;
         Status = status;
     }
-    internal static Result<OrderItem> Create(OrderItemId id, OrderId orderId, ProductVariantId productVariantId, short quantity, decimal unitPrice)
+    internal static Result<OrderItem> Create(OrderItemId id, OrderId orderId, ProductVariantId productVariantId, short quantity, Money unitPrice)
     {
 
         return new OrderItem(id, orderId, productVariantId, quantity, unitPrice, OrderItemStatus.Pending);
@@ -24,10 +25,9 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
     public ProductVariantId ProductVariantId { get; private init; }
 
     public short Quantity { get; private init; }
-    public short ReturnedQuantity { get; private set; }
 
-    public decimal UnitPrice { get; private init; }
-    public decimal TotalPrice { get { return decimal.Multiply(Quantity, UnitPrice); } }
+    public Money UnitPrice { get;  }
+    public Money TotalPrice { get; }
 
     public OrderItemStatus Status
     {
@@ -41,8 +41,8 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
         }
     }
 
-    public List<string> _serialNumbers = [];
-    public IReadOnlyCollection<string> SerialNumbers { get{ return _serialNumbers.AsReadOnly(); } private set{_serialNumbers = value is null ?[] : value.ToList();} }
+    private List<string> _serialNumbers = [];
+    public IReadOnlyList<string> SerialNumbers { get{ return _serialNumbers.AsReadOnly(); } private set{_serialNumbers = value is null ?[] : value.ToList();} }
 
     internal Result<Success> UpdateSerialNumbers(IReadOnlyCollection<string> serialNumbers)
     {
@@ -88,17 +88,11 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
         return Result.Success;
     }
 
-    internal Result<Success> MarkAsReturned(short quantityToReturn)
+    internal Result<Success> MarkAsReturned()
     {
         if (Status is OrderItemStatus.Returned)
         {
             return Result.Success;
-        }
-
-        bool isValidReturnQuantity = ValidationHelper.IsOutOfRange(quantityToReturn + ReturnedQuantity, 1, Quantity);
-        if (isValidReturnQuantity)
-        {
-            return OrderItemErrors.InvalidReturnQuantity;
         }
 
         bool isValidStatusTransition = Status is OrderItemStatus.Delivered or OrderItemStatus.PartiallyReturned;
@@ -107,8 +101,6 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
             return OrderItemErrors.CannotReturn;
         }
 
-        ReturnedQuantity += quantityToReturn;
-        Status = ReturnedQuantity == Quantity ? OrderItemStatus.Returned : OrderItemStatus.PartiallyReturned;
         return Result.Success;
     }
 

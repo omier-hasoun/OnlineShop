@@ -3,12 +3,16 @@ namespace Domain.ProductReviews;
 
 public sealed class ProductReview : AggregateRoot<ProductReviewId>, IHasCreationTime, IHasModificationTime
 {
-    private ProductReview(ProductReviewId id, ProductId productId, UserId userId,
+    private ProductReview()
+    {
+        
+    }
+    private ProductReview(ProductReviewId id, ProductId productId, UserId customerId,
         byte rating, string title, string? comment, DateTime createdAt, DateTime lastModifiedAt)
         : base(id)
     {
         ProductId = productId;
-        CustomerId = userId;
+        CustomerId = customerId;
         Rating = rating;
         Title = title;
         Comment = comment;
@@ -42,7 +46,7 @@ public sealed class ProductReview : AggregateRoot<ProductReviewId>, IHasCreation
     public byte Rating { get; private set; }
 
     public string? Comment { get; private set; }
-    public string Title { get; private set; }
+    public string Title { get; private set; } = null!;
 
     public DateTime LastModifiedAt { get; set; }
     public DateTime CreatedAt { get; set; }

@@ -27,6 +27,7 @@ internal sealed class WarehouseConfig : BaseEntityConfig<Warehouse>
         builder.HasOne<Address>()
                .WithOne()
                .HasForeignKey<Warehouse>(x => x.AddressId)
+               .OnDelete(DeleteBehavior.NoAction)
                .IsRequired();
 
         builder.ToTable("Warehouses");

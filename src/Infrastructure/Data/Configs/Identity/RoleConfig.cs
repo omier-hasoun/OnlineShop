@@ -11,14 +11,16 @@ public sealed class RoleConfig : IEntityTypeConfiguration<Role>
                .ValueGeneratedNever();
 
         builder.Property(x => x.Name)
-               .HasColumnType("varchar(32)");
+               .HasColumnType("VARCHAR(50)")
+               .IsRequired();
 
         builder.Property(x => x.NormalizedName)
-               .HasColumnType("varchar(32)");
+               .HasColumnType("VARCHAR(50)")
+               .IsRequired();
 
         builder.Property(x => x.ConcurrencyStamp)
-               .HasColumnType("char(32)");
-        builder.UseTpcMappingStrategy();
+               .HasConversion<Guid>(x => Guid.Parse(x!), x => x.ToString())
+               .IsRequired();
 
         builder.ToTable("Roles");
     }

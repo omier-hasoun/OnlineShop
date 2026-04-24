@@ -23,7 +23,7 @@ internal sealed class ReturnItemRequestReviewConfig : BaseEntityConfig<ReturnIte
 
         builder.Property(x => x.DecisionReason)
                .HasColumnType("NVARCHAR")
-               .HasMaxLength(ReturnItemRequestReviewRules.DecisionReasonMaxLength)
+               .HasMaxLength(255)
                .IsRequired();
 
         builder.HasOne<ReturnItemRequest>()
