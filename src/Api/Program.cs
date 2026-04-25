@@ -53,7 +53,6 @@ namespace Api
                .MapIdentityApi<AppUser>()
                .WithTags("Authentication");
 
-            AppDbContext context = app.Services.GetRequiredService<AppDbContext>();
             app.Run();
 
 
