@@ -52,7 +52,9 @@ namespace Api
             app.UseAuthorization();
 
             app.MapControllers();
-            app.MapIdentityApi<AppUser>();
+
+            app.MapGroup("/api/auth").
+                MapIdentityApi<AppUser>();
 
             app.Run();
 

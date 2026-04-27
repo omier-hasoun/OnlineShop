@@ -3,21 +3,21 @@ using Domain.Customers.CustomerShippingAddresses;
 
 namespace Domain.Customers;
 
-public sealed class Customer : AggregateRoot<UserId>, ISoftDeleted
+public sealed class Customer : AggregateRoot<CustomerId>, ISoftDeleted
 {
-    private Customer(UserId Id, bool isDeleted) : base(Id)
+    private Customer(CustomerId Id, bool isDeleted) : base(Id)
     {
         IsDeleted = isDeleted;
     }
 
-    public static Result<Customer> Create(UserId Id)
+    public static Result<Customer> Create(CustomerId Id)
     {
 
 
         return new Customer(Id, isDeleted: false);
     }
 
-    public UserId UserId { get {  return Id; }  }
+    public Guid UserId { get;  private set ; }
 
     public bool IsDeleted { get; private set; }
 

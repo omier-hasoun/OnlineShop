@@ -4,5 +4,5 @@ namespace Application.Common.Abstractions;
 
 public interface IUserContext
 {
-    UserId Id { get; }
+    CustomerId Id { get; }
 }

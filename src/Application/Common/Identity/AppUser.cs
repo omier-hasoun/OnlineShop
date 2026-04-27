@@ -11,7 +11,7 @@ public sealed class AppUser : IdentityUser<Guid>, IEntity
     public ICollection<UserToken> Tokens { get; private set; } = [];
     public ICollection<Role> Roles { get; private set; } = [];
 
-    public UserId UserId => Id;
+    public CustomerId UserId => Id;
 
 
     public AppUser()

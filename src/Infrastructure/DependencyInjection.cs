@@ -53,7 +53,7 @@ public static class DependencyInjection
         services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<Guid>, GuidV7Generator>("GuidV7");
         services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<long>, SnowflakeGenerator>("Snowflake");
 
-        services.AddSingleton<App.IIdGenerator<UserId>, UserIdGenerator>();
+        services.AddSingleton<App.IIdGenerator<CustomerId>, UserIdGenerator>();
         services.AddSingleton<App.IIdGenerator<ProductId>, ProductIdGenerator>();
         services.AddSingleton<App.IIdGenerator<OrderId>, OrderIdGenerator>();
 

@@ -3,7 +3,7 @@ namespace Domain.Customers.CartItems;
 public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
 {
 
-    private CartItem(CartItemId id, UserId customerId, ProductVariantId productVariantId, short quantity, DateTime createdAt) : base(id)
+    private CartItem(CartItemId id, CustomerId customerId, ProductVariantId productVariantId, short quantity, DateTime createdAt) : base(id)
     {
         CustomerId = customerId;
         ProductVariantId = productVariantId;
@@ -11,7 +11,7 @@ public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
         CreatedAt = createdAt;
     }
 
-    public static Result<CartItem> Create(CartItemId id, UserId customerId, ProductVariantId productVariantId, short quantity)
+    public static Result<CartItem> Create(CartItemId id, CustomerId customerId, ProductVariantId productVariantId, short quantity)
     {
 
         if (quantity < CartItemRules.MinQuantityValue || quantity > CartItemRules.MaxQuantityValue)
@@ -22,7 +22,7 @@ public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
         return new CartItem(id, customerId, productVariantId, quantity, DateTime.UtcNow);
     }
     public ProductVariantId ProductVariantId { get; private init; }
-    public UserId CustomerId { get; private init; }
+    public CustomerId CustomerId { get; private init; }
     public short Quantity { get; private set; }
 
     public DateTime CreatedAt { get; set; }

@@ -9,7 +9,7 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
     {
     }
     private Product(ProductId id, BrandId brandId, CategoryId categoryId, string title, string description, AverageRating averageRating, ProductStatus status,
-       bool isSerialized, IReadOnlyDictionary<string, string> attributes, DateTime createdAt, DateTime lastModifiedAt, UserId createdBy, UserId lastModifiedBy)
+       bool isSerialized, IReadOnlyDictionary<string, string> attributes, DateTime createdAt, DateTime lastModifiedAt, CustomerId createdBy, CustomerId lastModifiedBy)
         : base(id)
     {
         BrandId = brandId;
@@ -34,8 +34,8 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
         AverageRating averageRating = new (0);
         DateTime createdAt = DateTime.UtcNow;
         DateTime lastModifiedAt = createdAt;
-        UserId lastModifiedBy = UserId.EmptyInstance;
-        UserId createdBy = lastModifiedBy;
+        CustomerId lastModifiedBy = CustomerId.EmptyInstance;
+        CustomerId createdBy = lastModifiedBy;
         ProductStatus status = ProductStatus.Archived;
 
         attributes ??= new Dictionary<string,string>();

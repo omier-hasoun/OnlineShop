@@ -10,7 +10,7 @@ namespace Domain.Orders;
 public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
 {
 
-    private Order(OrderId id, UserId customerId, Money totalItemsPrice, Money shippingFees, DateTime createdAt)
+    private Order(OrderId id, CustomerId customerId, Money totalItemsPrice, Money shippingFees, DateTime createdAt)
         : base(id)
     {
         CustomerId = customerId;
@@ -42,7 +42,7 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
 
     //    return new Order(id, customerId, totalItemsPrice, shippingFees, items, TimeService.UtcNow);
     //}
-    public UserId CustomerId { get; private init; }
+    public CustomerId CustomerId { get; private init; }
     public Money TotalItemsPrice { get; private set; }
     public Money ShippingFees { get; private set; }
     public DateTime CreatedAt { get; set; }

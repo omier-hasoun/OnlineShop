@@ -19,8 +19,8 @@ public sealed class ReturnItemRequestReview : AggregateRoot<ReturnItemRequestId>
 
     public static Result<ReturnItemRequestReview> Create(ReturnItemRequestId Id, ReviewDecisionType decisionType, string decisionReason, Money additionalFees)
     {
-        UserId createdBy = UserId.EmptyInstance;
-        UserId lastModifiedBy = createdBy;
+        CustomerId createdBy = CustomerId.EmptyInstance;
+        CustomerId lastModifiedBy = createdBy;
 
         DateTime createdAt = TimeService.UtcNow;
         DateTime lastModifiedAt = createdAt;

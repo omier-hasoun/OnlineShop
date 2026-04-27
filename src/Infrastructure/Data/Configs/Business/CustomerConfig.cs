@@ -9,12 +9,15 @@ internal sealed class CustomerConfig : BaseEntityConfig<Customer>
     {
         base.Configure(builder);
 
-        builder.Ignore(x => x.UserId);
-
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
                .ValueGeneratedNever();
+
+        builder.HasOne<AppUser>()
+               .WithOne()
+               .HasForeignKey<Customer>(x => x.UserId);
+               
 
         builder.ToTable("Customers");
 

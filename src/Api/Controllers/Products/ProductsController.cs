@@ -26,7 +26,7 @@ public sealed class ProductsController(IMediator mediator) : ApiController
 
         var result = await mediator.Send(command, CancellationToken.None);
 
-        if(result.Failed)
+        if (result.Failed)
         {
             return BadRequest(result.Errors);
         }
@@ -35,5 +35,4 @@ public sealed class ProductsController(IMediator mediator) : ApiController
 
         return Ok(ProductId);
     }
-
 }

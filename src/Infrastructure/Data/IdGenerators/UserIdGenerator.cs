@@ -4,9 +4,9 @@ using Infrastructure.Common.Abstractions;
 using App = Application.Common.Abstractions;
 namespace Infrastructure.Data.IdGenerators;
 
-internal sealed class UserIdGenerator([FromKeyedServices("GuidV7")] IPrimitiveTypeIdGenerator<Guid> Generator) : App.IIdGenerator<UserId>
+internal sealed class UserIdGenerator([FromKeyedServices("GuidV7")] IPrimitiveTypeIdGenerator<Guid> Generator) : App.IIdGenerator<CustomerId>
 {
-    public UserId NewId()
+    public CustomerId NewId()
     {
         return Generator.Generate();
     }
