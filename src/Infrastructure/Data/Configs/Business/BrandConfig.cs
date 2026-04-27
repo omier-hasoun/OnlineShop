@@ -1,10 +1,10 @@
 
 using Domain.Brands;
-using Domain.Common.EntitiesRules;
+using Domain.Common.Rules;
 
 namespace Infrastructure.Data.Configs.Business;
 
-public sealed class BrandConfig : BaseEntityConfig<Brand>
+internal sealed class BrandConfig : BaseEntityConfig<Brand>
 {
     public override void Configure(EntityTypeBuilder<Brand> builder)
     {

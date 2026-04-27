@@ -1,5 +1,3 @@
-using Domain.Common.ValueObjects;
-
 namespace Domain.Common.Entities.Addresses;
 
 public class Address : BaseEntity<AddressId>

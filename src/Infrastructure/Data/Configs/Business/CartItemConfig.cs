@@ -1,5 +1,5 @@
 
-using Domain.Common.EntitiesRules;
+using Domain.Common.Rules;
 using Domain.Customers;
 using Domain.Customers.CartItems;
 using Domain.Products.ProductVariants;
@@ -7,7 +7,7 @@ using Domain.Products.ProductVariants;
 
 namespace Infrastructure.Data.Configs.Business;
 
-public sealed class CartItemConfig : BaseEntityConfig<CartItem>
+internal sealed class CartItemConfig : BaseEntityConfig<CartItem>
 {
     public override void Configure(EntityTypeBuilder<CartItem> builder)
     {

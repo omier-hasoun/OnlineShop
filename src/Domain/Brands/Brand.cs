@@ -18,7 +18,7 @@ public sealed class Brand : AggregateRoot<BrandId>, IHasCreationTime
 
     public Result<Brand> Create(BrandId id, string name, string? description, string companyName, string skuName,  string? logoUrl)
     {
-        return new Brand(id, name, description, companyName, skuName, logoUrl, TimeService.UtcNow, isActive: true);
+        return new Brand(id, name, description, companyName, skuName, logoUrl, DateTime.UtcNow, isActive: true);
     }
 
     public string Name { get; private set; }

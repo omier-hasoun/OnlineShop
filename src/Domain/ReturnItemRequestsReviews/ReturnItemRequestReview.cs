@@ -5,7 +5,7 @@ namespace Domain.ReturnItemRequestsReviews;
 
 public sealed class ReturnItemRequestReview : AggregateRoot<ReturnItemRequestId>, IFullAudited
 {
-    public ReturnItemRequestReview(ReturnItemRequestId Id, UserId createdBy, UserId lastModifiedBy, DateTime createdAt, DateTime lastModifiedAt, ReviewDecisionType decisionType, string decisionReason, Money additionalFees)
+    public ReturnItemRequestReview(ReturnItemRequestId Id, Guid createdBy, Guid lastModifiedBy, DateTime createdAt, DateTime lastModifiedAt, ReviewDecisionType decisionType, string decisionReason, Money additionalFees)
         : base(Id)
     {
         CreatedBy = createdBy;
@@ -29,8 +29,8 @@ public sealed class ReturnItemRequestReview : AggregateRoot<ReturnItemRequestId>
         return new ReturnItemRequestReview(Id, createdBy, lastModifiedBy, createdAt, lastModifiedAt, decisionType, decisionReason, additionalFees);
     }
 
-    public UserId CreatedBy { get; set; }
-    public UserId LastModifiedBy { get; set; }
+    public Guid CreatedBy { get; set; }
+    public Guid LastModifiedBy { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
 

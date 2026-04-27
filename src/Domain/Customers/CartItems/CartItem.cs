@@ -19,7 +19,7 @@ public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
             return CartItemErrors.QuantityOutOfRange;
         }
 
-        return new CartItem(id, customerId, productVariantId, quantity, TimeService.UtcNow);
+        return new CartItem(id, customerId, productVariantId, quantity, DateTime.UtcNow);
     }
     public ProductVariantId ProductVariantId { get; private init; }
     public UserId CustomerId { get; private init; }

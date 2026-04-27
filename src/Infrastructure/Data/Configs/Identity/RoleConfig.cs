@@ -19,7 +19,7 @@ public sealed class RoleConfig : IEntityTypeConfiguration<Role>
                .IsRequired();
 
         builder.Property(x => x.ConcurrencyStamp)
-               .HasConversion<Guid>(x => Guid.Parse(x!), x => x.ToString())
+               .HasColumnType("VARCHAR(50)")
                .IsRequired();
 
         builder.ToTable("Roles");

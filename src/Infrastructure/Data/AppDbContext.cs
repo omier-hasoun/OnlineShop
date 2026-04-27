@@ -3,8 +3,6 @@ using Domain.Orders;
 using Domain.Products;
 using Domain.Orders.OrderPayments;
 using Domain.Orders.OrderItems;
-using Domain.Products.ProductImages;
-using Infrastructure.Data.Interceptors;
 using Domain.Products.ProductVariants;
 using Domain.Brands;
 using Domain.AppSettings;
@@ -26,16 +24,16 @@ using Infrastructure.Common.EfCore.ValueComparers;
 using Domain.ProductsStock;
 using Domain.Common.ValueObjects;
 using Domain.Customers.CustomerShippingAddresses;
+using Domain.Products.ValueObjects;
 
 
 namespace Infrastructure.Data;
 
-public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserClaim, IdentityUserRole<Guid>, UserLoginProvider, RoleClaim, UserToken, IdentityUserPasskey<Guid>>, IAppDbContext
+internal sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserClaim, IdentityUserRole<Guid>, UserLoginProvider, RoleClaim, UserToken, IdentityUserPasskey<Guid>>, IAppDbContext
 {
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<ProductReview> Reviews => Set<ProductReview>();
-    public DbSet<ProductImage> ProductImages => Set<ProductImage>();
     public DbSet<Product> Products => Set<Product>();
     public DbSet<CartItem> CartItems => Set<CartItem>();
     public DbSet<Shipment> Shipments => Set<Shipment>();
@@ -60,7 +58,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
 
 
     //#region notSupported
-    //private string _notSupportedMessage = "The invoked DbSet not supported, just ignore it dont remove them";
+    //private string _notSupportedMessage = "The invoked DbSet not supported, just ignore it and do not remove them";
     //public override DbSet<RoleClaim> RoleClaims { get => throw new NotSupportedException(_notSupportedMessage); set { throw new NotSupportedException(_notSupportedMessage); } }
     //public override DbSet<IdentityUserPasskey<Guid>> UserPasskeys { get => throw new NotSupportedException(_notSupportedMessage); set => throw new NotSupportedException(_notSupportedMessage); }
 
@@ -102,8 +100,6 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
 
         builder.Properties<Money>()
                .HaveConversion<MoneyConverter>();
-
-
     }
 
     private static void ApplySoftDeleteQueryFilterOnAllMembersOfISoftDelete(ModelBuilder builder)
@@ -151,7 +147,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
             b.Property(nameof(ICreationAudited.CreatedBy))
              .IsRequired();
 
-            b.HasOne(typeof(Customer))
+            b.HasOne(typeof(AppUser))
              .WithMany()
              .HasForeignKey(nameof(ICreationAudited.CreatedBy))
              .OnDelete(DeleteBehavior.Restrict);
@@ -164,7 +160,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
             b.Property(nameof(IModificationAudited.LastModifiedBy))
              .IsRequired();
             
-            b.HasOne(typeof(Customer))
+            b.HasOne(typeof(AppUser))
              .WithMany()
              .HasForeignKey(nameof(IModificationAudited.LastModifiedBy))
              .OnDelete(DeleteBehavior.Restrict);

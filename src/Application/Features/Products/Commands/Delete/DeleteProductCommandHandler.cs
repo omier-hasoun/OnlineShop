@@ -1,6 +1,6 @@
 namespace Application.Features.Products.Commands.Delete;
 
-public sealed class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, Result<Deleted>>
+internal sealed class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, Result<Deleted>>
 {
     private readonly IAppDbContext _context;
     public DeleteProductCommandHandler(IAppDbContext context)

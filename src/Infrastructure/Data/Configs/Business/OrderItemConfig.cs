@@ -9,7 +9,7 @@ using Infrastructure.Common.EfCore.ValueConverters;
 
 namespace Infrastructure.Data.Configs.Business;
 
-public sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
+internal sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
 {
     public override void Configure(EntityTypeBuilder<OrderItem> builder)
     {

@@ -9,9 +9,18 @@ public readonly record struct BrandId
     public static implicit operator BrandId(Guid value) => new BrandId(value);
     public BrandId(Guid value)
     {
-        if (value.Version != 7 || value == default)
+        if (value == default)
             throw new ArgumentException("BrandId is invalid.", nameof(value));
 
         Value = value;
+    }
+
+    public static BrandId Parse(string value)
+    {
+        if(Guid.TryParse(value, out var brandId))
+        {
+            return new BrandId(brandId);
+        }
+        throw new ArgumentException("BrandId is invalid.", nameof(value));
     }
 }

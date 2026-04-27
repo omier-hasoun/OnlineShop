@@ -1,15 +1,16 @@
 
 
-
 namespace Infrastructure.Data.Interceptors;
 
 internal sealed class AuditedEntitySaveChangesInterceptor : SaveChangesInterceptor
 {
     private readonly IUserContext _user;
+    private readonly TimeProvider _time;
 
-    public AuditedEntitySaveChangesInterceptor(IUserContext user)
+    public AuditedEntitySaveChangesInterceptor(IUserContext user, TimeProvider time)
     {
         _user = user;
+        _time = time;
     }
 
     public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken ct = default)
@@ -22,17 +23,16 @@ internal sealed class AuditedEntitySaveChangesInterceptor : SaveChangesIntercept
     {
         if (eventData.Context is null) return;
 
-        var utcNow = TimeService.UtcNow;
-        var userId = _user.Id;
-
         var entries = eventData.Context.ChangeTracker.Entries()
             .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+
 
         foreach (var entry in entries)
         {
             var isAdded = entry.State == EntityState.Added;
             var isModified = entry.State == EntityState.Modified;
 
+            var utcNow = _time.GetUtcNow().DateTime;
             
             if (entry.Entity is IHasCreationTime cTime && isAdded)
                 cTime.CreatedAt = utcNow;
@@ -41,10 +41,10 @@ internal sealed class AuditedEntitySaveChangesInterceptor : SaveChangesIntercept
                 mTime.LastModifiedAt = utcNow;
 
             if (entry.Entity is ICreationAudited cUser && isAdded)
-                cUser.CreatedBy = userId;
+                cUser.CreatedBy = _user.Id;
 
             if (entry.Entity is IModificationAudited mUser && (isAdded || isModified))
-                mUser.LastModifiedBy = userId;
+                mUser.LastModifiedBy = _user.Id;
         }
     }
 }

@@ -1,5 +1,5 @@
 
-using Domain.Common.EntitiesRules;
+using Domain.Common.Rules;
 using Domain.Orders.OrderItems;
 using Domain.ReturnItemRequests;
 

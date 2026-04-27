@@ -1,14 +1,14 @@
 using System.Text.Json;
 using Domain.Brands;
 using Domain.Categories;
-using Domain.Common.EntitiesRules;
+using Domain.Common.Rules;
 using Domain.Products;
 using Infrastructure.Common.EfCore.ValueComparers;
 using Infrastructure.Common.EfCore.ValueConverters;
 
 namespace Infrastructure.Data.Configs.Business;
 
-public sealed class ProductConfig : BaseEntityConfig<Product>
+internal sealed class ProductConfig : BaseEntityConfig<Product>
 {
 
     public override void Configure(EntityTypeBuilder<Product> builder)
@@ -36,30 +36,25 @@ public sealed class ProductConfig : BaseEntityConfig<Product>
                .HasMaxLength(ProductRules.MaxDescriptionLength)
                .IsRequired();
 
-        builder.Property(x => x.AverageRating)
-               .HasColumnType("FLOAT")
-               .IsRequired();
+        builder.OwnsOne(x => x.AverageRating, lb =>
+        {
 
-
-        builder.Property(x => x.DefaultDiscountPrice)
-               .IsRequired();
-
-        builder.Property(x => x.DefaultOriginalPrice)
-               .IsRequired();
-
-        builder.Property(x => x.DefaultDiscountPercentage)
-               .HasColumnType("TINYINT")
-               .IsRequired();
-
-        builder.Property(x => x.MaxQuantityPerCustomer)
-               .HasColumnType("SMALLINT")
-               .IsRequired();
+            lb.Property(x => x.Value)
+                .HasColumnType("FLOAT")
+                .HasColumnName("AverageRating")
+                .IsRequired();
+        });
 
         builder.Property("_attributes")
                .HasColumnName("Attributes")
                .HasColumnType("NVARCHAR(3000)")
-               .HasConversion<JsonConverter<List<string>>>(new JsonListValueComparer())
+               .HasConversion<JsonConverter<Dictionary<string, string>>>(new JsonDictionaryValueComparer())
                .IsRequired(false);
+
+        builder.Property(x => x.Status)
+               .HasColumnType("VARCHAR(50)")
+               .HasConversion<string>()
+               .IsRequired();
 
         builder.HasOne<Brand>()
                .WithMany()
@@ -74,7 +69,6 @@ public sealed class ProductConfig : BaseEntityConfig<Product>
         builder.ToTable("Products", x =>
         {
             x.HasCheckConstraint("CK_Product_AverageRating", $"[AverageRating] between {ProductRules.MinAverageRatingValue} and {ProductRules.MaxAverageRatingValue}");
-            x.HasCheckConstraint("CK_Product_MaxQuantityPerCustomer", $"[MaxQuantityPerCustomer]  between {ProductRules.MinValueOf_MaxQuantityPerCustomer} and {ProductRules.MaxValueOf_MaxQuantityPerCustomer}");
 
         });
     }

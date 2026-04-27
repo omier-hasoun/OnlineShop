@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <Folder Include="Brands\Services\" />
-    <Folder Include="Common\Exceptions\" />
   </ItemGroup>
 
 </Project>

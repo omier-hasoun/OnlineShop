@@ -1,10 +1,10 @@
-using Domain.Common.EntitiesRules;
+using Domain.Common.Rules;
 using Domain.Orders;
 using Domain.Orders.Shipments;
 
 namespace Infrastructure.Data.Configs.Business;
 
-public sealed class ShipmentConfig : BaseEntityConfig<Shipment>
+internal sealed class ShipmentConfig : BaseEntityConfig<Shipment>
 {
     public override void Configure(EntityTypeBuilder<Shipment> builder)
     {

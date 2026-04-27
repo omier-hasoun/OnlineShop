@@ -1,0 +1,8 @@
+/* Visual Studio Settings File */
+{
+  "textEditor.advanced.responsiveCompletion": false,
+  "textEditor.codeCompletions.general.codeCompletionsProviders": [],
+  "textEditor.codeCompletions.preferences.showCodeCompletionsOnNewLines": false,
+  "textEditor.codeCompletions.preferences.acceptPartialSuggestionWord": false,
+  "textEditor.codeCompletions.preferences.acceptPartialSuggestionLine": false
+}

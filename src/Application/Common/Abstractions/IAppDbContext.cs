@@ -9,7 +9,6 @@ using Domain.Orders.OrderItems;
 using Domain.Orders.Shipments;
 using Domain.PaymentProviders;
 using Domain.ProductReviews;
-using Domain.Products.ProductImages;
 using Domain.Products.ProductVariants;
 using Domain.ProductsStock;
 using Domain.ReturnItemRequestsReviews;
@@ -30,7 +29,6 @@ public interface IAppDbContext
     DbSet<Order> Orders {get; }
     DbSet<OrderItem> OrderItems {get; }
     DbSet<ProductReview> ProductReviews {get; }
-    DbSet<ProductImage> ProductImages {get; }
     DbSet<Product> Products {get; }
     DbSet<ProductVariant> ProductVariants { get; }
     DbSet<Brand> Brands { get; }

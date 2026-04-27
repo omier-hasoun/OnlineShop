@@ -4,7 +4,7 @@ using Domain.Customers.CustomerShippingAddresses;
 
 namespace Infrastructure.Data.Configs.Business;
 
-public sealed class CustomerShippingAddressConfig : BaseEntityConfig<CustomerShippingAddress>
+internal sealed class CustomerShippingAddressConfig : BaseEntityConfig<CustomerShippingAddress>
 {
     public override void Configure(EntityTypeBuilder<CustomerShippingAddress> builder)
     {

@@ -15,7 +15,6 @@ public sealed class UserTokenConfig : IEntityTypeConfiguration<UserToken>
                .HasColumnType("VARCHAR(100)")
                .IsRequired();
 
-        
         builder.Property(x => x.LoginProvider)
                .HasColumnType("VARCHAR(255)")
                .IsRequired();

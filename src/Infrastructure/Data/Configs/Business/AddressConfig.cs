@@ -1,11 +1,11 @@
 
 using Domain.Common.Entities.Addresses;
-using Domain.Common.EntitiesRules;
+using Domain.Common.Rules;
 
 
 namespace Infrastructure.Data.Configs.Business;
 
-public sealed class AddressConfig : BaseEntityConfig<Address>
+internal sealed class AddressConfig : BaseEntityConfig<Address>
 {
     public override void Configure(EntityTypeBuilder<Address> builder)
     {

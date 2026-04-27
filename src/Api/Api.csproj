@@ -11,7 +11,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.6" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.6" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
-        <PackageReference Include="Scalar.AspNetCore" Version="2.14.1" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.14.4" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.6" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.6" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.6">
@@ -27,13 +27,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="HTTP\Controllers\Categories\" />
-      <Folder Include="HTTP\Controllers\Brands\" />
-      <Folder Include="HTTP\Controllers\Orders\" />
-      <Folder Include="HTTP\Controllers\Users\" />
-      <Folder Include="HTTP\MinimalApis\" />
-      <Folder Include="HTTP\Respones\" />
-      <Folder Include="HTTP\Requests\" />
+      <Folder Include="Common\Helpers\" />
+      <Folder Include="Controllers\Categories\" />
+      <Folder Include="Controllers\Orders\" />
+      <Folder Include="Controllers\Products\Responses\" />
+      <Folder Include="Controllers\Users\" />
     </ItemGroup>
 
 </Project>

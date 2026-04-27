@@ -1,6 +1,6 @@
 
 using Domain.Categories;
-using Domain.Common.EntitiesRules;
+using Domain.Common.Rules;
 
 namespace Infrastructure.Data.Configs.Business;
 
@@ -23,7 +23,7 @@ internal sealed class CategoryConfig : BaseEntityConfig<Category>
                .WithMany()
                .HasForeignKey(x => x.ParentCategoryId);
 
-        builder.ToTable("Categorys");
+        builder.ToTable("Categories");
 
     }
 }

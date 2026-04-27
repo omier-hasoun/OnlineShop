@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Data.Configs.Identity;
 
-public sealed class AppUserConfig : BaseEntityConfig<AppUser>
+internal sealed class AppUserConfig : BaseEntityConfig<AppUser>
 {
     public override void Configure(EntityTypeBuilder<AppUser> builder)
     {
@@ -28,11 +28,11 @@ public sealed class AppUserConfig : BaseEntityConfig<AppUser>
                .IsRequired(false);
 
         builder.Property(x => x.ConcurrencyStamp)
-               .HasConversion<Guid>(x => Guid.Parse(x!), x => x.ToString())
+               .HasColumnType("VARCHAR(50)")
                .IsRequired();
 
         builder.Property(x => x.SecurityStamp)
-               .HasConversion<Guid>(x => Guid.Parse(x!), x => x.ToString())
+               .HasColumnType("VARCHAR(50)")
                .IsRequired();
 
         builder.Property(x => x.LockoutEnabled)

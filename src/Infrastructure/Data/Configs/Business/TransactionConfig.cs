@@ -4,7 +4,7 @@ using Domain.Transactions;
 
 namespace Infrastructure.Data.Configs.Business;
 
-public sealed class TransactionConfig : BaseEntityConfig<Transaction>
+internal sealed class TransactionConfig : BaseEntityConfig<Transaction>
 {
     public override void Configure(EntityTypeBuilder<Transaction> builder)
     {

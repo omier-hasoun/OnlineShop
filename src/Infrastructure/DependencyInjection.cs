@@ -2,13 +2,17 @@
 using Domain.Customers;
 using Domain.Orders;
 using Domain.Products;
+using FileSignatures;
 using IdGen;
-using Infrastructure.AppIdGenerators;
-using Infrastructure.AppIdGenerators.Primitives;
 using Infrastructure.BackgroundServices;
 using Infrastructure.Common.Abstractions;
 using Infrastructure.Common.Exceptions;
+using Infrastructure.Data.IdGenerators;
+using Infrastructure.Data.IdGenerators.Primitives;
 using Infrastructure.Data.Interceptors;
+using Infrastructure.LocalServices.FileStorageService;
+using Infrastructure.LocalServices.FileValidationService;
+using Infrastructure.LocalServices.HashingService;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore.Diagnostics.Internal;
@@ -27,7 +31,8 @@ public static class DependencyInjection
                 .AddEfCoreServices(config, enviroment)
                 .AddIdGenServices(config)
                 .AddIdGeneratorsServices()
-
+                .AddIdentityServices(config, env: enviroment)
+                .AddFileSignaturesServices()
 
 
                 ;
@@ -37,6 +42,8 @@ public static class DependencyInjection
 
     private static IServiceCollection AddCustomServices(this IServiceCollection services)
     {
+        services.AddScoped<IFileValidationService, FileValidator>();
+        services.AddScoped<IFileStorageService, LocalFileStorage>();
 
         return services;
     }
@@ -73,6 +80,40 @@ public static class DependencyInjection
 
 
 
+        return services;
+    }
+    private static void GetIdentityOptions(IdentityOptions options, IConfiguration config)
+    {
+        var identitySection = config.GetSection("IdentityOptions");
+
+        identitySection.GetSection("Lockout").Bind(options.Lockout);
+        identitySection.GetSection("Password").Bind(options.Password);
+        identitySection.GetSection("SignIn").Bind(options.SignIn);
+        identitySection.GetSection("User").Bind(options.User);
+        identitySection.GetSection("ClaimsIdentity").Bind(options.ClaimsIdentity);
+    }
+
+    private static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config, IWebHostEnvironment env)
+    {
+
+
+
+
+        services.AddIdentityCore<AppUser>((options) => GetIdentityOptions(options, config))
+        .AddRoles<Role>()
+        .AddEntityFrameworkStores<AppDbContext>()
+        .AddApiEndpoints()
+        .AddDefaultTokenProviders()
+        ;
+
+        services.AddTransient<IEmailSender<AppUser>, EmailSenderFaker>();
+        services.AddScoped<IPasswordHasher<AppUser>, UserPasswordHasher>();
+
+        return services;
+    }
+    private static IServiceCollection AddFileSignaturesServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IFileFormatInspector, FileFormatInspector>();
         return services;
     }
 

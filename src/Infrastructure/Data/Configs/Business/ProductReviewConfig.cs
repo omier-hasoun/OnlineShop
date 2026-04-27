@@ -1,11 +1,11 @@
-using Domain.Common.EntitiesRules;
+using Domain.Common.Rules;
 using Domain.Customers;
 using Domain.ProductReviews;
 using Domain.Products;
 
 namespace Infrastructure.Data.Configs.Business;
 
-public sealed class ProductReviewConfig : BaseEntityConfig<ProductReview>
+internal sealed class ProductReviewConfig : BaseEntityConfig<ProductReview>
 {
     public override void Configure(EntityTypeBuilder<ProductReview> builder)
     {

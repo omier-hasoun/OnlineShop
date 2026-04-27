@@ -13,4 +13,4 @@ global using System.Security.Claims;
 global using Domain.Orders;
 global using Domain.Orders.OrderPayments;
 global using Domain.Products;
-global using Domain.Common.EntitiesRules;
+global using Domain.Common.Rules;

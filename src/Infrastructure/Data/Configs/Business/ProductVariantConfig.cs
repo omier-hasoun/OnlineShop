@@ -1,7 +1,8 @@
 
-using Domain.Common.EntitiesRules;
+using Domain.Common.Rules;
 using Domain.Products;
 using Domain.Products.ProductVariants;
+using Domain.Products.ValueObjects;
 using Infrastructure.Common.EfCore.ValueComparers;
 using Infrastructure.Common.EfCore.ValueConverters;
 
@@ -13,9 +14,8 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
     {
         base.Configure(builder);
 
-        builder.Ignore(x => x.Slug);
         builder.Ignore(x => x.Specifications);
-
+        builder.Ignore(x => x.Images);
 
         builder.HasKey(x => x.Id);
 
@@ -28,24 +28,46 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
                .HasMaxLength(ProductVariantRules.MaxSkuLength)
                .IsRequired();
 
+        builder.Property(x => x.Slug)
+               .HasColumnType("VARCHAR(80)")
+               .IsRequired();
+
+        builder.Property(x => x.BarCode)
+               .HasColumnType("VARCHAR(100)")
+               .IsRequired();
+
         builder.Property(x => x.DiscountPercentage)
                .HasColumnType("TINYINT")
                .IsRequired();
 
-        builder.Property(x => x.DiscountPrice)
+        builder.Property(x => x.Status)
+               .HasColumnType("VARCHAR(50)")
+               .HasConversion<string>()
+               .IsRequired();
+
+        builder.Property(x => x.PriceNow)
                .IsRequired();
 
         builder.Property(x => x.OriginalPrice)
                .IsRequired();
+
+//        var comparer = new ValueComparer<List<ProductImage>>(
+//    (a, b) => a!.SequenceEqual(b!),
+//    v => v.Aggregate(0, (hash, img) => HashCode.Combine(hash, img.GetHashCode())),
+//    v => v.Select(i => new ProductImage(i.FilePath, i.SortOrder)).ToList()
+//);
+
+        builder.OwnsMany(x => x.Images, b =>
+        {
+            b.ToJson();
+        });
+
 
         builder.Property("_specifications")
                .HasColumnName("Specifications")
                .HasColumnType("NVARCHAR(3000)")
                .HasConversion<JsonConverter<Dictionary<string, string>>>(new JsonDictionaryValueComparer())
                .IsRequired(false);
-
-        builder.HasIndex(x => x.Sku)
-               .IsUnique();
 
         builder.HasOne<Product>()
                .WithMany(x => x.Variants)
@@ -56,7 +78,6 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
         {
             x.HasCheckConstraint("CK_ProductVariant_DiscountPercentage", $"[DiscountPercentage] between {ProductVariantRules.MinDiscountPercentageValue} and {ProductVariantRules.MaxDiscountPercentageValue}");
             x.HasCheckConstraint("CK_ProductVariant_OriginalPrice", $"[OriginalPrice] between {ProductVariantRules.MinOriginalPriceValue} and {ProductVariantRules.MaxOriginalPriceValue}");
-            x.HasCheckConstraint("CK_ProductVariant_DiscountPrice", $"[DiscountPrice] between {ProductVariantRules.MinDiscountPriceValue} and {ProductVariantRules.MaxDiscountPriceValue}");
 
         });
     }

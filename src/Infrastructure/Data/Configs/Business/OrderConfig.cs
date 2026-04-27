@@ -3,7 +3,7 @@ using Domain.Orders;
 
 namespace Infrastructure.Data.Configs.Business;
 
-public sealed class OrderConfig : BaseEntityConfig<Order>
+internal sealed class OrderConfig : BaseEntityConfig<Order>
 {
     public override void Configure(EntityTypeBuilder<Order> builder)
     {

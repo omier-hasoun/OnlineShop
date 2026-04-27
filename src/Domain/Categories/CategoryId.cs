@@ -14,4 +14,12 @@ public readonly record struct CategoryId
         Value = value;
     }
 
+    public static CategoryId Parse(string value)
+    {
+        if(ulong.TryParse(value,out ulong categoryId))
+        {
+            return new CategoryId((long)categoryId);
+        }
+        throw new ArgumentException("CategoryId is invalid.", nameof(value));
+    }
 }
