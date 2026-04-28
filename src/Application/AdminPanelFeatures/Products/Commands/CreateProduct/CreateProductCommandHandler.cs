@@ -1,7 +1,5 @@
 
 using Application.Common.Exceptions;
-using Domain.Brands;
-using Domain.Categories;
 
 namespace Application.AdminPanelFeatures.Products.Commands.CreateProduct;
 
@@ -14,8 +12,8 @@ internal sealed class CreateProductCommandHandler(IAppDbContext context, IIdGene
 
         var createProductResult = Product.Create(
             productId,
-            BrandId.Parse(request.BrandId),
-            CategoryId.Parse(request.CategoryId),
+            request.BrandId,
+            request.CategoryId,
             request.Title,
             request.Description,
             request.IsSerialized,

@@ -15,7 +15,7 @@ internal sealed class OrderConfig : BaseEntityConfig<Order>
                .ValueGeneratedNever()
                .HasConversion(
                    id => id.Value,
-                   value => new OrderId(value)
+                   value => OrderId.From(value).Value
                );
 
         builder.Property(x => x.TotalItemsPrice)

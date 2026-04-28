@@ -1,20 +1,26 @@
 
-using Domain.Common.Exceptions;
 
 namespace Domain.Products.ValueObjects;
 
 public sealed record AverageRating
 {
-    public AverageRating(float value)
+    internal AverageRating()
     {
-        if(ValidationHelper.IsOutOfRange((decimal)value, ProductRules.MinAverageRatingValue, ProductRules.MaxAverageRatingValue))
-        {
-            throw new InvalidProductAverageRatingException(value);
-        }
-
-        Value = value;
+        
     }
 
-    public float Value { get; }
+    public float Value { get; internal init; } = 0;
 
+    public static Result<AverageRating> From(float value)
+    {
+        if (ValidationHelper.IsOutOfRange(value, ProductRules.MinAverageRatingValue, ProductRules.MaxAverageRatingValue))
+        {
+            return DomainErrors.Products.AverageRatingInvalid;
+        }
+
+        return new AverageRating()
+        {
+            Value = value
+        };
+    }
 }

@@ -17,20 +17,13 @@ public readonly record struct ProductReviewId
     public static implicit operator long(ProductReviewId productReviewId) => productReviewId.Value;
     public static implicit operator ProductReviewId(long value) => new (value);
 
-    public static ProductReviewId Parse(string value)
+    public static Result<ProductReviewId> From(long value)
     {
-        if (TryParse(value, out var id))
-            return id;
-        throw new ArgumentException("ProductReviewId is invalid.", nameof(value));
-    }
-    public static bool TryParse(string value, out ProductReviewId id)
-    {
-        if (long.TryParse(value, out var brandId))
+        if (value <= 0)
         {
-            id = new ProductReviewId(brandId);
-            return true;
+            return new ProductReviewId(value);
         }
-        id = new();
-        return false;
+
+        return DomainErrors.ProductReviews.ProductReviewIdInvalid;
     }
 }

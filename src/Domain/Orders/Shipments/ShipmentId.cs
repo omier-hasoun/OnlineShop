@@ -7,12 +7,20 @@ public readonly record struct ShipmentId
 
     public static implicit operator long(ShipmentId shipmentId) => shipmentId.Value;
     public static implicit operator ShipmentId(long value) => new(value);
-    public ShipmentId(long value)
+    internal ShipmentId(long value)
     {
-        if (value <= 0)
-            throw new ArgumentException("CategoryId is invalid.", nameof(value));
 
         Value = value;
+    }
+
+    public static Result<ShipmentId> From(long value)
+    {
+        if (value <= 0)
+        {
+            return new ShipmentId(value);
+        }
+
+        return DomainErrors.Categories.CategoryIdInvalid;
     }
 }
 

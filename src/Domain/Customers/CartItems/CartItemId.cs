@@ -9,26 +9,16 @@ public readonly record struct CartItemId
 
     public CartItemId(long value)
     {
-        if (value <= 0)
-            throw new ArgumentException("CartItemId cannot be 0.", nameof(value));
-
         Value = value;
     }
 
-    public static CartItemId Parse(string value)
+    public static Result<CartItemId> From(long value)
     {
-        if (TryParse(value, out var id))
-            return id;
-        throw new ArgumentException("CartItemId is invalid.", nameof(value));
-    }
-    public static bool TryParse(string value, out CartItemId id)
-    {
-        if (long.TryParse(value, out var brandId))
+        if (value <= 0)
         {
-            id = new CartItemId(brandId);
-            return true;
+            return new CartItemId(value);
         }
-        id = new();
-        return false;
+
+        return DomainErrors.CartItems.CartItemIdInvalid;
     }
 }

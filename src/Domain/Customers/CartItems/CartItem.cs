@@ -14,7 +14,7 @@ public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
     public static Result<CartItem> Create(CartItemId id, CustomerId customerId, ProductVariantId productVariantId, short quantity)
     {
 
-        if (quantity < CartItemRules.MinQuantityValue || quantity > CartItemRules.MaxQuantityValue)
+        if (quantity < CartItemRules.MinQuantity || quantity > CartItemRules.MaxQuantityForSerializedProducts)
         {
             return DomainErrors.CartItems.QuantityOutOfRange;
         }

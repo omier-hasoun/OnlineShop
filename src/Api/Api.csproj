@@ -40,5 +40,15 @@
       <Folder Include="wwwroot\uploads\products\images\original\" />
       <Folder Include="wwwroot\uploads\products\reporsts\" />
     </ItemGroup>
+    
+    <PropertyGroup>
+        <!--<PublishAot>true</PublishAot>
 
+        <TrimMode>full</TrimMode>
+
+        <StackTraceSupport>false</StackTraceSupport>-->
+        <InvariantGlobalization>false</InvariantGlobalization>
+        <OptimizationPreference>Size</OptimizationPreference>
+        <ServerGarbageCollection>false</ServerGarbageCollection>
+    </PropertyGroup>
 </Project>

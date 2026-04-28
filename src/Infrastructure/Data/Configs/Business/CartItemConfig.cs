@@ -46,7 +46,6 @@ internal sealed class CartItemConfig : BaseEntityConfig<CartItem>
 
         builder.ToTable("CartItems", x =>
         {
-            x.HasCheckConstraint("CK_CartItems_Quantity", $"[Quantity] between {CartItemRules.MinQuantityValue} and {CartItemRules.MaxQuantityValue}");
         });
 
     }

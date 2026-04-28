@@ -16,21 +16,14 @@ public readonly record struct TransactionId
         Value = value;
     }
 
-    public static TransactionId Parse(string value)
+    public static Result<CategoryId> From(long value)
     {
-        if (TryParse(value, out var id))
-            return id;
-        throw new ArgumentException("TransactionId is invalid.", nameof(value));
-    }
-    public static bool TryParse(string value, out TransactionId id)
-    {
-        if (long.TryParse(value, out var brandId))
+        if (value <= 0)
         {
-            id = new TransactionId(brandId);
-            return true;
+            return new CategoryId(value);
         }
-        id = new();
-        return false;
+
+        return DomainErrors.Categories.CategoryIdInvalid;
     }
 }
 

@@ -6,31 +6,21 @@ public readonly record struct ProductStockId
 {
     public long Value { get; }
 
-    public ProductStockId(long value)
+    internal ProductStockId(long value)
     {
-        if (value <= 0)
-            throw new ArgumentException("ProductStockId is invalid.", nameof(value));
-
         Value = value;
     }
 
     public static implicit operator long(ProductStockId productStockId) => productStockId.Value;
     public static implicit operator ProductStockId(long value) => new ProductStockId(value);
 
-    public static ProductStockId Parse(string value)
+    public static Result<ProductStockId> From(long value)
     {
-        if (TryParse(value, out var id))
-            return id;
-        throw new ArgumentException("ProductStockId is invalid.", nameof(value));
-    }
-    public static bool TryParse(string value, out ProductStockId id)
-    {
-        if (long.TryParse(value, out var brandId))
+        if (value <= 0)
         {
-            id = new ProductStockId(brandId);
-            return true;
+            return new ProductStockId(value);
         }
-        id = new();
-        return false;
+
+        return DomainErrors.Categories.CategoryIdInvalid;
     }
 }

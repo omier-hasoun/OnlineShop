@@ -9,7 +9,7 @@ public readonly record struct AddressId
     public AddressId(long value)
     {
         if (value <= 0)
-            throw new ArgumentException("AddressId must be a positive integer.", nameof(value));
+            throw new ArgumentException("AddressId is Invalid.", nameof(value));
 
         Value = value;
     }

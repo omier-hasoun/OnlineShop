@@ -37,7 +37,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
         //defaults
         byte discountPercentage = 0;
         Money priceNow = originalPrice;
-        ProductStatus status = ProductStatus.Archived;
+        ProductStatus status = ProductStatus.NotActive;
         
         return new ProductVariant(id, productId, originalPrice, priceNow, discountPercentage, status,
             width, height, length, weight, sku, slug, barCode, specifications);

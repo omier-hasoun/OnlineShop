@@ -22,3 +22,4 @@ global using Domain.Customers;
 global using Domain.Customers.CartItems;
 global using Domain.Orders.Shipments;
 global using Domain.ReturnItemRequests;
+global using Domain;

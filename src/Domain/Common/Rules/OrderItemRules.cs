@@ -3,8 +3,8 @@ namespace Domain.Common.Rules;
 
 public static class OrderItemRules
 {
-    public const byte MinQuantityValue = ProductRules.MinValueOf_MaxQuantityPerCustomer;
-    public const short MaxQuantityValue = ProductRules.MaxValueOf_MaxQuantityPerCustomer;
+    public const byte MinQuantityValue = 1;
+    public const short MaxQuantityValue = 1000;
 
     public const byte MinUnitPriceValue = ProductVariantRules.MinOriginalPriceValue;
     public const int MaxUnitPriceValue = ProductVariantRules.MaxOriginalPriceValue;

@@ -10,27 +10,17 @@ public readonly record struct CustomerId
     public static implicit operator Guid(CustomerId userId) => userId.Value;
     public static implicit operator CustomerId(Guid value) => new CustomerId(value);
 
-    public CustomerId(Guid value)
+    internal CustomerId(Guid value)
     {
-        if (value.Version != 7 || value == default)
-            throw new ArgumentException("CustomerId is invalid.", nameof(value));
-
         Value = value;
     }
-    public static CustomerId Parse(string value)
+    public static Result<CustomerId> From(Guid value)
     {
-        if (TryParse(value, out var id))
-            return id;
-        throw new ArgumentException("CustomerId is invalid.", nameof(value));
-    }
-    public static bool TryParse(string value, out CustomerId id)
-    {
-        if (Guid.TryParse(value, out var brandId))
+        if (value.Version == 7)
         {
-            id = new CustomerId(brandId);
-            return true;
+            return new CustomerId(value);
         }
-        id = new();
-        return false;
+
+        return DomainErrors.Customers.CustomerIdInvalid;
     }
 }

@@ -15,20 +15,13 @@ public readonly record struct ReturnItemRequestId
         Value = value;
     }
 
-    public static ReturnItemRequestId Parse(string value)
+    public static Result<BrandId> From(Guid value)
     {
-        if (TryParse(value, out var id))
-            return id;
-        throw new ArgumentException("ReturnItemRequestId is invalid.", nameof(value));
-    }
-    public static bool TryParse(string value, out ReturnItemRequestId id)
-    {
-        if (Guid.TryParse(value, out var brandId))
+        if (value.Version == 7)
         {
-            id = new ReturnItemRequestId(brandId);
-            return true;
+            return new BrandId(value);
         }
-        id = new();
-        return false;
+
+        return DomainErrors.Brands.BrandIdInvalid;
     }
 }

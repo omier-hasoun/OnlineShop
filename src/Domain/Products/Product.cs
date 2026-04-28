@@ -31,12 +31,13 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
         // Add domain validation logic here
 
         //defaults
-        AverageRating averageRating = new (0);
-        DateTime createdAt = DateTime.UtcNow;
-        DateTime lastModifiedAt = createdAt;
-        CustomerId lastModifiedBy = CustomerId.EmptyInstance;
-        CustomerId createdBy = lastModifiedBy;
-        ProductStatus status = ProductStatus.Archived;
+        var averageRating = new AverageRating();//0
+
+        var createdAt = DateTime.UtcNow;
+        var lastModifiedAt = createdAt;
+        var lastModifiedBy = CustomerId.EmptyInstance;
+        var createdBy = lastModifiedBy;
+        var status = ProductStatus.NotActive;
 
         attributes ??= new Dictionary<string,string>();
 

@@ -10,25 +10,18 @@ public readonly record struct CustomerShippingAddressId
     public CustomerShippingAddressId(long value)
     {
         if (value <= 0)
-            throw new ArgumentException("CustomerShippingAddressId must be a positive integer.", nameof(value));
+            throw new ArgumentException("CustomerShippingAddressId is invalid.", nameof(value));
 
         Value = value;
     }
 
-    public static CustomerShippingAddressId Parse(string value)
+    public static Result<CustomerShippingAddressId> From(long value)
     {
-        if (TryParse(value, out var id))
-            return id;
-        throw new ArgumentException("CustomerShippingAddressId is invalid.", nameof(value));
-    }
-    public static bool TryParse(string value, out CustomerShippingAddressId id)
-    {
-        if (long.TryParse(value, out var brandId))
+        if (value <= 0)
         {
-            id = new CustomerShippingAddressId(brandId);
-            return true;
+            return new CustomerShippingAddressId(value);
         }
-        id = new();
-        return false;
+
+        return DomainErrors.CustomerShippingAddresses.CustomerShippingAddressesIdInvalid;
     }
 }

@@ -6,28 +6,18 @@ public readonly record struct CategoryId
 
     public static implicit operator long(CategoryId categoryId) => categoryId.Value;
     public static implicit operator CategoryId(long value) => new(value);
-    public CategoryId(long value)
+    internal CategoryId(long value)
     {
-        if (value <= 0)
-            throw new ArgumentException("CategoryId is invalid.", nameof(value));
-
         Value = value;
     }
 
-    public static CategoryId Parse(string value)
+    public static Result<CategoryId> From(long value)
     {
-        if (TryParse(value, out var id))
-            return id;
-        throw new ArgumentException("CategoryId is invalid.", nameof(value));
-    }
-    public static bool TryParse(string value, out CategoryId id)
-    {
-        if (long.TryParse(value, out var brandId))
+        if (value <= 0)
         {
-            id = new CategoryId(brandId);
-            return true;
+            return new CategoryId(value);
         }
-        id = new();
-        return false;
+
+        return DomainErrors.Categories.CategoryIdInvalid;
     }
 }

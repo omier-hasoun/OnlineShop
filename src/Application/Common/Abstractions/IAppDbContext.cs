@@ -1,5 +1,4 @@
 using Application.Common.Identity;
-using Domain.AppSettings;
 using Domain.Brands;
 using Domain.Categories;
 using Domain.Common.Entities.Addresses;
@@ -17,14 +16,14 @@ using Domain.Transactions;
 using Domain.UsersPaymentMethodsLogs;
 using Domain.Warehouses;
 using Domain.Customers.CustomerShippingAddresses;
+using Application.Common.AppSettingsConfiguration;
 
 namespace Application.Common.Abstractions;
 
 public interface IAppDbContext
 
 {
-    public DbSet<AppUser> Users {get; }
-
+    DbSet<AppUser> Users {get; }
     DbSet<Order> Orders {get; }
     DbSet<OrderItem> OrderItems {get; }
     DbSet<ProductReview> ProductReviews {get; }

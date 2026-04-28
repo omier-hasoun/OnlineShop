@@ -9,9 +9,6 @@ public static class ProductVariantRules
     public const byte MaxDiscountPercentageValue = 80;// max discount is 80 percent
     public const byte MinDiscountPercentageValue = 0;// 0 when no discount is applied
 
-    public const byte MinDiscountPriceValue = MinOriginalPriceValue;
-    public const int MaxDiscountPriceValue = 499_500;
-
     public const byte MinSkuLength = 8;
     public const byte MaxSkuLength = 50;
 

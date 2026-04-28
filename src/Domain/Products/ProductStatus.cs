@@ -3,8 +3,8 @@ namespace Domain.Products;
 
 public enum ProductStatus
 {
-    Draft = 1,
-    IsActive = 2,
-    IsInActive = 3,
+
+    Active = 2,
+    NotActive = 3,
     Archived = 4,
 }

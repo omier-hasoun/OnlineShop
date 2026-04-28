@@ -6,7 +6,7 @@ public readonly record struct UserPaymentMethodLogId
     public long Value { get; }
 
     public static implicit operator long(UserPaymentMethodLogId userPaymentMethodLogId) => userPaymentMethodLogId.Value;
-    public static implicit operator UserPaymentMethodLogId(long value) => new UserPaymentMethodLogId(value);
+    public static implicit operator UserPaymentMethodLogId(long value) => new(value);
     public UserPaymentMethodLogId(long value)
     {
         if (value <= 0)
@@ -15,20 +15,13 @@ public readonly record struct UserPaymentMethodLogId
         Value = value;
     }
 
-    public static UserPaymentMethodLogId Parse(string value)
+    public static Result<UserPaymentMethodLogId> From(long value)
     {
-        if (TryParse(value, out var id))
-            return id;
-        throw new ArgumentException("UserPaymentMethodLogId is invalid.", nameof(value));
-    }
-    public static bool TryParse(string value, out UserPaymentMethodLogId id)
-    {
-        if (long.TryParse(value, out var brandId))
+        if (value <= 0)
         {
-            id = new UserPaymentMethodLogId(brandId);
-            return true;
+            return new UserPaymentMethodLogId(value);
         }
-        id = new();
-        return false;
+
+        return DomainErrors.Categories.CategoryIdInvalid;
     }
 }

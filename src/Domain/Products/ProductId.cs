@@ -14,20 +14,13 @@ public readonly record struct ProductId
         Value = value;
     }
 
-    public static ProductId Parse(string value)
+    public static Result<CategoryId> From(long value)
     {
-        if (TryParse(value, out var id))
-            return id;
-        throw new ArgumentException("ProductId is invalid.", nameof(value));
-    }
-    public static bool TryParse(string value, out ProductId id)
-    {
-        if (long.TryParse(value, out var brandId))
+        if (value <= 0)
         {
-            id = new ProductId(brandId);
-            return true;
+            return new CategoryId(value);
         }
-        id = new();
-        return false;
+
+        return DomainErrors.Categories.CategoryIdInvalid;
     }
 }

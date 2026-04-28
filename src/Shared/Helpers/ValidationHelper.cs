@@ -22,7 +22,11 @@ public static class ValidationHelper
     {
         return value < min || value > max;
     }
-     public static bool IsOutOfRange(int value, int min, int max)
+    public static bool IsOutOfRange(float value, float min, float max)
+    {
+        return value < min || value > max;
+    }
+    public static bool IsOutOfRange(int value, int min, int max)
     {
         return value < min || value > max;
     }

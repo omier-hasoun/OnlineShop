@@ -3,19 +3,26 @@ namespace Domain.Common.ValueObjects;
 
 public sealed record Money
 {
-    public const long MaxValue = 10_000_000_000;
+    public const decimal MaxValue = 1_000_000;
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="value"></param>
-    public Money(decimal value)
+    internal Money()
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(value, 0, nameof(value));
-
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(value, MaxValue, nameof(value));
-        Value = value;
+        
     }
 
-    public decimal Value { get; }
+
+    public static Result<Money> From(decimal value)
+    {
+        if(ValidationHelper.IsOutOfRange(value, 0, MaxValue))
+        {
+            return DomainErrors.Common.MoneyAmountInvalid;
+        }
+
+        return new Money()
+        {
+            Value = value
+        };
+    }
+    public decimal Value { get; internal init; }
+
 }

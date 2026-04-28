@@ -14,20 +14,13 @@ public readonly record struct PaymentProviderId
 
         Value = value;
     }
-    public static PaymentProviderId Parse(string value)
+    public static Result<BrandId> From(Guid value)
     {
-        if (TryParse(value, out var id))
-            return id;
-        throw new ArgumentException("PaymentProviderId is invalid.", nameof(value));
-    }
-    public static bool TryParse(string value, out PaymentProviderId id)
-    {
-        if (Guid.TryParse(value, out var brandId))
+        if (value.Version == 7)
         {
-            id = new PaymentProviderId(brandId);
-            return true;
+            return new BrandId(value);
         }
-        id = new();
-        return false;
+
+        return DomainErrors.Brands.BrandIdInvalid;
     }
 }

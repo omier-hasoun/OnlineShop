@@ -1,8 +1,10 @@
-using Application.Common.RequestModels;
+
+using Domain.Brands;
+using Domain.Categories;
 
 namespace Application.AdminPanelFeatures.Products.Commands.CreateProduct;
 
 public sealed record CreateProductCommand(
-string BrandId, string CategoryId, string Title, string Description,
-bool IsSerialized, IReadOnlyDictionary<string, string> Attributes
+BrandId BrandId, CategoryId CategoryId, string Title, string Description,
+bool IsSerialized, IReadOnlyDictionary<string, string>? Attributes
 ) : IRequest<Result<long>>;

@@ -13,7 +13,7 @@ internal sealed class BrandConfig : BaseEntityConfig<Brand>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-               .HasConversion(id => id.Value, value => new BrandId(value))
+               .HasConversion(id => id.Value, value => BrandId.From(value).Value)
                .ValueGeneratedNever();
 
         builder.Property(x => x.CompanyName)

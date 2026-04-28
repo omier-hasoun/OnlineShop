@@ -6,29 +6,20 @@ public readonly record struct BrandId
     public Guid Value { get; init; }
 
     public static implicit operator Guid(BrandId brandId) => brandId.Value;
-    public static implicit operator BrandId(Guid value) => new BrandId(value);
-    public BrandId(Guid value)
+    public static implicit operator BrandId(Guid value) => new(value);
+    internal BrandId(Guid value)
     {
-        if (value == default)
-            throw new ArgumentException("BrandId is invalid.", nameof(value));
-
         Value = value;
     }
 
-    public static BrandId Parse(string value)
+    public static Result<BrandId> From(Guid value)
     {
-        if (TryParse(value, out var id))
-            return id;
-        throw new ArgumentException("BrandId is invalid.", nameof(value));
-    }
-    public static bool TryParse(string value, out BrandId id)
-    {
-        if (Guid.TryParse(value, out var brandId))
+        if (value.Version == 7)
         {
-            id = new BrandId(brandId);
-            return true;
+            return new BrandId(value);
         }
-        id = new();
-        return false;
+
+        return DomainErrors.Brands.BrandIdInvalid;
     }
+
 }

@@ -6,6 +6,7 @@ using Shared.Results;
 namespace Api.Controllers;
 
 [ApiController]
+[Route("api/")]
 public class ApiController : ControllerBase
 {
     protected ActionResult Problem(List<Error> errors)

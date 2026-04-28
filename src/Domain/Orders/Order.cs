@@ -76,7 +76,7 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
     {
         if (orderItems is null || ValidationHelper.IsOutOfRange(orderItems.Count, OrderRules.MinOrderItemsCount, OrderRules.MaxOrderItemsCount))
         {
-            return DomainErrors.Orders.OrderItemsCountOutOfRange;
+            return DomainErrors.Orders.OrderItemsNumberOutOfRange;
         }
         return Result.Success;
     }

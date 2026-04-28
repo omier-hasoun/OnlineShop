@@ -5,7 +5,6 @@ using Domain.Orders.OrderPayments;
 using Domain.Orders.OrderItems;
 using Domain.Products.ProductVariants;
 using Domain.Brands;
-using Domain.AppSettings;
 using Domain.Warehouses;
 using Domain.PaymentProviders;
 using Domain.Categories;
@@ -24,6 +23,7 @@ using Domain.ProductsStock;
 using Domain.Common.ValueObjects;
 using Domain.Customers.CustomerShippingAddresses;
 using Domain.Products.ValueObjects;
+using Application.Common.AppSettingsConfiguration;
 
 
 namespace Infrastructure.Data;
@@ -94,7 +94,7 @@ internal sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, User
     protected override void ConfigureConventions(ModelConfigurationBuilder builder)
     {
         builder.Properties<CustomerId>()
-                .HaveConversion<UserIdConverter>();
+                .HaveConversion<CustomerIdConverter>();
 
         builder.Properties<Money>()
                .HaveConversion<MoneyConverter>();

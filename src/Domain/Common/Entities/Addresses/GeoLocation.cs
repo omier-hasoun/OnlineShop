@@ -2,6 +2,10 @@ namespace Domain.Common.Entities.Addresses;
 
 public sealed record GeoLocation
 {
+    internal GeoLocation()
+    {
+        
+    }
     public GeoLocation(decimal latitude, decimal longitude)
     {
         if(latitude < -90 || latitude > 90)

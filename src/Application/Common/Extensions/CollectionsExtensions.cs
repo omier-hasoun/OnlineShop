@@ -1,0 +1,22 @@
+
+using Application.Common.ResponseModels;
+
+namespace Application.Common.Extensions;
+
+public static class CollectionsExtensions
+{
+    public static PaginatedList<TResult> ToPaginatedList<TResult>(this ICollection<TResult> elements, int pageNumber, int totalCount)
+    {
+        ArgumentNullException.ThrowIfNull(elements);
+
+        return new PaginatedList<TResult>()
+        {
+            Items = elements.ToList(),
+            PageNumber = pageNumber,
+            PageSize = elements.Count,
+            TotalCount = totalCount,
+            TotalPages = totalCount / elements.Count
+
+        };
+    }
+}
