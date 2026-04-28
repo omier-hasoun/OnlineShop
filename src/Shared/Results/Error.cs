@@ -19,17 +19,25 @@ public readonly record struct Error
 
     public static Error Failure(string code, string description = "General failure.")
     => new(code, description, ErrorType.Failure);
+
     public static Error Unexpected(string code, string description = "Unexpected error.")
     => new(code, description, ErrorType.Unexpected);
+
     public static Error Unauthorized(string code, string description = "Unauthorized.")
     => new(code, description, ErrorType.Unauthorized);
+
     public static Error Validation(string code, string description = "Validation error.")
     => new(code, description, ErrorType.Validation);
+
     public static Error Forbidden(string code, string description = "Forbidden operation.")
     => new(code, description, ErrorType.Forbidden);
+
     public static Error Conflict(string code, string description = "Conflict error.")
     => new(code, description, ErrorType.Conflict);
+
     public static Error NotFound(string code, string description = "Not Found error.")
     => new(code, description, ErrorType.NotFound);
 
+    public static Error ActionRequired(string code, string description = "An Action is required.")
+    => new(code, description, ErrorType.ActionRequired);
 }

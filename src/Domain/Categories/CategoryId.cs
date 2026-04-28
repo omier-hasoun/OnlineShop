@@ -16,10 +16,18 @@ public readonly record struct CategoryId
 
     public static CategoryId Parse(string value)
     {
-        if(ulong.TryParse(value,out ulong categoryId))
-        {
-            return new CategoryId((long)categoryId);
-        }
+        if (TryParse(value, out var id))
+            return id;
         throw new ArgumentException("CategoryId is invalid.", nameof(value));
+    }
+    public static bool TryParse(string value, out CategoryId id)
+    {
+        if (long.TryParse(value, out var brandId))
+        {
+            id = new CategoryId(brandId);
+            return true;
+        }
+        id = new();
+        return false;
     }
 }

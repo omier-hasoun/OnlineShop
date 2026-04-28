@@ -13,9 +13,24 @@ public readonly record struct CustomerId
     public CustomerId(Guid value)
     {
         if (value.Version != 7 || value == default)
-            throw new ArgumentException("UserId is invalid.", nameof(value));
+            throw new ArgumentException("CustomerId is invalid.", nameof(value));
 
         Value = value;
     }
-
+    public static CustomerId Parse(string value)
+    {
+        if (TryParse(value, out var id))
+            return id;
+        throw new ArgumentException("CustomerId is invalid.", nameof(value));
+    }
+    public static bool TryParse(string value, out CustomerId id)
+    {
+        if (Guid.TryParse(value, out var brandId))
+        {
+            id = new CustomerId(brandId);
+            return true;
+        }
+        id = new();
+        return false;
+    }
 }

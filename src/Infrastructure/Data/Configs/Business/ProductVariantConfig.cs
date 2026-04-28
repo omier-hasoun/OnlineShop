@@ -15,7 +15,6 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
         base.Configure(builder);
 
         builder.Ignore(x => x.Specifications);
-        builder.Ignore(x => x.Images);
 
         builder.HasKey(x => x.Id);
 
@@ -51,21 +50,15 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
         builder.Property(x => x.OriginalPrice)
                .IsRequired();
 
-//        var comparer = new ValueComparer<List<ProductImage>>(
-//    (a, b) => a!.SequenceEqual(b!),
-//    v => v.Aggregate(0, (hash, img) => HashCode.Combine(hash, img.GetHashCode())),
-//    v => v.Select(i => new ProductImage(i.FilePath, i.SortOrder)).ToList()
-//);
-
         builder.OwnsMany(x => x.Images, b =>
         {
             b.ToJson();
+        
         });
-
 
         builder.Property("_specifications")
                .HasColumnName("Specifications")
-               .HasColumnType("NVARCHAR(3000)")
+               .HasColumnType("NVARCHAR(MAX)")
                .HasConversion<JsonConverter<Dictionary<string, string>>>(new JsonDictionaryValueComparer())
                .IsRequired(false);
 

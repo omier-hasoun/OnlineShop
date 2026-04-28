@@ -2,6 +2,7 @@
 
 
 using Domain.Common.ValueObjects;
+using Domain.ReturnItemRequests.ValueObjects;
 
 namespace Domain.ReturnItemRequests;
 

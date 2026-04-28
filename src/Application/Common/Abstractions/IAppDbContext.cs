@@ -13,7 +13,6 @@ using Domain.Products.ProductVariants;
 using Domain.ProductsStock;
 using Domain.ReturnItemRequestsReviews;
 using Domain.ReturnItemRequests;
-using Domain.ReturnItemRequests.Attachments;
 using Domain.Transactions;
 using Domain.UsersPaymentMethodsLogs;
 using Domain.Warehouses;
@@ -40,8 +39,6 @@ public interface IAppDbContext
 
     DbSet<ProductStock> ProductStocks { get; }
     DbSet<ReturnItemRequest> ReturnRequests { get; }
-    DbSet<ReturnItemRequestAttachment> ReturnRequestAttachments { get; }
-
     DbSet<Transaction> Transactions { get; }
     DbSet<Customer> Customers { get; }
     DbSet<Address> Addresses {get; }
@@ -52,5 +49,5 @@ public interface IAppDbContext
     DbSet<CartItem> CartItems {get; }
     DbSet<Shipment> Shipments {get; }
 
-    Task<int> SaveChangesAsync(CancellationToken token = default);
+    Task<bool> SaveAsync(CancellationToken ct = default);
 }

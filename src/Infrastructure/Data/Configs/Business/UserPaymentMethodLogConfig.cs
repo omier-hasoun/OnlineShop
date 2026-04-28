@@ -1,6 +1,4 @@
 
-
-using Domain.Customers;
 using Domain.UsersPaymentMethodsLogs;
 using Infrastructure.Common.EfCore.ValueComparers;
 using Infrastructure.Common.EfCore.ValueConverters;
@@ -23,8 +21,9 @@ internal sealed class UserPaymentMethodLogConfig : BaseEntityConfig<UserPaymentM
 
         builder.Property("_details")
                .HasColumnName("Details")
-               .HasColumnType("NVARCHAR(3000)")
-               .HasConversion<JsonConverter<Dictionary<string, string>>>(new JsonDictionaryValueComparer());
+               .HasColumnType("NVARCHAR(MAX)")
+               .HasConversion<JsonConverter<Dictionary<string, string>>>(new JsonDictionaryValueComparer())
+               .IsRequired(false);
 
         builder.Property(x => x.ProviderBrandName)
                .HasColumnType("NVARCHAR(50)")

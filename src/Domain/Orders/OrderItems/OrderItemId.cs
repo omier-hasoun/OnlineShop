@@ -15,4 +15,21 @@ public readonly record struct OrderItemId
         }
         Value = value;
     }
+
+    public static OrderItemId Parse(string value)
+    {
+        if (TryParse(value, out var id))
+            return id;
+        throw new ArgumentException("ProductReviewId is invalid.", nameof(value));
+    }
+    public static bool TryParse(string value, out OrderItemId id)
+    {
+        if (long.TryParse(value, out var brandId))
+        {
+            id = new OrderItemId(brandId);
+            return true;
+        }
+        id = new();
+        return false;
+    }
 }

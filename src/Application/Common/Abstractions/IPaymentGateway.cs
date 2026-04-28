@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.Services.Payment;
+namespace Application.Common.Abstractions;
 
 internal interface IPaymentGateway
 {

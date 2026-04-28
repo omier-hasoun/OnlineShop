@@ -1,4 +1,4 @@
-namespace Application.Features.Products.Commands.Delete;
+namespace Application.AdminPanelFeatures.Products.Commands.DeleteProduct;
 
 public sealed record DeleteProductCommand(
     ProductId ProductId

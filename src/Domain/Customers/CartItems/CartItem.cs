@@ -16,7 +16,7 @@ public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
 
         if (quantity < CartItemRules.MinQuantityValue || quantity > CartItemRules.MaxQuantityValue)
         {
-            return CartItemErrors.QuantityOutOfRange;
+            return DomainErrors.CartItems.QuantityOutOfRange;
         }
 
         return new CartItem(id, customerId, productVariantId, quantity, DateTime.UtcNow);

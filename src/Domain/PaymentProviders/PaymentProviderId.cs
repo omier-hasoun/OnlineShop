@@ -14,4 +14,20 @@ public readonly record struct PaymentProviderId
 
         Value = value;
     }
+    public static PaymentProviderId Parse(string value)
+    {
+        if (TryParse(value, out var id))
+            return id;
+        throw new ArgumentException("PaymentProviderId is invalid.", nameof(value));
+    }
+    public static bool TryParse(string value, out PaymentProviderId id)
+    {
+        if (Guid.TryParse(value, out var brandId))
+        {
+            id = new PaymentProviderId(brandId);
+            return true;
+        }
+        id = new();
+        return false;
+    }
 }

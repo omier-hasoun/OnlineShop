@@ -14,4 +14,21 @@ public readonly record struct UserPaymentMethodLogId
 
         Value = value;
     }
+
+    public static UserPaymentMethodLogId Parse(string value)
+    {
+        if (TryParse(value, out var id))
+            return id;
+        throw new ArgumentException("UserPaymentMethodLogId is invalid.", nameof(value));
+    }
+    public static bool TryParse(string value, out UserPaymentMethodLogId id)
+    {
+        if (long.TryParse(value, out var brandId))
+        {
+            id = new UserPaymentMethodLogId(brandId);
+            return true;
+        }
+        id = new();
+        return false;
+    }
 }

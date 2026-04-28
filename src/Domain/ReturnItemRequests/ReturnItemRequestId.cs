@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Domain.ReturnItemRequests;
 
@@ -16,5 +13,22 @@ public readonly record struct ReturnItemRequestId
             throw new ArgumentException("orderReturnRequestId is invalid.", nameof(value));
 
         Value = value;
+    }
+
+    public static ReturnItemRequestId Parse(string value)
+    {
+        if (TryParse(value, out var id))
+            return id;
+        throw new ArgumentException("ReturnItemRequestId is invalid.", nameof(value));
+    }
+    public static bool TryParse(string value, out ReturnItemRequestId id)
+    {
+        if (Guid.TryParse(value, out var brandId))
+        {
+            id = new ReturnItemRequestId(brandId);
+            return true;
+        }
+        id = new();
+        return false;
     }
 }

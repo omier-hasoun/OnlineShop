@@ -1,6 +1,5 @@
 using Api.Controllers.Products.Requests;
-using Application.Common.RequestModels;
-using Application.Features.Products.Commands.CreateProduct;
+using Application.AdminPanelFeatures.Products.Commands.CreateProduct;
 using MediatR;
 
 namespace Api.Controllers.Products;
@@ -11,7 +10,7 @@ public sealed class ProductsController(IMediator mediator) : ApiController
 {
 
     [HttpPost]
-    public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest request)
+    public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest request, CancellationToken ct)
     {
 
         CreateProductCommand command = new
@@ -24,15 +23,10 @@ public sealed class ProductsController(IMediator mediator) : ApiController
             request.Attributes
         );
 
-        var result = await mediator.Send(command, CancellationToken.None);
+        var result = await mediator.Send(command, ct);
 
-        if (result.Failed)
-        {
-            return BadRequest(result.Errors);
-        }
-
-        var ProductId = result.Value.Value;
-
-        return Ok(ProductId);
+        return result.Match(
+            (response) => Ok(response),
+           Problem);
     }
 }

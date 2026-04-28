@@ -1,4 +1,4 @@
-namespace Application.Features.Products.Commands.Delete;
+namespace Application.AdminPanelFeatures.Products.Commands.DeleteProduct;
 
 internal sealed class DeleteProductCommandValidator : AbstractValidator<DeleteProductCommand>
 {

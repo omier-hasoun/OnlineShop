@@ -17,10 +17,18 @@ public readonly record struct BrandId
 
     public static BrandId Parse(string value)
     {
-        if(Guid.TryParse(value, out var brandId))
-        {
-            return new BrandId(brandId);
-        }
+        if (TryParse(value, out var id))
+            return id;
         throw new ArgumentException("BrandId is invalid.", nameof(value));
+    }
+    public static bool TryParse(string value, out BrandId id)
+    {
+        if (Guid.TryParse(value, out var brandId))
+        {
+            id = new BrandId(brandId);
+            return true;
+        }
+        id = new();
+        return false;
     }
 }

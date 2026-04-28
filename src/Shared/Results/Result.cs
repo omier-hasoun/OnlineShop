@@ -54,13 +54,13 @@ public readonly record struct Result<TValue> : IResult<TValue>
                 return field!;
             }
 
-            throw new InvalidResultAccessException();
+            throw new ResultHasNoValueException();
         }
     }
 
     [JsonConstructor]// for serialization
     [EditorBrowsable(EditorBrowsableState.Never)]
-    [Obsolete("")]
+    [Obsolete("For serializer only.")]
     public Result(TValue value, List<Error> errors, bool isSuccess)
     {
         Succeeded = isSuccess;

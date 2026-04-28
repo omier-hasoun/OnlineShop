@@ -20,11 +20,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Exceptions\" />
+    <Folder Include="AdminPanelFeatures\Products\Dtos\" />
+    <Folder Include="AdminPanelFeatures\Products\Queries\" />
     <Folder Include="Features\Categories\Commands\" />
     <Folder Include="Features\Categories\Queries\" />
     <Folder Include="Features\Orders\Commands\" />
     <Folder Include="Features\Orders\Queries\" />
+    <Folder Include="Features\Products\Dtos\" />
     <Folder Include="Features\Users\Commands\" />
     <Folder Include="Features\Users\Queries\" />
   </ItemGroup>

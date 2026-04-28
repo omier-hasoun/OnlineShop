@@ -1,6 +1,6 @@
 using Domain.Products.ProductVariants;
 
-namespace Application.Services.Inventory;
+namespace Application.Common.Abstractions;
 
 public interface IInventoryService
 {

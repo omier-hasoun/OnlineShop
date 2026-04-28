@@ -21,5 +21,4 @@ global using Domain.Common.Entities.Addresses;
 global using Domain.Customers;
 global using Domain.Customers.CartItems;
 global using Domain.Orders.Shipments;
-global using Domain.ReturnItemRequests.Attachments;
 global using Domain.ReturnItemRequests;

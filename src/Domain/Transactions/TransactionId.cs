@@ -15,6 +15,23 @@ public readonly record struct TransactionId
         }
         Value = value;
     }
+
+    public static TransactionId Parse(string value)
+    {
+        if (TryParse(value, out var id))
+            return id;
+        throw new ArgumentException("TransactionId is invalid.", nameof(value));
+    }
+    public static bool TryParse(string value, out TransactionId id)
+    {
+        if (long.TryParse(value, out var brandId))
+        {
+            id = new TransactionId(brandId);
+            return true;
+        }
+        id = new();
+        return false;
+    }
 }
 
 

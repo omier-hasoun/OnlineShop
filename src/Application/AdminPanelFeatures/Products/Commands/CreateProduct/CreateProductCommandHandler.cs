@@ -1,18 +1,19 @@
 
+using Application.Common.Exceptions;
 using Domain.Brands;
 using Domain.Categories;
-using Domain.Common.ValueObjects;
 
-namespace Application.Features.Products.Commands.CreateProduct;
+namespace Application.AdminPanelFeatures.Products.Commands.CreateProduct;
 
-internal sealed class CreateProductCommandHandler(IAppDbContext context, IIdGenerator<ProductId> idGen) : IRequestHandler<CreateProductCommand, Result<ProductId>>
+internal sealed class CreateProductCommandHandler(IAppDbContext context, IIdGenerator<ProductId> idGen) : IRequestHandler<CreateProductCommand, Result<long>>
 {
-    public async Task<Result<ProductId>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+    public async Task<Result<long>> Handle(CreateProductCommand request, CancellationToken ct)
     {
 
+        ProductId productId = idGen.NewId();
 
         var createProductResult = Product.Create(
-            idGen.NewId(),
+            productId,
             BrandId.Parse(request.BrandId),
             CategoryId.Parse(request.CategoryId),
             request.Title,
@@ -28,11 +29,14 @@ internal sealed class CreateProductCommandHandler(IAppDbContext context, IIdGene
 
         context.Products.Add(createProductResult.Value);
 
-        var result = await context.SaveChangesAsync(cancellationToken);
+        var succeeded = await context.SaveAsync(ct);
 
-        return result > 0 ?
-            createProductResult.Value.Id :
-            ProductApplicationErrors.ProductCreationFailed;
+        if(succeeded)
+        {
+            return productId.Value;
+        }
+
+        throw new DbSaveFailedException();
     }
 
     //private bool IsUniqueProductTitle(string name)

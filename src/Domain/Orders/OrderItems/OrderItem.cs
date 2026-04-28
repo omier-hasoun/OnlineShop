@@ -50,7 +50,7 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
 
         if (serialNumbers.Count != Quantity)
         {
-            return OrderItemErrors.SerialNumbersDoNotMatchQuantity;
+            return DomainErrors.OrderItems.SerialNumbersDoNotMatchQuantity;
         }
         _serialNumbers = serialNumbers.ToList();
         return Result.Success;
@@ -66,7 +66,7 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
 
         if(Status != OrderItemStatus.Pending)
         {
-            return OrderItemErrors.CannotConfirm;
+            //return DomainErrors.OrderItems.CannotConfirm;
         }
 
         Status = OrderItemStatus.Confirmed;
@@ -81,7 +81,7 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
 
         if (Status is not OrderItemStatus.Pending and not OrderItemStatus.Confirmed)
         {
-            return OrderItemErrors.CannotCancel;
+            //return DomainErrors.OrderItems.CannotCancel;
         }
 
         Status = OrderItemStatus.Cancelled;
@@ -98,7 +98,7 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
         bool isValidStatusTransition = Status is OrderItemStatus.Delivered or OrderItemStatus.PartiallyReturned;
         if (isValidStatusTransition)
         {
-            return OrderItemErrors.CannotReturn;
+            //return OrderItemErrors.CannotReturn;
         }
 
         return Result.Success;
@@ -109,7 +109,7 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
 
         if (Status is not OrderItemStatus.Shipped and not OrderItemStatus.Delivered)
         {
-            return OrderItemErrors.CannotReturn;
+            //return OrderItemErrors.CannotReturn;
         }
 
         return Result.Success;

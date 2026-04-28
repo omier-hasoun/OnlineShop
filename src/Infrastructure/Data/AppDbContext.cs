@@ -14,7 +14,6 @@ using Domain.Common.Entities.Addresses;
 using Domain.Customers.CartItems;
 using Domain.Orders.Shipments;
 using Domain.ProductReviews;
-using Domain.ReturnItemRequests.Attachments;
 using Domain.Transactions;
 using Domain.Customers;
 using Domain.ReturnItemRequestsReviews;
@@ -47,7 +46,6 @@ internal sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, User
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<ProductStock> ProductStocks => Set<ProductStock>();
     public DbSet<ReturnItemRequest> ReturnRequests => Set<ReturnItemRequest>();
-    public DbSet<ReturnItemRequestAttachment> ReturnRequestAttachments => Set<ReturnItemRequestAttachment>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<Address> Addresses => Set<Address>();
     public DbSet<CustomerShippingAddress> CustomerShippingAddresses => Set<CustomerShippingAddress>();
@@ -67,10 +65,10 @@ internal sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, User
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
-    public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
-    {
 
-        return await base.SaveChangesAsync(ct);
+    public async Task<bool> SaveAsync(CancellationToken ct = default)
+    {
+        return await SaveChangesAsync(ct) > 0;
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

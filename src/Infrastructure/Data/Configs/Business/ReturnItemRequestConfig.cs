@@ -2,6 +2,7 @@
 using Domain.Common.Rules;
 using Domain.Orders.OrderItems;
 using Domain.ReturnItemRequests;
+using Domain.ReturnItemRequests.ValueObjects;
 
 namespace Infrastructure.Data.Configs.Business;
 
@@ -39,6 +40,12 @@ internal sealed class ReturnItemRequestConfig : BaseEntityConfig<ReturnItemReque
                .WithMany()
                .HasForeignKey(x => x.OrderItemId)
                .IsRequired();
+
+        builder.OwnsMany(x => x.Attachments, l =>
+        {
+            l.ToJson();
+        });
+               
 
         builder.ToTable("ReturnItemRequests");
     }

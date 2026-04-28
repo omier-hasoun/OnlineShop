@@ -1,8 +1,4 @@
 
-
-
-
-
 using Domain.Common.ValueObjects;
 
 namespace Domain.Orders;
@@ -63,7 +59,7 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
     {
         if(ValidationHelper.IsOutOfRange(shippingFees, OrderRules.MinShippingFeesValue, OrderRules.MaxShippingFeesValue))
         {
-            return OrderErrors.ShippingFeesOutOfRange;
+            return DomainErrors.Orders.ShippingFeesOutOfRange;
         }
 
         return Result.Success;
@@ -72,7 +68,7 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
     {
         if (ValidationHelper.IsOutOfRange(totalItemsPrice, OrderRules.MinTotalItemsPriceValue, OrderRules.MaxTotalItemsPriceValue))
         {
-            return OrderErrors.TotalItemsPriceOutOfRange;
+            return DomainErrors.Orders.TotalItemsPriceOutOfRange;
         }
         return Result.Success;
     }
@@ -80,7 +76,7 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
     {
         if (orderItems is null || ValidationHelper.IsOutOfRange(orderItems.Count, OrderRules.MinOrderItemsCount, OrderRules.MaxOrderItemsCount))
         {
-            return OrderErrors.OrderItemsCountOutOfRange;
+            return DomainErrors.Orders.OrderItemsCountOutOfRange;
         }
         return Result.Success;
     }

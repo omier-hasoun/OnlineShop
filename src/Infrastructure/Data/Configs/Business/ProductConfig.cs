@@ -47,7 +47,7 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
 
         builder.Property("_attributes")
                .HasColumnName("Attributes")
-               .HasColumnType("NVARCHAR(3000)")
+               .HasColumnType("NVARCHAR(MAX)")
                .HasConversion<JsonConverter<Dictionary<string, string>>>(new JsonDictionaryValueComparer())
                .IsRequired(false);
 

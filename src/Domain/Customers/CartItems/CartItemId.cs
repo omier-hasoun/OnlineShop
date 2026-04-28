@@ -15,4 +15,20 @@ public readonly record struct CartItemId
         Value = value;
     }
 
+    public static CartItemId Parse(string value)
+    {
+        if (TryParse(value, out var id))
+            return id;
+        throw new ArgumentException("CartItemId is invalid.", nameof(value));
+    }
+    public static bool TryParse(string value, out CartItemId id)
+    {
+        if (long.TryParse(value, out var brandId))
+        {
+            id = new CartItemId(brandId);
+            return true;
+        }
+        id = new();
+        return false;
+    }
 }

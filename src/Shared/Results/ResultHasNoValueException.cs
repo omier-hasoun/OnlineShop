@@ -1,8 +1,8 @@
 namespace Shared.Results;
 
-public sealed class InvalidResultAccessException : Exception
+public sealed class ResultHasNoValueException : Exception
 {
-    public InvalidResultAccessException()
+    public ResultHasNoValueException()
         : base("Cannot access the value of a failed Result. Ensure the Result indicates success before accessing its value.")
     {
     }

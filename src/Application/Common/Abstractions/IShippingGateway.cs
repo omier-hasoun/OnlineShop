@@ -1,4 +1,4 @@
-namespace Application.Services.Shipping;
+namespace Application.Common.Abstractions;
 
 public interface IShippingGateway
 {
