@@ -5,22 +5,18 @@ public readonly record struct PaymentProviderId
 {
     public Guid Value { get; init; }
 
-    public static implicit operator Guid(PaymentProviderId paymentProviderId) => paymentProviderId.Value;
-    public static implicit operator PaymentProviderId(Guid value) => new PaymentProviderId(value);
     public PaymentProviderId(Guid value)
     {
-        if (value.Version != 7 || value == default)
-            throw new ArgumentException("PaymentProviderId is invalid.", nameof(value));
-
         Value = value;
     }
-    public static Result<BrandId> From(Guid value)
+
+    public Result<Success> IsValid()
     {
-        if (value.Version == 7)
+        if (Value.Version != 7)
         {
-            return new BrandId(value);
+            return DomainErrors.PaymentProviders.PaymentProviderIdInvalid;
         }
 
-        return DomainErrors.Brands.BrandIdInvalid;
+        return Result.Success;
     }
 }

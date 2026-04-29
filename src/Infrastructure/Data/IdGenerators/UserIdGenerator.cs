@@ -8,6 +8,6 @@ internal sealed class UserIdGenerator([FromKeyedServices("GuidV7")] IPrimitiveTy
 {
     public CustomerId NewId()
     {
-        return Generator.Generate();
+        return new CustomerId(Generator.Generate());
     }
 }

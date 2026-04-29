@@ -4,23 +4,18 @@ namespace Domain.Products.ProductVariants;
 public readonly record struct ProductVariantId
 {
     public long Value { get; }
-
-    internal ProductVariantId(long value)
+    public ProductVariantId(long value)
     {
-
         Value = value;
     }
 
-    public static implicit operator long(ProductVariantId productVariantId) => productVariantId.Value;
-    public static implicit operator ProductVariantId(long value) => new ProductVariantId(value);
-
-    public static Result<ProductVariantId> From(long value)
+    public Result<Success> IsValid()
     {
-        if (value <= 0)
+        if (Value <= 0)
         {
-            return new ProductVariantId(value);
+            return DomainErrors.ProductVariants.ProductVariantIdInvalid;
         }
 
-        return DomainErrors.ProductVariants.ProductVariantIdInvalid;
+        return Result.Success;
     }
 }

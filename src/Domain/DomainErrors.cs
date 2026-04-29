@@ -3,7 +3,7 @@ namespace Domain;
 // need to replece ErrorCodes with the BaseErrorCode 
 public static class DomainErrors
 {
-    public static class ReturnItemRequest
+    public static class ReturnItemRequests
     {
         public const string BaseErrorCode = "DomainErrors.ReturnItemRequest";
 
@@ -16,8 +16,9 @@ public static class DomainErrors
         public static readonly Error ProductDoesNotRequireSerialNumbers =
             Error.Validation("DomainErrors.ReturnItemRequest.ProductDoesNotRequireSerialNumbers", "This product doesn't require Serial Numbers.");
 
-        public static readonly Error InvalidSerialNumbers =
-            Error.Validation("DomainErrors.ReturnItemRequest.InvalidSerialNumber", ".");
+        public static readonly Error InvalidSerialNumbers = Error.Validation("DomainErrors.ReturnItemRequest.InvalidSerialNumber", ".");
+        public static readonly Error ReturnItemRequestIdInvalid = Error.Validation($"{BaseErrorCode}.ReturnItemRequestIdInvalid");
+
     }
 
 
@@ -98,9 +99,11 @@ public static class DomainErrors
     {
         public const string BaseErrorCode = "DomainErrors.OrderItems";
 
-        public static readonly Error SerialNumbersDoNotMatchQuantity = Error.Validation("DomainErrors.SerialNumbers.DoNotMatchQuantity");
+        public static readonly Error SerialNumbersDoNotMatchQuantity = Error.Validation($"{BaseErrorCode}.DoNotMatchQuantity");
 
-        public static readonly Error InvalidReturnQuantity = Error.Validation("DomainErrors.SerialNumbers.DoNotMatchQuantity");
+        public static readonly Error InvalidReturnQuantity = Error.Validation($"{BaseErrorCode}.DoNotMatchQuantity");
+
+        internal static readonly Error OrderItemIdInvalid = Error.Validation($"{BaseErrorCode}.OrderItemIdInvalid");
     }
 
 
@@ -172,4 +175,51 @@ public static class DomainErrors
 
     }
 
+
+
+    public static class Addresses
+    {
+        public const string BaseErrorCode = "DomainErrors.Addresses";
+        public static readonly Error AddressIdInvalid = Error.Validation($"{BaseErrorCode}.AddressIdInvalid");
+
+    }
+
+
+
+    public static class Shipments
+    {
+        public const string BaseErrorCode = "DomainErrors.Shipments";
+        public static readonly Error ShipmentIdInvalid = Error.Validation($"{BaseErrorCode}.ShipmentIdInvalid");
+
+    }
+
+
+
+    public static class PaymentProviders
+    {
+        public const string BaseErrorCode = "DomainErrors.PaymentProviders";
+        public static readonly Error PaymentProviderIdInvalid = Error.Validation($"{BaseErrorCode}.PaymentProviderIdInvalid");
+
+    }
+
+    public static class Transactions
+    {
+        public const string BaseErrorCode = "DomainErrors.Transactions";
+        public static readonly Error TransactionIdInvalid = Error.Validation($"{BaseErrorCode}.TransactionIdInvalid");
+
+    }
+
+    public static class UserPaymentMethodLogs
+    {
+        public const string BaseErrorCode = "DomainErrors.UserPaymentMethodLogs";
+        public static readonly Error UserPaymentMethodLogIdInvalid = Error.Validation($"{BaseErrorCode}.UserPaymentMethodLogIdInvalid");
+
+    }
+
+    public static class ProductsStock
+    {
+        public const string BaseErrorCode = "DomainErrors.ProductsStock";
+        public static readonly Error ProductStockIdInvalid = Error.Validation($"{BaseErrorCode}.ProductStockIdInvalid");
+
+    }
 }

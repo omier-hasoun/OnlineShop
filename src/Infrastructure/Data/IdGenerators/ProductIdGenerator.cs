@@ -6,6 +6,6 @@ internal sealed class ProductIdGenerator([FromKeyedServices("Snowflake")] IPrimi
 {
     public ProductId NewId()
     {
-        return Generator.Generate();
+        return new ProductId(Generator.Generate());
     }
 }

@@ -4,23 +4,19 @@ namespace Domain.Orders.Shipments;
 public readonly record struct ShipmentId
 {
     public long Value { get; }
-
-    public static implicit operator long(ShipmentId shipmentId) => shipmentId.Value;
-    public static implicit operator ShipmentId(long value) => new(value);
-    internal ShipmentId(long value)
+    public ShipmentId(long value)
     {
-
         Value = value;
     }
 
-    public static Result<ShipmentId> From(long value)
+    public Result<Success> IsValid()
     {
-        if (value <= 0)
+        if (Value <= 0)
         {
-            return new ShipmentId(value);
+            return DomainErrors.Shipments.ShipmentIdInvalid;
         }
 
-        return DomainErrors.Categories.CategoryIdInvalid;
+        return Result.Success;
     }
 }
 

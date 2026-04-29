@@ -7,7 +7,7 @@ namespace Infrastructure.Common.EfCore.ValueConverters;
 public sealed class CustomerIdConverter : ValueConverter<CustomerId, Guid>
 {
     public CustomerIdConverter()
-        : base(id => id.Value, value => CustomerId.From(value).Value)
+        : base(id => id.Value, value => new CustomerId(value))
     {
     }
 

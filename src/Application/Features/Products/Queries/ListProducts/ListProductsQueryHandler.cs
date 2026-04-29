@@ -28,7 +28,7 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
                         )
                         .Select((selector) =>  new ProductListItemDto
                         (
-                            ProductId: selector.pv.p.Id,
+                            ProductId: selector.pv.p.Id.Value,
                             Title: selector.pv.p.Title,
                             PriceNow: (double)selector.pv.v.PriceNow.Value,
                             Brand: selector.b.Name,

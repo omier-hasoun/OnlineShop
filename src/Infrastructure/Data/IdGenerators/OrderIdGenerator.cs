@@ -6,6 +6,6 @@ internal sealed class OrderIdGenerator([FromKeyedServices("Snowflake")] IPrimiti
 {
     public OrderId NewId()
     {
-        return Generator.Generate();
+        return new OrderId(Generator.Generate());
     }
 }

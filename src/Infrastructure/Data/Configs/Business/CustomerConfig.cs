@@ -1,5 +1,6 @@
 
 using Domain.Customers;
+using Infrastructure.Common.EfCore.ValueConverters;
 
 namespace Infrastructure.Data.Configs.Business;
 
@@ -12,6 +13,7 @@ internal sealed class CustomerConfig : BaseEntityConfig<Customer>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
+               .HasConversion<CustomerIdConverter>()
                .ValueGeneratedNever();
 
         builder.HasOne<AppUser>()

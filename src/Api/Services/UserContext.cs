@@ -6,7 +6,7 @@ namespace Api.Services;
 
 public class UserContext(IHttpContextAccessor context) : IUserContext
 {
-    public CustomerId Id
+    public Guid Id
     {
         get
         {
@@ -15,7 +15,6 @@ public class UserContext(IHttpContextAccessor context) : IUserContext
                 return Id;
             }
             throw new HttpRequestMissingUserIdException();
-            //return Guid.Parse("019DD034-8F6F-7F1B-8F7C-FBE35EF82935");
         }
     }
 

@@ -5,20 +5,18 @@ namespace Domain.Orders;
 public readonly record struct OrderId
 {
     public long Value { get; }
-    public static implicit operator long(OrderId orderId) => orderId.Value;
-    public static implicit operator OrderId(long value) => new(value);
-    internal OrderId(long value)
+    public OrderId(long value)
     {
         Value = value;
     }
 
-    public static Result<OrderId> From(long value)
+    public Result<Success> IsValid()
     {
-        if (value <= 0)
+        if (Value <= 0)
         {
-            return new OrderId(value);
+            return DomainErrors.Orders.OrderIdInvalid;
         }
 
-        return DomainErrors.Orders.OrderIdInvalid;
+        return Result.Success;
     }
 }

@@ -4,23 +4,22 @@ namespace Domain.Customers;
 
 public readonly record struct CustomerId
 {
-    public static readonly CustomerId EmptyInstance = new CustomerId();
+    public static readonly CustomerId Empty = new ();
+
     public Guid Value { get; init; }
 
-    public static implicit operator Guid(CustomerId userId) => userId.Value;
-    public static implicit operator CustomerId(Guid value) => new CustomerId(value);
-
-    internal CustomerId(Guid value)
+    public CustomerId(Guid value)
     {
         Value = value;
     }
-    public static Result<CustomerId> From(Guid value)
+
+    public Result<Success> IsValid()
     {
-        if (value.Version == 7)
+        if (Value.Version != 7)
         {
-            return new CustomerId(value);
+            return DomainErrors.Customers.CustomerIdInvalid;
         }
 
-        return DomainErrors.Customers.CustomerIdInvalid;
+        return Result.Success;
     }
 }

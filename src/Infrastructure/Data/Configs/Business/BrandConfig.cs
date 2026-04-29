@@ -1,5 +1,6 @@
 
 using Domain.Brands;
+using Domain.Common.Entities.Addresses;
 using Domain.Common.Rules;
 
 namespace Infrastructure.Data.Configs.Business;
@@ -13,7 +14,9 @@ internal sealed class BrandConfig : BaseEntityConfig<Brand>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-               .HasConversion(id => id.Value, value => BrandId.From(value).Value)
+               .HasConversion(
+               id => id.Value,
+               value => new BrandId(value))
                .ValueGeneratedNever();
 
         builder.Property(x => x.CompanyName)

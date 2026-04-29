@@ -12,7 +12,7 @@ internal sealed class CategoryConfig : BaseEntityConfig<Category>
 
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)
-               .HasConversion(id => id.Value, value => CategoryId.From(value).Value)
+               .HasConversion(id => id.Value, value => new CategoryId(value))
                .ValueGeneratedNever();
 
         builder.Property(x => x.Name)

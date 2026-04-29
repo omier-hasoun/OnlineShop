@@ -16,7 +16,7 @@ internal sealed class ShipmentConfig : BaseEntityConfig<Shipment>
                .ValueGeneratedNever()
                .HasConversion(
                    id => id.Value,
-                   value => ShipmentId.From(value).Value
+                   value => new ShipmentId(value)
                );
 
         builder.Property(x => x.CarrierName)

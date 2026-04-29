@@ -6,21 +6,18 @@ public readonly record struct ProductStockId
 {
     public long Value { get; }
 
-    internal ProductStockId(long value)
+    public ProductStockId(long value)
     {
         Value = value;
     }
 
-    public static implicit operator long(ProductStockId productStockId) => productStockId.Value;
-    public static implicit operator ProductStockId(long value) => new ProductStockId(value);
-
-    public static Result<ProductStockId> From(long value)
+    public Result<Success> IsValid(long value)
     {
-        if (value <= 0)
+        if (Value <= 0)
         {
-            return new ProductStockId(value);
+            return DomainErrors.ProductsStock.ProductStockIdInvalid;
         }
 
-        return DomainErrors.Categories.CategoryIdInvalid;
+        return Result.Success;
     }
 }

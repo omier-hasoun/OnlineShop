@@ -93,9 +93,6 @@ internal sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, User
 
     protected override void ConfigureConventions(ModelConfigurationBuilder builder)
     {
-        builder.Properties<CustomerId>()
-                .HaveConversion<CustomerIdConverter>();
-
         builder.Properties<Money>()
                .HaveConversion<MoneyConverter>();
     }

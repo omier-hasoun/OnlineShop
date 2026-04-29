@@ -6,12 +6,13 @@ public sealed class AppUser : IdentityUser<Guid>, IEntity
 {
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
     private List<IDomainEvent> _domainEvents = [];
+
     public ICollection<UserClaim> Claims { get; private set; } = [];
     public UserLoginProvider? LinkedLoginProvider { get; private set; } = null!;
     public ICollection<UserToken> Tokens { get; private set; } = [];
     public ICollection<Role> Roles { get; private set; } = [];
 
-    public CustomerId UserId => Id;
+    public CustomerId? CustomerId { get; private set; }
 
 
     public AppUser()

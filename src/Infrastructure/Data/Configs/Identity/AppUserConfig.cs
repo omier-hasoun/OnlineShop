@@ -8,7 +8,7 @@ internal sealed class AppUserConfig : BaseEntityConfig<AppUser>
     {
         base.Configure(builder);
 
-        builder.Ignore(x => x.UserId);// UserId is readonly, return the Guid Id value its just a strongly type UserId for the domain
+        builder.Ignore(x => x.CustomerId);// UserId is readonly, return the Guid Id value its just a strongly type UserId for the domain
 
         builder.HasKey(x => x.Id);
 

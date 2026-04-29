@@ -19,7 +19,7 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-               .HasConversion(id => id.Value, value => ProductVariantId.From(value).Value)
+               .HasConversion(id => id.Value, value => new ProductVariantId(value))
                .ValueGeneratedNever();
 
         builder.Property(x => x.Sku)
