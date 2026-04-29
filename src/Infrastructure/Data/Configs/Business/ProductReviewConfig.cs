@@ -41,6 +41,7 @@ internal sealed class ProductReviewConfig : BaseEntityConfig<ProductReview>
 
         builder.HasOne<Customer>()
                .WithMany()
+               .HasForeignKey(x => x.CustomerId)
                .IsRequired();
 
         builder.ToTable("ProductReviews", x =>
