@@ -13,7 +13,7 @@ public sealed record AverageRating
 
     public static Result<AverageRating> From(float value)
     {
-        if (ValidationHelper.IsOutOfRange(value, ProductRules.MinAverageRatingValue, ProductRules.MaxAverageRatingValue))
+        if (ValHelper.IsOutOfRange(value, ProductRules.MinAverageRatingValue, ProductRules.MaxAverageRatingValue))
         {
             return DomainErrors.Products.AverageRatingInvalid;
         }

@@ -13,7 +13,9 @@ internal sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
 {
     public override void Configure(EntityTypeBuilder<OrderItem> builder)
     {
-        base.Configure(builder);
+
+        builder.HasKey(e => e.Id)
+               .IsClustered();
 
         builder.Ignore(x => x.TotalPrice);
         builder.Ignore(x => x.SerialNumbers);

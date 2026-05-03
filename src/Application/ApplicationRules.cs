@@ -3,7 +3,7 @@ using System.Net.Mime;
 
 namespace Application;
 
-public class ApplicationRules
+public static class ApplicationRules
 {
     public static class Uploads
     {
@@ -14,13 +14,19 @@ public class ApplicationRules
             MediaTypeNames.Image.Gif,
             MediaTypeNames.Image.Png,
             MediaTypeNames.Image.Webp,
+
         };
 
-            public static readonly string[] AllowedImageExtensionsList = { "jpg", "jpeg", "png", "webp", "gif", "bmb" };
+        public static readonly string[] AllowedImageExtensionsList = { "jpg", "jpeg", "png", "webp", "gif", "bmb" };
 
-            public static readonly string AllowedImageExtensions = string.Join(", ", AllowedImageExtensionsList);
+        public static readonly string AllowedImageExtensions = string.Join(", ", AllowedImageExtensionsList);
 
-            public const int MaxImageSizeForProducts = 8 * 1024 * 1024;//8 Mb
-        }
+        public const int MaxImageSizeForProducts = 10 * 1024 * 1024;//10 Mb
+
+        public const short MinWidth = 800;
+        public const short MinHeight = 800;
+
+
+    }
 
 }

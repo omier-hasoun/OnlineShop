@@ -7,7 +7,9 @@ internal sealed class OrderConfig : BaseEntityConfig<Order>
 {
     public override void Configure(EntityTypeBuilder<Order> builder)
     {
-        base.Configure(builder);
+
+        builder.HasKey(e => e.Id)
+               .IsClustered();
 
         builder.HasKey(x => x.Id);
 

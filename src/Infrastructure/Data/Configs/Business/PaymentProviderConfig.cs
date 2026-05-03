@@ -8,7 +8,9 @@ internal sealed class PaymentProviderConfig : BaseEntityConfig<PaymentProvider>
     public override void Configure(EntityTypeBuilder<PaymentProvider> builder)
     {
         base.Configure(builder);
-        builder.HasKey(x => x.Id);
+
+        builder.HasKey(e => e.Id)
+               .IsClustered();
 
         builder.Property(x => x.Id)
                .HasConversion(id => id.Value, value => new PaymentProviderId(value))

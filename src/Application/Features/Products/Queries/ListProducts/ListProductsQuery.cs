@@ -4,4 +4,4 @@ using Application.Features.Products.Dtos;
 
 namespace Application.Features.Products.Queries.ListProducts;
 
-public sealed record ListProductsQuery(int PageSize, int PageNumber) : IRequest<Result<PaginatedList<ProductListItemDto>>>;
+public sealed record ListProductsQuery(int PageSize, int PageNumber) : IRequest<Result<PaginatedList<ProductListItemViewDto>>>;

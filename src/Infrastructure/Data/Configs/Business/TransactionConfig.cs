@@ -1,5 +1,4 @@
 
-using System.Text.Json;
 using Domain.Transactions;
 
 namespace Infrastructure.Data.Configs.Business;
@@ -10,8 +9,8 @@ internal sealed class TransactionConfig : BaseEntityConfig<Transaction>
     {
         base.Configure(builder);
 
-        builder.HasKey(x => x.Id);
-
+        builder.HasKey(e => e.Id)
+               .IsClustered();
         builder.Property(x => x.Id)
                .HasConversion(id => id.Value, value => new TransactionId(value))
                .ValueGeneratedNever();

@@ -19,7 +19,7 @@ internal sealed class AppSettingsConfig : IEntityTypeConfiguration<AppSettings>
         builder.Property(x => x.Value)
                .HasColumnType("NVARCHAR(1000)")
                .IsRequired();
-
+        
         builder.ToTable("AppSettings");
     }
 }

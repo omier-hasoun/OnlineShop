@@ -57,7 +57,7 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
 
     private static Result<Success> ValidateShippingFees(decimal shippingFees)
     {
-        if(ValidationHelper.IsOutOfRange(shippingFees, OrderRules.MinShippingFeesValue, OrderRules.MaxShippingFeesValue))
+        if(ValHelper.IsOutOfRange(shippingFees, OrderRules.MinShippingFeesValue, OrderRules.MaxShippingFeesValue))
         {
             return DomainErrors.Orders.ShippingFeesOutOfRange;
         }
@@ -66,7 +66,7 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
     }
     private static Result<Success> ValidateTotalItemsPrice(decimal totalItemsPrice)
     {
-        if (ValidationHelper.IsOutOfRange(totalItemsPrice, OrderRules.MinTotalItemsPriceValue, OrderRules.MaxTotalItemsPriceValue))
+        if (ValHelper.IsOutOfRange(totalItemsPrice, OrderRules.MinTotalItemsPriceValue, OrderRules.MaxTotalItemsPriceValue))
         {
             return DomainErrors.Orders.TotalItemsPriceOutOfRange;
         }
@@ -74,7 +74,7 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
     }
     private static Result<Success> ValidateOrderItems(IReadOnlyList<OrderItem> orderItems)
     {
-        if (orderItems is null || ValidationHelper.IsOutOfRange(orderItems.Count, OrderRules.MinOrderItemsCount, OrderRules.MaxOrderItemsCount))
+        if (orderItems is null || ValHelper.IsOutOfRange(orderItems.Count, OrderRules.MinOrderItemsCount, OrderRules.MaxOrderItemsCount))
         {
             return DomainErrors.Orders.OrderItemsNumberOutOfRange;
         }

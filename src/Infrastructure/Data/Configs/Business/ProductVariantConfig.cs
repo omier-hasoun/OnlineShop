@@ -16,7 +16,9 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
 
         builder.Ignore(x => x.Specifications);
 
-        builder.HasKey(x => x.Id);
+
+        builder.HasKey(e => e.Id)
+               .IsClustered();
 
         builder.Property(x => x.Id)
                .HasConversion(id => id.Value, value => new ProductVariantId(value))
@@ -31,7 +33,7 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
                .HasColumnType("VARCHAR(80)")
                .IsRequired();
 
-        builder.Property(x => x.BarCode)
+        builder.Property(x => x.Barcode)
                .HasColumnType("VARCHAR(100)")
                .IsRequired();
 

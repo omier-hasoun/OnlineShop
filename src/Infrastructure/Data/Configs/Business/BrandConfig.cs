@@ -11,7 +11,8 @@ internal sealed class BrandConfig : BaseEntityConfig<Brand>
     {
         base.Configure(builder);
 
-        builder.HasKey(x => x.Id);
+        builder.HasKey(e => e.Id)
+               .IsClustered();
 
         builder.Property(x => x.Id)
                .HasConversion(

@@ -10,7 +10,10 @@ internal sealed class CategoryConfig : BaseEntityConfig<Category>
     {
         base.Configure(builder);
 
-        builder.HasKey(x => x.Id);
+
+        builder.HasKey(e => e.Id)
+               .IsClustered();
+
         builder.Property(x => x.Id)
                .HasConversion(id => id.Value, value => new CategoryId(value))
                .ValueGeneratedNever();

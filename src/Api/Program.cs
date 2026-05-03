@@ -1,6 +1,7 @@
+using Application.Common.AppSettingsConfiguration.FileStoragePaths;
+using Application.Common.AppSettingsConfiguration.FileStoragePaths.ProductsPaths;
 using Application.Common.Identity;
-using Infrastructure.Configurations;
-using Infrastructure.Configurations.FileStorage;
+using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 
 
@@ -8,7 +9,7 @@ namespace Api
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
@@ -19,7 +20,9 @@ namespace Api
             if (builder.Environment.IsDevelopment())
                 config.AddUserSecrets("7f342e59-c0e1-4ef5-9bd1-126a96fa7a5b");
 
+            builder.Services.Configure<ProductPathsOptions>(config.GetSection(nameof(ProductPathsOptions)));
             builder.Services.Configure<FileStoragePathsOptions>(config.GetSection(nameof(FileStoragePathsOptions)));
+
             builder.Services.Configure<IdentityOptions>(config.GetSection(nameof(IdentityOptions)));
 
 
@@ -30,6 +33,9 @@ namespace Api
 
             var app = builder.Build();
 
+            NetVips.Cache.MaxFiles = 0;
+            NetVips.Cache.MaxMem = 0;
+            NetVips.NetVips.Concurrency = 2;
 
             if (app.Environment.IsDevelopment())
             {
@@ -56,6 +62,17 @@ namespace Api
             app.MapGroup("/api/auth").
                 MapIdentityApi<AppUser>();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                ApplicationDbContextInitialiser initialiser = new(scope.ServiceProvider.GetRequiredService<ILogger<ApplicationDbContextInitialiser>>(),
+                    scope.ServiceProvider.GetRequiredService<AppDbContext>(),
+                    scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>(),
+                    scope.ServiceProvider.GetRequiredService<RoleManager<Role>>());
+
+                await initialiser.InitialiseAndSeedData();
+                IOptions<ProductPathsOptions> options = scope.ServiceProvider.GetRequiredService<IOptions<ProductPathsOptions>>();
+
+            }
             app.Run();
 
 

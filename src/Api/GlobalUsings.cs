@@ -10,5 +10,4 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Authorization;
 global using Infrastructure.Data;
 global using Application.Common;
-global using Infrastructure.BackgroundServices;
 global using Microsoft.AspNetCore.Identity;

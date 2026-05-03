@@ -13,7 +13,7 @@ public sealed record Money
 
     public static Result<Money> From(decimal value)
     {
-        if(ValidationHelper.IsOutOfRange(value, 0, MaxValue))
+        if(ValHelper.IsOutOfRange(value, 0, MaxValue))
         {
             return DomainErrors.Common.MoneyAmountInvalid;
         }

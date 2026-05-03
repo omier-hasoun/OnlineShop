@@ -1,7 +1,10 @@
 
+
+using Microsoft.AspNetCore.Http;
+
 namespace Application.Common.Abstractions;
 
 public interface IFileValidationService
 {
-    public bool ValidateAsync(Stream file, string[] shouldMatchAnyMediaType);
+    public Result<Success> Validate(IFormFile file);
 }

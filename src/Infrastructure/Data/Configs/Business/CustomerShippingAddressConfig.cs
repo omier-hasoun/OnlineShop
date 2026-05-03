@@ -8,7 +8,9 @@ internal sealed class CustomerShippingAddressConfig : BaseEntityConfig<CustomerS
 {
     public override void Configure(EntityTypeBuilder<CustomerShippingAddress> builder)
     {
-        builder.HasKey(x => x.Id);
+
+        builder.HasKey(e => e.Id)
+               .IsClustered();
 
         builder.Property(x => x.Id)
                .HasConversion(id => id.Value, value => new CustomerShippingAddressId(value))

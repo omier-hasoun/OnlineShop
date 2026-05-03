@@ -1,15 +1,20 @@
 
+using System.Threading.Channels;
+using Application.Common.InternalModels;
 using Domain.Customers;
 using Domain.Orders;
 using Domain.Products;
+using Domain.Products.ProductVariants;
 using FileSignatures;
 using IdGen;
-using Infrastructure.BackgroundServices;
+using Infrastructure.Channels;
 using Infrastructure.Common.Abstractions;
 using Infrastructure.Common.Exceptions;
 using Infrastructure.Data.IdGenerators;
 using Infrastructure.Data.IdGenerators.Primitives;
 using Infrastructure.Data.Interceptors;
+using Infrastructure.LocalServices.BackgroundServices;
+using Infrastructure.LocalServices.FileNameGeneratorService;
 using Infrastructure.LocalServices.FileStorageService;
 using Infrastructure.LocalServices.FileValidationService;
 using Infrastructure.LocalServices.HashingService;
@@ -33,8 +38,6 @@ public static class DependencyInjection
                 .AddIdGeneratorsServices()
                 .AddIdentityServices(config, env: enviroment)
                 .AddFileSignaturesServices()
-
-
                 ;
 
         return services;
@@ -42,8 +45,25 @@ public static class DependencyInjection
 
     private static IServiceCollection AddCustomServices(this IServiceCollection services)
     {
-        services.AddScoped<IFileValidationService, FileValidator>();
-        services.AddScoped<IFileStorageService, LocalFileStorage>();
+        services.AddSingleton<IFileValidationService, FileValidator>();
+        services.AddSingleton<IFileStorageService, LocalFileStorage>();
+        services.AddHostedService<ImagesProcessorWorker>();
+
+        services.AddSingleton<Channel<ImageProcessingTask>>(sp => {
+
+            return Channel.CreateBounded<ImageProcessingTask>(new BoundedChannelOptions(100)
+            {
+                FullMode = BoundedChannelFullMode.Wait,
+                SingleWriter = false,
+                SingleReader = true,
+                AllowSynchronousContinuations = false,
+            });
+            
+         });
+        services.AddSingleton<IImageProcessingService, ProcessingImagesTasksChannel>();
+        services.AddSingleton<IImageTaskReader, ProcessingImagesTasksChannel>();
+        services.AddSingleton<IUniqueFileNameGenerator, FileNameGenerator>();
+
 
         return services;
     }
@@ -55,6 +75,9 @@ public static class DependencyInjection
 
         services.AddSingleton<App.IIdGenerator<CustomerId>, UserIdGenerator>();
         services.AddSingleton<App.IIdGenerator<ProductId>, ProductIdGenerator>();
+
+        services.AddSingleton<App.IIdGenerator<ProductVariantId>, ProductVariantIdGenerator>();
+
         services.AddSingleton<App.IIdGenerator<OrderId>, OrderIdGenerator>();
 
 
@@ -103,8 +126,7 @@ public static class DependencyInjection
         .AddRoles<Role>()
         .AddEntityFrameworkStores<AppDbContext>()
         .AddApiEndpoints()
-        .AddDefaultTokenProviders()
-        ;
+        .AddDefaultTokenProviders();
 
         services.AddTransient<IEmailSender<AppUser>, EmailSenderFaker>();
         services.AddScoped<IPasswordHasher<AppUser>, UserPasswordHasher>();
@@ -113,7 +135,10 @@ public static class DependencyInjection
     }
     private static IServiceCollection AddFileSignaturesServices(this IServiceCollection services)
     {
-        services.AddSingleton<IFileFormatInspector, FileFormatInspector>();
+        services.AddSingleton<IFileFormatInspector, FileFormatInspector>( sp =>
+        {
+            return new FileFormatInspector(FileFormatLocator.GetFormats());
+        });
         return services;
     }
 

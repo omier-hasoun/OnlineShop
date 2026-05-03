@@ -50,6 +50,9 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(50)");
 
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("VARCHAR(254)");
@@ -91,6 +94,10 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("NormalizedEmail")
                         .IsUnique()
@@ -227,6 +234,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
                     b.ToTable("Brands", (string)null);
                 });
 
@@ -244,6 +253,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.HasIndex("ParentCategoryId");
 
@@ -305,6 +316,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
                     b.ToTable("Addresses", (string)null);
                 });
 
@@ -326,6 +339,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("smallint");
 
                     b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.HasIndex("CustomerId");
 
@@ -349,6 +364,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
                     b.HasIndex("UserId")
                         .IsUnique();
 
@@ -370,6 +387,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.HasIndex("AddressId")
                         .IsUnique();
@@ -400,6 +419,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.HasIndex("CustomerId");
 
@@ -433,6 +454,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
                     b.HasIndex("OrderId");
 
                     b.HasIndex("ProductVariantId");
@@ -456,6 +479,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.HasIndex("OrderId");
 
@@ -510,6 +535,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
                     b.HasIndex("OrderId");
 
                     b.ToTable("Shipments", (string)null);
@@ -535,6 +562,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("NVARCHAR(255)");
 
                     b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.ToTable("PaymentProviders", (string)null);
                 });
@@ -569,6 +598,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("NVARCHAR");
 
                     b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.HasIndex("CustomerId");
 
@@ -626,6 +657,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
                     b.HasIndex("BrandId");
 
                     b.HasIndex("CategoryId");
@@ -645,7 +678,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("BarCode")
+                    b.Property<string>("Barcode")
                         .IsRequired()
                         .HasColumnType("VARCHAR(100)");
 
@@ -691,6 +724,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnName("Specifications");
 
                     b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.HasIndex("ProductId");
 
@@ -763,6 +798,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
                     b.HasIndex("OrderItemId");
 
                     b.ToTable("ReturnItemRequests", (string)null);
@@ -798,6 +835,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.HasIndex("CreatedBy");
 
@@ -849,6 +888,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
                     b.ToTable("Transactions", (string)null);
                 });
 
@@ -874,6 +915,8 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
                     b.ToTable("UsersPaymentMethodsLogs", (string)null);
                 });
 
@@ -894,6 +937,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("NVARCHAR(50)");
 
                     b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.HasIndex("AddressId")
                         .IsUnique();
@@ -917,6 +962,13 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("AppUserId");
 
                     b.ToTable("UserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Application.Common.Identity.AppUser", b =>
+                {
+                    b.HasOne("Domain.Customers.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
                 });
 
             modelBuilder.Entity("Application.Common.Identity.UserClaim", b =>

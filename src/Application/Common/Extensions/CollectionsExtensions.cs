@@ -15,8 +15,10 @@ public static class CollectionsExtensions
             PageNumber = pageNumber,
             PageSize = elements.Count,
             TotalCount = totalCount,
-            TotalPages = totalCount / elements.Count
+            TotalPages = elements.Count == 0 ? 1 : (int)Math.Ceiling(((decimal)(decimal)totalCount / (decimal)elements.Count ))
 
         };
     }
+
+
 }

@@ -17,7 +17,9 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
 
         builder.Ignore(x => x.Attributes);
 
-        builder.HasKey(x => x.Id);
+
+        builder.HasKey(e => e.Id)
+               .IsClustered();
 
         builder.Property(x => x.Id)
                .HasConversion(

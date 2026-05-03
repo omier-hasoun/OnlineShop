@@ -13,7 +13,9 @@ internal sealed class OrderPaymentConfig : BaseEntityConfig<OrderPayment>
     {
         base.Configure(builder);
 
-        builder.HasKey(x => x.Id);
+
+        builder.HasKey(e => e.Id)
+               .IsClustered();
 
         builder.Property(x => x.Id)
                .ValueGeneratedNever();

@@ -1,8 +1,10 @@
 
 
+using Microsoft.AspNetCore.Http;
+
 namespace Application.Common.Abstractions;
 
 public interface IFileStorageService
 {
-    Task SaveAsync(IReadOnlyCollection<FileInfo> files);
+    Task<bool> SaveAsync(IFormFile file, string outPutFilePath);
 }

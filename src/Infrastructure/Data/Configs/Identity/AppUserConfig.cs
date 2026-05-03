@@ -1,5 +1,7 @@
 
 
+using Domain.Customers;
+
 namespace Infrastructure.Data.Configs.Identity;
 
 internal sealed class AppUserConfig : BaseEntityConfig<AppUser>
@@ -8,9 +10,8 @@ internal sealed class AppUserConfig : BaseEntityConfig<AppUser>
     {
         base.Configure(builder);
 
-        builder.Ignore(x => x.CustomerId);// UserId is readonly, return the Guid Id value its just a strongly type UserId for the domain
-
-        builder.HasKey(x => x.Id);
+        builder.HasKey(x => x.Id)
+               .IsClustered();
 
         builder.Property(x => x.Id)
                .ValueGeneratedNever();
@@ -73,6 +74,11 @@ internal sealed class AppUserConfig : BaseEntityConfig<AppUser>
         builder.HasIndex(x => x.NormalizedEmail)
                .IsUnique()
                .HasDatabaseName("IX_User_NormalizedEmail");
+
+        builder.HasOne<Customer>()
+               .WithMany()
+               .HasForeignKey(x => x.CustomerId)
+               .IsRequired(false);
 
         builder.ToTable("Users");
     }

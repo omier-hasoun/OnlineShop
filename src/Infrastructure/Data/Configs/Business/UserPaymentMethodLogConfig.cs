@@ -13,7 +13,9 @@ internal sealed class UserPaymentMethodLogConfig : BaseEntityConfig<UserPaymentM
 
         builder.Ignore(x => x.Details);
 
-        builder.HasKey(x => x.Id);
+
+        builder.HasKey(e => e.Id)
+               .IsClustered();
 
         builder.Property(x => x.Id)
                .HasConversion(id => id.Value, value => new UserPaymentMethodLogId(value))

@@ -10,7 +10,9 @@ internal sealed class CustomerConfig : BaseEntityConfig<Customer>
     {
         base.Configure(builder);
 
-        builder.HasKey(x => x.Id);
+
+        builder.HasKey(e => e.Id)
+               .IsClustered();
 
         builder.Property(x => x.Id)
                .HasConversion<CustomerIdConverter>()

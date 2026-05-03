@@ -1,9 +1,12 @@
 using Api.Controllers.Products.Requests;
 using Application.AdminPanelFeatures.Products.Commands.CreateProduct;
+using Application.AdminPanelFeatures.Products.Commands.CreateVariant;
+using Application.Common.RequestModels;
+using Application.Features.Products.Queries.ListProducts;
 using Domain.Brands;
 using Domain.Categories;
+using Domain.Products;
 using MediatR;
-using Shared.Results;
 
 namespace Api.Controllers.Products;
 
@@ -13,37 +16,80 @@ public sealed class ProductsController(IMediator mediator) : ApiController
 {
 
     [HttpPost]
-    public async Task<IActionResult> CreateProduct([FromBody] CreateProductCommand request, CancellationToken ct)
+    public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest request, CancellationToken ct)
     {
 
-        //var brandIdResult = BrandId.From(request.BrandId); 
+        var brandId = new BrandId(request.Brand_Id);
 
-        //if (brandIdResult.Failed)
-        //{
-        //    return Problem(brandIdResult.Errors);
-        //}
+        var categoryId = new CategoryId(request.Category_Id);
 
-        //var categoryIdResult = CategoryId.From(request.CategoryId);
+        CreateProductCommand command = new
+        (
+            brandId,
+            categoryId,
+            request.Title,
+            request.Description,
+            request.Is_Serialized,
+            request.Attributes
+        );
 
-        //if(categoryIdResult.Failed)
-        //{
-        //    return Problem(categoryIdResult.Errors);
-        //}
+        var result = await mediator.Send(command, ct);
 
-        //CreateProductCommand command = new
-        //(
-        //    brandIdResult.Value,
-        //    categoryIdResult.Value,
-        //    request.Title,
-        //    request.Description,
-        //    request.IsSerialized,
-        //    request.Attributes
-        //);
+        return result.Match((response) => Ok(response), Problem);
+    }
+
+    [HttpPost("variants/")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> CreateVariant([FromForm] CreateVariantRequest request, CancellationToken ct)
+    {
+
+        var productId = new ProductId(request.Product_Id);
+
+        CreateVariantCommand command = new
+        (
+            productId,
+            request.Price,
+            request.Width,
+            request.Height,
+            request.Length,
+            request.Weight,
+            request.Sku,
+            request.Slug,
+            request.BarCode,
+            request.Images,
+            request.Specifications
+        );
+
+        var result = await mediator.Send(command, ct);
+
+        return result.Match((response) => Ok(response), Problem);
+    }
+
+    [HttpGet()]
+    public async Task<IActionResult> ListProducts([FromQuery] ListProductsQuery request, CancellationToken ct)
+    {
 
         var result = await mediator.Send(request, ct);
 
-        return result.Match(
-            (response) => Ok(response),
-           Problem);
+        return result.Match((response) => Ok(response), Problem);
     }
+
+
+    //[HttpGet("{id}")]
+    //public async Task<IActionResult> GetProductById([FromRoute] long id, CancellationToken ct)
+    //{
+
+    //    var result = await mediator.Send(id, ct);
+
+    //    return result.Match((response) => Ok(response), Problem);
+    //}
+
+    //[HttpGet("variants/{id}")]
+    //public async Task<IActionResult> GetVariantById([FromRoute]long id, CancellationToken ct)
+    //{
+
+    //    var result = await mediator.Send(id, ct);
+
+    //    return result.Match((response) => Ok(response), Problem);
+    //}
 }

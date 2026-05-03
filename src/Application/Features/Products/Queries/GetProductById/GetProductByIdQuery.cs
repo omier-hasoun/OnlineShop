@@ -1,4 +1,4 @@
 
 namespace Application.Features.Products.Queries.GetProductById;
 
-public sealed record GetProductByIdQuery(string ProductId);
+//public sealed record GetProductByIdQuery(ProductId ProductId) : IRequest<>;

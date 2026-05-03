@@ -12,7 +12,9 @@ internal sealed class ReturnItemRequestConfig : BaseEntityConfig<ReturnItemReque
     {
         base.Configure(builder);
 
-        builder.HasKey(x => x.Id);
+
+        builder.HasKey(e => e.Id)
+               .IsClustered();
 
         builder.Property(x => x.Id)
                .HasConversion(id => id.Value, value => new ReturnItemRequestId(value))

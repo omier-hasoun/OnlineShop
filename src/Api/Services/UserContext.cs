@@ -1,6 +1,5 @@
 using Api.Common.Exceptions;
 using Domain.Customers;
-using Infrastructure.Configurations;
 
 namespace Api.Services;
 
@@ -14,7 +13,8 @@ public class UserContext(IHttpContextAccessor context) : IUserContext
             {
                 return Id;
             }
-            throw new HttpRequestMissingUserIdException();
+            return Guid.Parse("00000000-0000-0000-0000-000000000000");
+            //throw new HttpRequestMissingUserIdException();
         }
     }
 

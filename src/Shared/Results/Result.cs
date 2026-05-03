@@ -22,15 +22,23 @@ public static class Result
 
     public static Result<Success> ValidateAll(params Func<Result<Success>>[] validators)
     {
+        List<Error>? allErrors = null;
+
         foreach (var validator in validators)
         {
             var result = validator();
-            if (result.Failed)
+            if (result.Succeeded)
             {
-                return result;
+                continue;
+            }
+
+            foreach(var error in result.Errors)
+            {
+                allErrors ??= new();
+                allErrors.Add(error);
             }
         }
-        return Result.Success;
+        return allErrors is null ? Result.Success: allErrors ;
     }
 }
 

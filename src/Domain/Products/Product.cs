@@ -1,4 +1,5 @@
 
+using Domain.Common.ValueObjects;
 using Domain.Products.ValueObjects;
 
 namespace Domain.Products;
@@ -71,24 +72,37 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
     public IReadOnlyCollection<ProductVariant> Variants { get { return _variants.AsReadOnly(); } private set { _variants = value is null ? [] : value.ToList(); } }
 
 
+    public Result<Success> AddVariant(ProductVariantId varaintId, Money price, int width, int height,
+        int length, int weight, string sku, string slug, string barCode, IReadOnlyDictionary<string, string> specifications)
+    {
 
-    //public Result<Updated> UpdateProductImages(List<ProductImage> newImages)
-    //{
-    //    if (newImages.Count < ProductRules.MinImagesCount || newImages.Count > ProductRules.MaxImagesCount)
-    //    {
-    //        return ProductErrors.ImagesOutOfRange;
-    //    }
+        var createVariantResult = ProductVariant.Create(varaintId, Id, price, width, height, length, weight, sku, slug, barCode, specifications);
 
-    //    _images = newImages;
-    //    EnsureImagesSortOrderIsSequential();
-    //    return Result.Updated;
-    //}
-    //private void EnsureImagesSortOrderIsSequential()
-    //{
-    //    //byte sortOrder = 1;
-    //    //foreach (var image in _images.OrderBy(i => i.SortOrder))
-    //    //{
-    //    //    image.UpdateSortOrder(sortOrder++);
-    //    //}
-    //}
+        if(createVariantResult.Failed)
+        {
+            return createVariantResult.Errors;
+        }
+
+        _variants.Add(createVariantResult.Value);
+        return Result.Success;
+    }
+
+
+    public Result<Updated> UpdateVariantImages(ProductVariantId varaintId, List<ProductImage> newImages)
+    {
+        var variant = _variants.FirstOrDefault(x => x.Id == varaintId);
+
+        if (variant is null)
+            return DomainErrors.ProductVariantIdInvalid;
+
+        var updateResult = variant.UpdateImages(newImages);
+
+        if (updateResult.Failed)
+        {
+            return updateResult.Errors;
+        }
+       
+        return Result.Updated;
+    }
+
 }

@@ -17,6 +17,7 @@ using Domain.UsersPaymentMethodsLogs;
 using Domain.Warehouses;
 using Domain.Customers.CustomerShippingAddresses;
 using Application.Common.AppSettingsConfiguration;
+using Application.Features.Products.Dtos;
 
 namespace Application.Common.Abstractions;
 

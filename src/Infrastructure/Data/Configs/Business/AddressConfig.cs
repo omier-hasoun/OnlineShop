@@ -11,7 +11,8 @@ internal sealed class AddressConfig : BaseEntityConfig<Address>
     {
         base.Configure(builder);
 
-        builder.HasKey(e => e.Id);
+        builder.HasKey(e => e.Id)
+               .IsClustered();
 
         builder.Property(x => x.Id)
                .HasConversion(

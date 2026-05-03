@@ -8,9 +8,11 @@ public sealed class Role : IdentityRole<Guid>
     {
 
     }
-    public Role(string roleName) : base(roleName)
+    public Role(string roleName)
     {
         if (Id == default)
             Id = Guid.CreateVersion7();
+
+        Name = roleName;
     }
 }

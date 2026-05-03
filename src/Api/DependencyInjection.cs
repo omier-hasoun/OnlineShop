@@ -1,6 +1,7 @@
 //using Api.Services;
 using Api.Services;
 using Application.Common.Identity;
+using Infrastructure.LocalServices.BackgroundServices;
 using Infrastructure.LocalServices.HashingService;
 using Microsoft.AspNetCore.Identity.UI.Services;
 

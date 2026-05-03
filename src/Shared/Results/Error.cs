@@ -1,10 +1,12 @@
 namespace Shared.Results;
 
-public readonly record struct Error
+public record struct Error
 {
     public string Code { get; }
-    public string Description { get; }
+    public string Description { get; set; }
     public ErrorType Type { get; }
+
+    public object[]? Parameters { get; private set; } = null;
 
     private Error(string code, string description, ErrorType errorType)
     {
@@ -15,6 +17,12 @@ public readonly record struct Error
         this.Type = errorType;
         this.Description = description;
         this.Code = code;
+    }
+
+    public Error WithParameters(params object[]?  parameters)
+    {
+        Parameters = parameters;
+        return this;
     }
 
     public static Error Failure(string code, string description = "General failure.")

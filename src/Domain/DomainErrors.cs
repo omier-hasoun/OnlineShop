@@ -3,6 +3,18 @@ namespace Domain;
 // need to replece ErrorCodes with the BaseErrorCode 
 public static class DomainErrors
 {
+    public const string BaseErrorCode = "DomainErrors";
+
+    public static readonly Error ProductIdInvalid = Products.ProductIdInvalid;
+    public static readonly Error ReturnItemRequestIdInvalid = ReturnItemRequests.ReturnItemRequestIdInvalid;
+    public static readonly Error ProductVariantIdInvalid = ProductVariants.ProductVariantIdInvalid;
+    public static readonly Error OrderIdInvalid = Orders.OrderIdInvalid;
+    public static readonly Error ProductReviewIdInvalid = ProductReviews.ProductReviewIdInvalid;
+    public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+    public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+    public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+    public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+    public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
     public static class ReturnItemRequests
     {
         public const string BaseErrorCode = "DomainErrors.ReturnItemRequest";
@@ -18,6 +30,18 @@ public static class DomainErrors
 
         public static readonly Error InvalidSerialNumbers = Error.Validation("DomainErrors.ReturnItemRequest.InvalidSerialNumber", ".");
         public static readonly Error ReturnItemRequestIdInvalid = Error.Validation($"{BaseErrorCode}.ReturnItemRequestIdInvalid");
+
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
 
     }
 
@@ -47,7 +71,17 @@ public static class DomainErrors
 
         public static readonly Error DescriptionOutOfRange = Error.Validation($"{BaseErrorCode}.DescriptionOutOfRange");
 
-        public static readonly Error ImagesOutOfRange = Error.Validation($"{BaseErrorCode}.ImagesOutOfRange");
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
 
     }
 
@@ -59,6 +93,25 @@ public static class DomainErrors
 
         public static readonly Error ProductVariantIdInvalid = Error.Validation($"{BaseErrorCode}.ProductVariantIdInvalid");
         public static readonly Error PriceOutOfRange = Error.Validation($"{BaseErrorCode}.PriceOutOfRange");
+        public static readonly Error InvalidDimensions = Error.Validation($"{BaseErrorCode}.InvalidDimensions");
+
+        public static readonly Error BarCodeRequired = Error.Validation($"{BaseErrorCode}.BarCodeRequired");
+        public static readonly Error BarCodeLengthOutOfRange = Error.Validation($"{BaseErrorCode}.BarCodeLengthOutOfRange");
+        public static readonly Error SlugLengthOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(SlugLengthOutOfRange)}");
+
+        public static readonly Error ImagesOutOfRange = Error.Validation($"{BaseErrorCode}.ImagesOutOfRange");
+
+        public static readonly Error SkuOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(SkuOutOfRange)}");
+        public static readonly Error AtleastOneSpecificationRequired = Error.Validation($"{BaseErrorCode}.{nameof(AtleastOneSpecificationRequired)}");
+        public static readonly Error InvalidSpecification = Error.Validation($"{BaseErrorCode}.{nameof(InvalidSpecification)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error BarcodeOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(BarcodeOutOfRange)}");
+        public static readonly Error MaxAllowedSpecificationsNumberExceeded = Error.Validation($"{BaseErrorCode}.{nameof(MaxAllowedSpecificationsNumberExceeded)}");
+
     }
 
 
@@ -72,6 +125,17 @@ public static class DomainErrors
         public static readonly Error ProductReviewIdInvalid = Error.Validation($"{BaseErrorCode}.ProductReviewIdInvalid");
 
         public static readonly Error CommentLengthOutOfRange =Error.Validation($"{BaseErrorCode}.CommentLengthOutOfRange");
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
     }
 
 
@@ -89,6 +153,17 @@ public static class DomainErrors
         public static readonly Error ShippingFeesOutOfRange = Error.Validation($"{BaseErrorCode}.OutOfRange");
 
         public static readonly Error TotalItemsPriceOutOfRange = Error.Validation($"{BaseErrorCode}.OutOfRange");
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
     }
 
 
@@ -104,6 +179,17 @@ public static class DomainErrors
         public static readonly Error InvalidReturnQuantity = Error.Validation($"{BaseErrorCode}.DoNotMatchQuantity");
 
         internal static readonly Error OrderItemIdInvalid = Error.Validation($"{BaseErrorCode}.OrderItemIdInvalid");
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
     }
 
 
@@ -114,6 +200,17 @@ public static class DomainErrors
         public const string BaseErrorCode = "DomainErrors.Brands";
 
         public static readonly Error BrandIdInvalid = Error.Validation("DomainErrors.Invalid", "Brand Id is invalid.");
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
     }
 
 
@@ -123,6 +220,17 @@ public static class DomainErrors
         public const string BaseErrorCode = "DomainErrors.Categories";
 
         public static readonly Error CategoryIdInvalid = Error.Validation("DomainErrors.Invalid", "Category Id is invalid.");
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
     }
 
 
@@ -133,6 +241,17 @@ public static class DomainErrors
 
         public static readonly Error CartItemIdInvalid = Error.Validation($"{BaseErrorCode}.CartItemIdInvalid");
         public static readonly Error QuantityOutOfRange = Error.Validation($"{BaseErrorCode}.QuantityOutOfRange");
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
     }
 
 
@@ -142,6 +261,17 @@ public static class DomainErrors
         public const string BaseErrorCode = "DomainErrors.Warehouses";
 
         public static readonly Error WarehouseIdInvalid = Error.Validation($"{BaseErrorCode}.WarehouseIdInvalid");
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
 
     }
 
@@ -154,6 +284,19 @@ public static class DomainErrors
         public static readonly Error CustomerIdInvalid = Error.Validation($"{BaseErrorCode}.CustomerIdInvalid");
 
 
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
+
+
     }
 
 
@@ -164,6 +307,17 @@ public static class DomainErrors
 
         public static readonly Error MoneyAmountInvalid = Error.Validation($"{BaseErrorCode}.MoneyAmountInvalid");
 
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
+
     }
 
 
@@ -171,7 +325,20 @@ public static class DomainErrors
     public static class CustomerShippingAddresses
     {
         public const string BaseErrorCode = "DomainErrors.CustomerShippingAddresses";
+
         public static readonly Error CustomerShippingAddressesIdInvalid = Error.Validation($"{BaseErrorCode}.CustomerShippingAddressesIdInvalid");
+
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
 
     }
 
@@ -182,6 +349,18 @@ public static class DomainErrors
         public const string BaseErrorCode = "DomainErrors.Addresses";
         public static readonly Error AddressIdInvalid = Error.Validation($"{BaseErrorCode}.AddressIdInvalid");
 
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
+
     }
 
 
@@ -190,6 +369,18 @@ public static class DomainErrors
     {
         public const string BaseErrorCode = "DomainErrors.Shipments";
         public static readonly Error ShipmentIdInvalid = Error.Validation($"{BaseErrorCode}.ShipmentIdInvalid");
+
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
 
     }
 
@@ -200,12 +391,37 @@ public static class DomainErrors
         public const string BaseErrorCode = "DomainErrors.PaymentProviders";
         public static readonly Error PaymentProviderIdInvalid = Error.Validation($"{BaseErrorCode}.PaymentProviderIdInvalid");
 
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
+
     }
 
     public static class Transactions
     {
         public const string BaseErrorCode = "DomainErrors.Transactions";
         public static readonly Error TransactionIdInvalid = Error.Validation($"{BaseErrorCode}.TransactionIdInvalid");
+
+
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
 
     }
 
@@ -214,12 +430,36 @@ public static class DomainErrors
         public const string BaseErrorCode = "DomainErrors.UserPaymentMethodLogs";
         public static readonly Error UserPaymentMethodLogIdInvalid = Error.Validation($"{BaseErrorCode}.UserPaymentMethodLogIdInvalid");
 
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
+
     }
 
     public static class ProductsStock
     {
         public const string BaseErrorCode = "DomainErrors.ProductsStock";
         public static readonly Error ProductStockIdInvalid = Error.Validation($"{BaseErrorCode}.ProductStockIdInvalid");
+
+
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
 
     }
 }

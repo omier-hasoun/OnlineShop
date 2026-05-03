@@ -24,11 +24,12 @@ using Domain.Common.ValueObjects;
 using Domain.Customers.CustomerShippingAddresses;
 using Domain.Products.ValueObjects;
 using Application.Common.AppSettingsConfiguration;
+using Application.Features.Products.Dtos;
 
 
 namespace Infrastructure.Data;
 
-internal sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserClaim, IdentityUserRole<Guid>, UserLoginProvider, RoleClaim, UserToken, IdentityUserPasskey<Guid>>, IAppDbContext
+public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserClaim, IdentityUserRole<Guid>, UserLoginProvider, RoleClaim, UserToken, IdentityUserPasskey<Guid>>, IAppDbContext
 {
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
@@ -53,15 +54,6 @@ internal sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, User
     public DbSet<UserPaymentMethodLog> UserPaymentMethodLogs => Set<UserPaymentMethodLog>();
     public DbSet<Customer> Customers => Set<Customer>();
 
-
-
-    //#region notSupported
-    //private string _notSupportedMessage = "The invoked DbSet not supported, just ignore it and do not remove them";
-    //public override DbSet<RoleClaim> RoleClaims { get => throw new NotSupportedException(_notSupportedMessage); set { throw new NotSupportedException(_notSupportedMessage); } }
-    //public override DbSet<IdentityUserPasskey<Guid>> UserPasskeys { get => throw new NotSupportedException(_notSupportedMessage); set => throw new NotSupportedException(_notSupportedMessage); }
-
-    //#endregion
-
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
@@ -76,7 +68,6 @@ internal sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, User
 
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-
         ConfigureISoftDeleted(builder);
 
         ConfigureIHasCreationTime(builder);
@@ -88,7 +79,7 @@ internal sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, User
 
         builder.Ignore<IdentityUserPasskey<Guid>>();
         builder.Ignore<RoleClaim>();
-
+        
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder builder)
