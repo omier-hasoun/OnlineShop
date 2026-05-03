@@ -73,8 +73,8 @@ public sealed class CreateVariantCommandHandler(IOptions<ProductPathsOptions> op
             
         }
 
-        var updateResult = product.UpdateVariantImages(variandId, productImages);
-
+        var updateImagesResult = product.UpdateVariantImages(variandId, productImages);
+        if(updateImagesResult)
 
         if (await context.SaveAsync(ct))
         {
