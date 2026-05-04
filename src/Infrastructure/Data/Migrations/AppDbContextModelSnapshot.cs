@@ -667,6 +667,10 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("LastModifiedBy");
 
+                    b.HasIndex("Title")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Product_Title");
+
                     b.ToTable("Products", null, t =>
                         {
                             t.HasCheckConstraint("CK_Product_AverageRating", "[AverageRating] between 0 and 5");
@@ -1161,7 +1165,7 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.OwnsOne("Domain.Products.ValueObjects.AverageRating", "AverageRating", b1 =>
+                    b.OwnsOne("Domain.Products.ValueObjects.ProductAverageRating", "AverageRating", b1 =>
                         {
                             b1.Property<long>("ProductId")
                                 .HasColumnType("bigint");
@@ -1197,7 +1201,7 @@ namespace Infrastructure.Data.Migrations
                             b1.Property<int>("__synthesizedOrdinal")
                                 .ValueGeneratedOnAddOrUpdate();
 
-                            b1.Property<string>("FilePath")
+                            b1.Property<string>("FileName")
                                 .IsRequired();
 
                             b1.Property<byte>("SortOrder");

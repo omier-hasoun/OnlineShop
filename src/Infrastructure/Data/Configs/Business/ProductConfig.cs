@@ -68,6 +68,12 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
                .HasForeignKey(x => x.CategoryId)
                .IsRequired();
 
+
+        builder.HasIndex(x => x.Title)
+               .HasDatabaseName("IX_Product_Title")
+               .IsUnique();
+
+
         builder.ToTable("Products", x =>
         {
             x.HasCheckConstraint("CK_Product_AverageRating", $"[AverageRating] between {ProductRules.MinAverageRatingValue} and {ProductRules.MaxAverageRatingValue}");
