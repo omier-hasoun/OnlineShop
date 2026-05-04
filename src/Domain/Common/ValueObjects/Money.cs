@@ -24,5 +24,16 @@ public sealed record Money
         };
     }
     public decimal Value { get; internal init; }
+    public static bool operator <(Money left, Money right) =>
+        left is not null && right is not null && left.Value < right.Value;
+
+    public static bool operator >(Money left, Money right) =>
+        left is not null && right is not null && left.Value > right.Value;
+
+    public static bool operator <=(Money left, Money right) =>
+        left is not null && right is not null && left.Value <= right.Value;
+
+    public static bool operator >=(Money left, Money right) =>
+        left is not null && right is not null && left.Value >= right.Value;
 
 }

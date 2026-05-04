@@ -5,11 +5,11 @@ using Application.AdminPanelFeatures.Products.Commands.CreateVariant;
 using Application.AdminPanelFeatures.Products.Commands.PublishProduct;
 using Application.Common.AppSettingsConfiguration.FileStoragePaths.ProductsPaths;
 using Application.Common.Extensions;
-using Application.Common.RequestModels;
 using Application.Common.ResponseModels;
 using Application.Features.Products.Queries.ListProducts;
 using Domain.Brands;
 using Domain.Categories;
+using Domain.Common.ValueObjects;
 using Domain.Products;
 using MediatR;
 using Microsoft.Extensions.Options;
@@ -73,10 +73,19 @@ public sealed class ProductsController(IMediator mediator, IOptions<ProductPaths
     }
 
     [HttpGet()]
-    public async Task<IActionResult> ListProducts([FromQuery] ListProductsQuery request, CancellationToken ct)
+    public async Task<IActionResult> ListProducts([FromQuery] ListProductsRequest request, CancellationToken ct)
     {
+        if(request.MaxPrice is not null and <= 0)
+        {
+            return BadRequest("Cannot request a max price less than or equal to 0");
+        }
+        Money? maxPrice = request.MaxPrice is null ? null : Money.From((decimal)request.MaxPrice).Value;
+        BrandId? brandId = request.BrandId is null ? null : new BrandId((Guid)request.BrandId);
+        CategoryId? categoryId = request.CategoryId is null ? null : new CategoryId((long)request.CategoryId);
 
-        var queryResult = await mediator.Send(request, ct);
+        var query = new ListProductsQuery(request.PageSize, request.PageNumber, maxPrice, request.SearchText, brandId, categoryId);
+ 
+        var queryResult = await mediator.Send(query, ct);
 
         List<ProductListItemResponse> response;
         Result<PaginatedList<ProductListItemResponse>> result = new();

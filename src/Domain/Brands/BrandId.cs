@@ -12,7 +12,7 @@ public readonly record struct BrandId
 
     public Result<Success> IsValid()
     {
-        if (Value.Version != 7)
+        if (Value.Version != 7)// this will also ensure that a guid is not default
         {
             return DomainErrors.Brands.BrandIdInvalid;
         }
