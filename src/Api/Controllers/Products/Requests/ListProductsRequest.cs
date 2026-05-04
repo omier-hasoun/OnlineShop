@@ -4,5 +4,4 @@ public sealed class ListProductsRequest
 {
     public required int PageNumber;
     public required int PageSize;
-
 }

@@ -9,8 +9,9 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
     private ProductVariant()
     {
     }
+
     private ProductVariant(ProductVariantId id, ProductId productId, Money originalPrice, Money priceNow, byte discountPercentage,  ProductStatus status,
-        int width, int height, int length, int weight, string sku, string slug, string barCode, IReadOnlyDictionary<string, string> specifications, IReadOnlyCollection<ProductImage>? images)
+        int width, int height, int length, int weight, string sku, string slug, string barCode, IReadOnlyDictionary<string, string> specifications, IReadOnlyCollection<ProductImage> images)
         : base(id)
     {
         ProductId = productId;
@@ -27,12 +28,12 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
         Sku = sku;
         Slug = slug;
         Barcode = barCode;
-
+        _images = images.ToList();
         _specifications = specifications.ToDictionary();
     }
 
     public static Result<ProductVariant> Create(ProductVariantId id, ProductId productId, Money originalPrice,
-        int width, int height, int length, int weight, string sku, string slug, string barCode, IReadOnlyDictionary<string, string> specifications, IReadOnlyCollection<ProductImage>? images = null)
+        int width, int height, int length, int weight, string sku, string slug, string barCode, IReadOnlyDictionary<string, string> specifications, IReadOnlyCollection<ProductImage> images)
     {
         var validationResult = Result.ValidateAll(
                                 () => id.Validate(),
@@ -41,8 +42,8 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
                                 () => ValidateSpecifications(specifications),
                                 () => ValidateSku(sku),
                                 () => ValidateSlug(slug),
-                                () => ValidateBarcode(barCode)
-                               );
+                                () => ValidateImages(images),
+                                () => ValidateBarcode(barCode));
 
         if (validationResult.Failed)
         {
@@ -53,7 +54,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
 
         byte discountPercentage = 0;
         Money priceNow = originalPrice;
-        ProductStatus status = ProductStatus.NotActive;
+        ProductStatus status = ProductStatus.Draft;
         
         return new ProductVariant(id, productId, originalPrice, priceNow, discountPercentage, status,
             width, height, length, weight, sku, slug, barCode, specifications, images);
@@ -80,7 +81,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
 
     public string Sku { get; private set; } = null!;
     public string Slug { get; private set; } = null!;
-    public string Barcode { get; private init; }
+    public string Barcode { get; private init; } = null!;
 
     private List<ProductImage> _images = [];
     public IReadOnlyCollection<ProductImage> Images { get { return _images.AsReadOnly(); } private set { _images = value is null ? [] : value.ToList(); } }
@@ -94,27 +95,57 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
     //        return originalPrice;
     //    return originalPrice * (100 - discountPercentage) / 100;
     //}
-    private void EnsureImagesSortOrderIsSequential(ref List<ProductImage> images)
+
+
+    public Result<Updated> UpdateImages(List<ProductImage> newImages)
+    {
+        var validaitonResult = ValidateImages(newImages);
+
+        if (validaitonResult.Failed)
+            return validaitonResult.Errors;
+
+        _images = newImages;
+        EnsureImagesHaveSequentialSortOrder();
+
+        return Result.Updated;
+    }
+
+
+    public void Publish()
+    {
+        Status = ProductStatus.Active;
+    }
+    public void Unpublish()
+    {
+        Status = ProductStatus.NotActive;
+    }
+    public void Delete()
+    {
+        Status = ProductStatus.Archived;
+    }
+
+
+    private void EnsureImagesHaveSequentialSortOrder()
     {
         byte sortOrder = 1;
-        foreach (var image in images.OrderBy(i => i.SortOrder))
+        foreach (var image in Images.OrderBy(i => i.SortOrder))
         {
             image.ChangeSortOrder(sortOrder++);
         }
     }
 
-    public Result<Updated> UpdateImages(List<ProductImage> newImages)
+
+
+
+
+    private static Result<Success> ValidateImages(IReadOnlyCollection<ProductImage> newImages)
     {
-        
-        if(newImages is null || ValHelper.IsOutOfRange(newImages.Count, ProductVariantRules.MinNumberOfImages, ProductVariantRules.MaxNumberOfImages))
+        if (newImages is null || ValHelper.IsOutOfRange(newImages.Count, ProductVariantRules.MinNumberOfImages, ProductVariantRules.MaxNumberOfImages))
         {
             return DomainErrors.ProductVariants.ImagesOutOfRange;
         }
-        EnsureImagesSortOrderIsSequential(ref newImages);
-        _images = newImages;
-        return Result.Updated;
+        return Result.Success;
     }
-
     private static Result<Success> ValidateOriginalPrice(Money price)
     {
         if(ValHelper.IsOutOfRange(price.Value, ProductVariantRules.MinOriginalPriceValue, ProductVariantRules.MaxOriginalPriceValue))

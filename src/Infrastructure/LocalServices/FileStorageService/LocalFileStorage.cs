@@ -1,44 +1,48 @@
 
+using Application.Common.AppSettingsConfiguration.FileStoragePaths;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure.LocalServices.FileStorageService;
 
 internal sealed class LocalFileStorage : IFileStorageService
 {
-    public LocalFileStorage()
+    private readonly IWebHostEnvironment _env;
+    private readonly FileStoragePathsOptions _paths;
+    public LocalFileStorage(IWebHostEnvironment env, IOptions<FileStoragePathsOptions> options)
     {
+        _env = env;
+        _paths = options.Value;
     }
 
-    public async Task<bool> SaveAsync(IFormFile file, string outputFilePath)
+    public async Task<bool> SaveImageAsync(IFormFile file, string fileName, CancellationToken ct)
     {
         if (file == null || file.Length == 0)
             return false;
 
+        var outputPath = Path.Combine( _env.WebRootPath, _paths.ProductsPaths.Images_Original + fileName);
         try
         {
-            var dir = Path.GetDirectoryName(outputFilePath);
 
-            if (string.IsNullOrWhiteSpace(dir))
-                return false;
-
-            Directory.CreateDirectory(dir);
+            Directory.CreateDirectory(outputPath);
 
             await using var fileStream = new FileStream(
-                outputFilePath,
+                fileName,
                 FileMode.Create,
                 FileAccess.Write,
                 FileShare.None,
                 81920,
                 useAsync: true);
 
-            await file.CopyToAsync(fileStream);
-            await fileStream.FlushAsync();
+            await file.CopyToAsync(fileStream, ct);
+            await fileStream.FlushAsync(ct);
 
             return true;
         }
         catch (Exception)
         {
-            // log here
+            File.Delete(outputPath); // case exception happed delete the file to not waste storage
             return false;
         }
     }

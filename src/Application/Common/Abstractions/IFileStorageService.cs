@@ -6,5 +6,5 @@ namespace Application.Common.Abstractions;
 
 public interface IFileStorageService
 {
-    Task<bool> SaveAsync(IFormFile file, string outPutFilePath);
+    Task<bool> SaveImageAsync(IFormFile file, string outPutFilePath, CancellationToken ct);
 }

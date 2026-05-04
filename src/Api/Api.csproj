@@ -34,7 +34,6 @@
       <Folder Include="Common\Helpers\" />
       <Folder Include="Controllers\Categories\" />
       <Folder Include="Controllers\Orders\" />
-      <Folder Include="Controllers\Products\Responses\" />
       <Folder Include="Controllers\Users\" />
       <Folder Include="wwwroot\uploads\products\images\" />
       <Folder Include="wwwroot\uploads\products\images\original\" />

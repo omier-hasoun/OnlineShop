@@ -2,13 +2,13 @@
 using Application.Common.Extensions;
 using Application.Common.ResponseModels;
 using Application.Features.Products.Dtos;
-using Domain.Products.ValueObjects;
-using Domain.Products.ProductVariants;
+
+
 namespace Application.Features.Products.Queries.ListProducts;
 
-internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequestHandler<ListProductsQuery, Result<PaginatedList<ProductListItemViewDto>>>
+internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequestHandler<ListProductsQuery, Result<PaginatedList<ProductListItemDto>>>
 {
-    public async Task<Result<PaginatedList<ProductListItemViewDto>>> Handle(ListProductsQuery request, CancellationToken ct)
+    public async Task<Result<PaginatedList<ProductListItemDto>>> Handle(ListProductsQuery request, CancellationToken ct)
     {
         if(request.PageSize > 50 || request.PageNumber > 1000)// just making sure no one is insane enough to request page 1000
         {
@@ -17,36 +17,6 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
 
         int skip = ((request.PageNumber - 1) * request.PageSize);
         int totalProductsCount = await context.Products.Where(p => p.Status == ProductStatus.Active).CountAsync(ct);
-        //        var products = await context.Products.FromSqlInterpolated(
-        //$@"
-        //DECLARE @skip int
-        //DECLARE @take smallInt
-        //set @skip = {skip}
-        //set @take = {request.PageSize}
-
-        //SELECT p.Id,
-        //       p.AverageRating,
-        //       p.Title,
-        //       b.Name as Brand,
-        //       v.DiscountPercentage,
-        //       v.OriginalPrice,
-        //       v.Images,
-        //       v.PriceNow
-        //FROM Products p
-        //JOIN Brands b ON p.BrandId = b.Id
-        //CROSS APPLY (
-        //    SELECT TOP 1
-        //           v.DiscountPercentage,
-        //           v.OriginalPrice,
-        //           v.PriceNow,
-        //		   v.Images
-        //    FROM ProductVariants v
-        //    WHERE v.ProductId = p.Id
-        //    ORDER BY v.PriceNow ASC
-        //) v
-        //where Status = '{ProductStatus.Active}'
-        //OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY").ToListAsync(ct);
-
 
         var query = context.Products
             .AsNoTracking()
@@ -66,21 +36,21 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
             .OrderBy(x => x.p.Id)
             .Skip(skip)
             .Take(request.PageSize)
-            .Select(m => new ProductListItemViewDto
+            .Select(m => new ProductListItemDto
             {
-                Id = m.p.Id.Value,
+                Id = m.p.Id,
                 Title = m.p.Title,
-                AverageRating = m.p.AverageRating.Value,
+                AverageRating = m.p.AverageRating,
                 Brand = m.b.Name,
-                Images = m.v.Images.ToList(),
-                OriginalPrice = m.v.OriginalPrice.Value,
-                PriceNow = m.v.PriceNow.Value,
+                Image = m.v.Images.First(x => x.SortOrder == 1),
+                OriginalPrice = m.v.OriginalPrice,
+                PriceNow = m.v.PriceNow,
                 DiscountPercentage = m.v.DiscountPercentage
             });
 
 
         var productsPage = await query.ToListAsync(ct);
-        return productsPage.ToPaginatedList(request.PageNumber, totalProductsCount);
+        return productsPage.ToPaginatedList(request.PageNumber, totalProductsCount) ;
         
     }
 

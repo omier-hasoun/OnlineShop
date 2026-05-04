@@ -15,18 +15,18 @@ namespace Application.Features.Products.Dtos;
 /// <param name="Images"></param>
 /// <param name="DiscountPercentage"></param>
 /// <param name="OriginalPrice"></param>
-public sealed record ProductListItemViewDto
+public sealed record ProductListItemDto
 {
-    public long Id { get; init; }
+    public ProductId Id { get; init; }
     public string Title { get; init; } = null!;
-    public decimal PriceNow { get; init; } 
+    public Money PriceNow { get; init; } = null!;
     public string Brand { get; init; } = null!;
-    public float AverageRating { get; init; }
-    public List<ProductImage> Images { get; init; } = null!;
+    public ProductAverageRating AverageRating { get; init; } = null!;
+    public ProductImage Image { get; init; } = null!;
     public byte DiscountPercentage { get; init; }
-    public decimal OriginalPrice { get; init; } 
+    public Money OriginalPrice { get; init; } = null!;
 
-    public ProductListItemViewDto()
+    public ProductListItemDto()
     {
         
     }

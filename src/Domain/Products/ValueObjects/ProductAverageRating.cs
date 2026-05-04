@@ -2,23 +2,23 @@
 
 namespace Domain.Products.ValueObjects;
 
-public sealed record AverageRating
+public sealed record ProductAverageRating
 {
-    internal AverageRating()
+    internal ProductAverageRating()
     {
         
     }
 
     public float Value { get; internal init; } = 0;
 
-    public static Result<AverageRating> From(float value)
+    public static Result<ProductAverageRating> From(float value)
     {
         if (ValHelper.IsOutOfRange(value, ProductRules.MinAverageRatingValue, ProductRules.MaxAverageRatingValue))
         {
             return DomainErrors.Products.AverageRatingInvalid;
         }
 
-        return new AverageRating()
+        return new ProductAverageRating()
         {
             Value = value
         };

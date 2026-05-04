@@ -9,7 +9,7 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
     private Product()
     {
     }
-    private Product(ProductId id, BrandId brandId, CategoryId categoryId, string title, string description, AverageRating averageRating, ProductStatus status,
+    private Product(ProductId id, BrandId brandId, CategoryId categoryId, string title, string description, ProductAverageRating averageRating, ProductStatus status,
        bool isSerialized, IReadOnlyDictionary<string, string> attributes, DateTime createdAt, DateTime lastModifiedAt, Guid createdBy, Guid lastModifiedBy)
         : base(id)
     {
@@ -27,18 +27,18 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
         LastModifiedBy = lastModifiedBy;
     }
     public static Result<Product> Create(ProductId id, BrandId brandId, CategoryId categoryId, string title, string description,
-        bool isSerialized, IReadOnlyDictionary<string, string>? attributes)
+        bool isSerialized, IReadOnlyDictionary<string, string> attributes)
     {
         // Add domain validation logic here
 
         //defaults
-        var averageRating = new AverageRating();//0
+        var averageRating = new ProductAverageRating();//0
 
         var createdAt = DateTime.UtcNow;
         var lastModifiedAt = createdAt;
         var lastModifiedBy = Guid.Empty;
         var createdBy = lastModifiedBy;
-        var status = ProductStatus.NotActive;
+        var status = ProductStatus.Draft;
 
         attributes ??= new Dictionary<string,string>();
 
@@ -55,8 +55,8 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
     public string Title { get; private set; } = null!;
     public string Description { get; private set; } = null!;
 
-    public AverageRating AverageRating { get; private init; } = null!;
-    public ProductStatus Status { get; }
+    public ProductAverageRating AverageRating { get; private init; } = null!;
+    public ProductStatus Status { get; private set; }
     public bool IsSerialized { get; private set; }
 
     public Guid CreatedBy { get; set; }
@@ -73,10 +73,14 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
 
 
     public Result<Success> AddVariant(ProductVariantId varaintId, Money price, int width, int height,
-        int length, int weight, string sku, string slug, string barCode, IReadOnlyDictionary<string, string> specifications)
+        int length, int weight, string sku, string slug, string barCode, IReadOnlyDictionary<string, string> specifications, IReadOnlyCollection<ProductImage> images)
     {
+        if(_variants.Count >= ProductRules.MaxNumberOfVariants)
+        {
+            return DomainErrors.Products.MaxNumberOfVariantsReached;
+        }
 
-        var createVariantResult = ProductVariant.Create(varaintId, Id, price, width, height, length, weight, sku, slug, barCode, specifications);
+        var createVariantResult = ProductVariant.Create(varaintId, Id, price, width, height, length, weight, sku, slug, barCode, specifications, images);
 
         if(createVariantResult.Failed)
         {
@@ -105,4 +109,55 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
         return Result.Updated;
     }
 
+    public Result<Success> Publish()
+    {
+        if(_variants.Count == 0)
+        {
+            return DomainErrors.Products.CannotPublishThisProductAtLeast1VariantRequired;
+        }
+
+        _variants.ForEach(x => x.Publish());
+        Status = ProductStatus.Active;
+
+        return Result.Success;
+    }
+
+    public Result<Success> Unpublish()
+    {
+        _variants.ForEach(x => x.Unpublish());
+
+        Status = ProductStatus.NotActive;
+
+        return Result.Success;
+    }
+
+
+    public Result<Success> PublishVariant(ProductVariantId variantId)
+    {
+        var variant = _variants.FirstOrDefault(x => x.Id == variantId);
+
+        if(variant is null)
+        {
+            return DomainErrors.ProductVariantIdInvalid;
+        }
+
+        variant.Publish();
+
+        return Result.Success;
+    }
+
+    public Result<Success> UnpublishVariant(ProductVariantId variantId)
+    {
+
+        var variant = _variants.FirstOrDefault(x => x.Id == variantId);
+
+        if (variant is null)
+        {
+            return DomainErrors.ProductVariantIdInvalid;
+        }
+
+        variant.Unpublish();
+
+        return Result.Success;
+    }
 }
