@@ -1,6 +1,4 @@
 
-using Application.Common.Exceptions;
-
 namespace Application.AdminPanelFeatures.Products.Commands.PublishProduct;
 
 internal sealed class PublishProductCommandHandler(IAppDbContext context) : IRequestHandler<PublishProductCommand, Result<Success>>
@@ -9,6 +7,7 @@ internal sealed class PublishProductCommandHandler(IAppDbContext context) : IReq
     public async Task<Result<Success>> Handle(PublishProductCommand request, CancellationToken ct)
     {
         var product = await context.Products.Include(x => x.Variants).FirstOrDefaultAsync(x => x.Id == request.ProductId, ct);
+
         if (product is null)
         {
             return ApplicationErrors.NotFound.Product;
@@ -21,9 +20,8 @@ internal sealed class PublishProductCommandHandler(IAppDbContext context) : IReq
             return result.Errors;
         }
 
-        if(await context.SaveAsync(ct))
-            return Result.Success;
-
-        throw new DbSaveFailedException();
+        await context.SaveAsync(ct);
+        
+        return Result.Success;
     }
 }

@@ -7,28 +7,27 @@ internal sealed class CreateVaraintCommandValidator : AbstractValidator<CreateVa
 {
     public CreateVaraintCommandValidator()
     {
-        RuleFor(x => x.ProductId).Must(x => x.IsValid() == Result.Success)
-                                 .WithErrorCode(DomainErrors.ProductIdInvalid.Code)
-                                 .WithMessage(DomainErrors.ProductIdInvalid.Description);
+        RuleFor(x => x.Product_Id).NotEmpty();
 
-        RuleFor(x => x.Specifications).NotEmpty()
-                                      .WithErrorCode(DomainErrors.ProductVariants.AtleastOneSpecificationRequired.Code)
-                                      .WithMessage(DomainErrors.ProductVariants.AtleastOneSpecificationRequired.Description)
-                                      .Must(x => x?.Count <= ProductVariantRules.MaxNumberOfSpecifications)
-                                      .WithErrorCode(DomainErrors.ProductVariants.MaxAllowedSpecificationsNumberExceeded.Code)
-                                      .WithMessage(DomainErrors.ProductVariants.MaxAllowedSpecificationsNumberExceeded.Description);
+        RuleFor(x => x.Price).Must(x => x > 0);
 
-        RuleFor(x => x.Images).NotEmpty()
-                              .Must(x => x.Count <= ProductVariantRules.MaxNumberOfImages)
-                              .WithErrorCode(DomainErrors.ProductVariants.ImagesOutOfRange.Code)
-                              .WithMessage(DomainErrors.ProductVariants.ImagesOutOfRange.Description);
+        RuleFor(x => x.Height).Must(x => x > 0);
 
-        RuleForEach(x => x.Images).NotNull()
-                                  .WithErrorCode(ApplicationErrors.Validation.InvalidImage.Code)
-                                  .WithMessage(ApplicationErrors.Validation.InvalidImage.Description)
+        RuleFor(x => x.Weight).Must(x => x > 0);
+
+        RuleFor(x => x.Length).Must(x => x > 0);
+
+        RuleFor(x => x.Width).Must(x => x > 0);
+
+
+        RuleFor(x => x.Specifications).Must(x => x.Count <= ProductVariantRules.MaxNumberOfSpecifications);
+
+        RuleFor(x => x.Images)
+                              .Must(x => x.Count <= ProductVariantRules.MaxNumberOfImages);
+
+        RuleForEach(x => x.Images).NotEmpty()
                                   .Must(image => image.File.Length <= ApplicationRules.Uploads.MaxImageSizeForProducts)
-                                  .WithErrorCode(ApplicationErrors.Validation.InvalidImageSize.Code)
-                                  .WithMessage(ApplicationErrors.Validation.InvalidImageSize.Description);
+                                  .WithMessage($"A single image cannot cannot exceed 10 Mb");
                                   
 
     }

@@ -19,9 +19,9 @@ internal sealed class ProcessingImagesTasksChannel : IImageProcessingService, II
         return _channel.Reader.ReadAllAsync(ct);
     }
 
-    public async ValueTask Process(List<ImageProcessingTask> processingImagesTasks, CancellationToken ct)
+    public async ValueTask Process(List<ImageProcessingTask> processingImagesTasks)
     {
-        processingImagesTasks.ForEach(async x => await _channel.Writer.WriteAsync(x, ct));
+        processingImagesTasks.ForEach(async x => await _channel.Writer.WriteAsync(x, CancellationToken.None));
     }
 
 }

@@ -5,6 +5,6 @@ namespace Application.Common.Abstractions;
 
 public interface IImageProcessingService
 {
-    ValueTask Process(List<ImageProcessingTask> processingImagesTasks, CancellationToken ct);
+    ValueTask Process(List<ImageProcessingTask> processingImagesTasks);
 
 }

@@ -4,7 +4,7 @@ namespace Domain.Products.ValueObjects;
 
 public sealed record ProductAverageRating
 {
-    internal ProductAverageRating()
+    private ProductAverageRating()
     {
         
     }

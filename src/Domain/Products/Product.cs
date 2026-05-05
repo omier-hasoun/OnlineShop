@@ -30,15 +30,20 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
         bool isSerialized, IReadOnlyDictionary<string, string> attributes)
     {
         // Add domain validation logic here
-
+        var validationResult = Result.ValidateAll(
+                            () => id.IsValid(),
+                            () => brandId.IsValid(),
+                            () => categoryId.IsValid()
+                          );
         //defaults
-        var averageRating = new ProductAverageRating();//0
+        var averageRating = ProductAverageRating.From(0).Value;
+        var status = ProductStatus.Draft;
 
         var createdAt = DateTime.UtcNow;
         var lastModifiedAt = createdAt;
+
         var lastModifiedBy = Guid.Empty;
         var createdBy = lastModifiedBy;
-        var status = ProductStatus.Draft;
 
         attributes ??= new Dictionary<string,string>();
 

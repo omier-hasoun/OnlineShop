@@ -47,5 +47,5 @@ public record struct Error
     => new(code, description, ErrorType.NotFound);
 
     public static Error ActionRequired(string code, string description = "An Action is required.")
-    => new(code, description, ErrorType.ActionRequired);
+    => new(code, description, ErrorType.Failure);
 }

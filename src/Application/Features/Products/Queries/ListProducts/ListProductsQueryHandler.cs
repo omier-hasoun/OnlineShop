@@ -2,6 +2,9 @@
 using Application.Common.Extensions;
 using Application.Common.ResponseModels;
 using Application.Features.Products.Dtos;
+using Domain.Brands;
+using Domain.Categories;
+using Domain.Common.ValueObjects;
 
 namespace Application.Features.Products.Queries.ListProducts;
 
@@ -14,9 +17,6 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
             return ApplicationErrors.Validation.PageSizeTooBig;
         }
 
-        int skip = ((request.PageNumber - 1) * request.PageSize);
-
-
         var cheapestVariantsQuery = context.Products.AsNoTracking()
             .Where(product => product.Status == ProductStatus.Active)
             .SelectMany(
@@ -27,9 +27,13 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
                 (product, variant) => new { product, variant }
             );
 
-        if (request.MaxPrice != null)
+
+
+        if (request.MaxPrice != null && request.MaxPrice > 0)
         {
-            cheapestVariantsQuery = cheapestVariantsQuery.Where(x => x.variant.PriceNow <= request.MaxPrice);
+            var maxPrice = Money.From((int)request.MaxPrice).Value;
+
+            cheapestVariantsQuery = cheapestVariantsQuery.Where(x => x.variant.PriceNow <= maxPrice);
         }
 
         var queryWithBrands = cheapestVariantsQuery.Join(
@@ -43,18 +47,23 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
 
         if (request.BrandId != null)
         {
-            queryWithBrands = queryWithBrands.Where(x => x.product.BrandId == request.BrandId);
+            var brandId = new BrandId((Guid)request.BrandId);
+            queryWithBrands = queryWithBrands.Where(x => x.product.BrandId == brandId);
         }
 
         if (request.CategoryId != null)
         {
-            queryWithBrands = queryWithBrands.Where(x => x.product.CategoryId == request.CategoryId);
+            var categoryId = new CategoryId((long)request.CategoryId);
+
+            queryWithBrands = queryWithBrands.Where(x => x.product.CategoryId == categoryId);
         }
 
-        if (!string.IsNullOrEmpty(request.SearchText))
+        if (request.SearchText != null && request.SearchText.Length <= 100)
         {
             queryWithBrands = queryWithBrands.Where(x => x.product.Title.ToLower().Contains(request.SearchText));
         }
+
+        int skip = ((request.PageNumber - 1) * request.PageSize);
 
         var finalQuery = queryWithBrands
             .OrderBy(x => x.product.Id)
@@ -62,17 +71,18 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
             .Take(request.PageSize)
             .Select(x => new
             {
-                dto = new ProductListItemDto
-                {
-                    Id = x.product.Id,
-                    Title = x.product.Title,
-                    AverageRating = x.product.AverageRating,
-                    Brand = x.brand.Name,
-                    Image = x.variant.Images.OrderBy(img => img.SortOrder).FirstOrDefault()!,
-                    OriginalPrice = x.variant.OriginalPrice,
-                    PriceNow = x.variant.PriceNow,
-                    DiscountPercentage = x.variant.DiscountPercentage
-                },
+                dto = new ProductListItemDto(
+                    x.product.Id,
+                    x.product.Title,
+                    x.variant.OriginalPrice,
+                    x.brand.Name,
+                    x.product.AverageRating,
+                    x.variant.PriceNow,
+                    x.variant.Images.OrderBy(img => img.SortOrder).FirstOrDefault()!,
+                    x.variant.DiscountPercentage
+
+                    ),
+
                 TotalCount = queryWithBrands.Count()
             }
             );

@@ -1,6 +1,4 @@
 
-using Application.Common.Exceptions;
-
 namespace Application.AdminPanelFeatures.Products.Commands.PublishProduct;
 
 internal sealed class UnpublishProductCommandHandler(IAppDbContext context) : IRequestHandler<UnpublishProductCommand, Result<Success>>
@@ -21,9 +19,8 @@ internal sealed class UnpublishProductCommandHandler(IAppDbContext context) : IR
             return result.Errors;
         }
 
-        if (await context.SaveAsync(ct))
-            return Result.Success;
-
-        throw new DbSaveFailedException();
+        await context.SaveAsync(ct);
+        
+        return Result.Success;
     }
 }

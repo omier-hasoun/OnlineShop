@@ -1,3 +1,5 @@
+using Application.Common.Extensions;
+using Domain;
 using Domain.Brands;
 using Domain.Categories;
 using FluentValidation.Validators;
@@ -8,45 +10,30 @@ internal sealed class CreateProductCommandValidator : AbstractValidator<CreatePr
 {
     public CreateProductCommandValidator()
     {
-        //RuleFor(x => x.Title).NotEmpty()
-        //                     .WithErrorCode(ProductErrors.TitleInvalid.Code)
-        //                     .WithMessage(ProductErrors.TitleInvalid.Description)
-        //                     .Length(ProductRules.MinTitleLength, ProductRules.MaxTitleLength)
-        //                     .WithErrorCode(ProductErrors.TitleOutOfRange.Code)
-        //                     .WithMessage(ProductErrors.TitleOutOfRange.Description);
+        RuleFor(x => x.Title).NotEmpty()
+                             .Length(ProductRules.MinTitleLength, ProductRules.MaxTitleLength);
 
-        //RuleFor(x => x.Description).NotEmpty()
-        //                           .WithErrorCode(ProductErrors.DescriptionInvalid.Code)
-        //                           .WithMessage(ProductErrors.DescriptionInvalid.Description)
-        //                           .Length(ProductRules.MinDescriptionLength, ProductRules.MaxDescriptionLength)
-        //                           .WithErrorCode(ProductErrors.DescriptionOutOfRange.Code)
-        //                           .WithMessage(ProductErrors.DescriptionOutOfRange.Description);
 
-        //RuleFor(x => x.BrandId).NotEmpty()
-        //                       .Must(brandId => BrandId.TryParse(brandId, out _))
-        //                       .WithErrorCode(ProductErrors.BrandIdInvalid.Code)
-        //                       .WithMessage(ProductErrors.BrandIdInvalid.Description);
+        RuleFor(x => x.Description).NotEmpty()
+                                   .Length(ProductRules.MinDescriptionLength, ProductRules.MaxDescriptionLength);
 
-        //RuleFor(x => x.CategoryId).NotEmpty()
-        //               .Must(categoryid => CategoryId.TryParse(categoryid, out _))
-        //               .WithErrorCode(ProductErrors.BrandIdInvalid.Code)
-        //               .WithMessage(ProductErrors.BrandIdInvalid.Description);
+        RuleFor(x => x.Brand_Id).NotEmpty();
 
-        //RuleFor(x => x.Attributes).NotEmpty()
-        //                          .WithErrorCode(ProductErrors.At.Code)
-        //                          .WithMessage(ProductErrors.BrandInvalid.Description);
+        RuleFor(x => x.Category_Id).NotEmpty();
 
-        //RuleFor(x => x.Images).NotEmpty()
-        //                      .Must(value => value.Count >= ProductRules.MinNum && value.Count <= ProductRules.MaxNumberOfVariants)
-        //                      .WithErrorCode(ProductErrors.ImagesOutOfRange.Code)
-        //                      .WithMessage(ProductErrors.ImagesOutOfRange.Description);
+        RuleFor(x => x.Attributes).NotEmpty()
+                                  .Must(x => x.Count <= ProductRules.MaxNumberOfAttributes)
+                                  .WithMessage($"Attributes cannot exceed {ProductRules.MaxNumberOfAttributes} values");
 
-        //RuleForEach(x => x.Images).NotNull()
-        //                          .WithErrorCode(ProductApplicationErrors.InvalidImage.Code)
-        //                          .WithMessage(ProductApplicationErrors.InvalidImage.Description)
-        //                          .Must(image => image.SizeInBytes <= ProductApplicationRules.MaxImageSizeBytes)
-        //                          .WithErrorCode(ProductApplicationErrors.InvalidImageSize.Code)
-        //                          .WithMessage(ProductApplicationErrors.InvalidImageSize.Description);
+        RuleForEach(x => x.Attributes)
+                                    .Must(kv => kv.Key.Length <= 50 && !string.IsNullOrWhiteSpace(kv.Key) )
+                                    .WithMessage("Invalid key. It cannot be empty or too long");
+
+        RuleForEach(x => x.Attributes)
+                                .Must(kv =>  kv.Value.Length <= 50! && string.IsNullOrWhiteSpace(kv.Value))
+                                .WithMessage("Invalid value. It cannot be empty or too long");
+
+
 
 
     }

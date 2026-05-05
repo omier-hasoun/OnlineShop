@@ -8,6 +8,5 @@ public enum ErrorType
     Forbidden,
     Unauthorized,
     Conflict,
-    ActionRequired,
     Validation
 }

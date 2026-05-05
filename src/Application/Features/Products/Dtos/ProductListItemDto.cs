@@ -17,17 +17,24 @@ namespace Application.Features.Products.Dtos;
 /// <param name="OriginalPrice"></param>
 public sealed record ProductListItemDto
 {
-    public ProductId Id { get; init; }
+    public long Id { get; init; }
     public string Title { get; init; } = null!;
-    public Money PriceNow { get; init; } = null!;
+    public decimal PriceNow { get; init; } 
     public string Brand { get; init; } = null!;
-    public ProductAverageRating AverageRating { get; init; } = null!;
-    public ProductImage Image { get; init; } = null!;
+    public float AverageRating { get; init; }
+    public string Image { get; init; } = null!;
     public byte DiscountPercentage { get; init; }
-    public Money OriginalPrice { get; init; } = null!;
+    public decimal OriginalPrice { get; init; }
 
-    public ProductListItemDto()
+    public ProductListItemDto(ProductId id, string title, Money originalPrice, string brand, ProductAverageRating avgerageRating, Money priceNow, ProductImage image, byte discountPercentage)
     {
-        
+        Id = id.Value;
+        Title = title;
+        Brand = brand;
+        OriginalPrice = originalPrice.Value;
+        PriceNow = priceNow.Value;
+        Image = image.FileName;
+        AverageRating = avgerageRating.Value;
+        DiscountPercentage = discountPercentage;
     }
 }

@@ -21,7 +21,7 @@ internal sealed class DeleteProductCommandHandler : IRequestHandler<DeleteProduc
 
         _context.Products.Remove(product);
 
-        var deleteResult = await _context.SaveAsync(ct);
+        await _context.SaveAsync(ct);
 
 
         //return deleteResult.Succeeded ? Result.Deleted : 

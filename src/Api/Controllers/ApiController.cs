@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Shared.Results;
 
@@ -32,6 +31,8 @@ public class ApiController : ControllerBase
             ErrorType.Validation => StatusCodes.Status400BadRequest,
             ErrorType.NotFound => StatusCodes.Status404NotFound,
             ErrorType.Unauthorized => StatusCodes.Status403Forbidden,
+            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
+
             _ => StatusCodes.Status500InternalServerError,
         };
 

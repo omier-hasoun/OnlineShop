@@ -1,5 +1,6 @@
 
-using Application.Common.Exceptions;
+using Domain.Brands;
+using Domain.Categories;
 
 namespace Application.AdminPanelFeatures.Products.Commands.CreateProduct;
 
@@ -10,13 +11,17 @@ internal sealed class CreateProductCommandHandler(IAppDbContext context, IIdGene
 
         ProductId productId = idGen.NewId();
 
+        BrandId brandId = new(request.Brand_Id);
+
+        CategoryId categoryId = new(request.Category_Id);
+
         var createProductResult = Product.Create(
             productId,
-            request.BrandId,
-            request.CategoryId,
+            brandId,
+            categoryId,
             request.Title,
             request.Description,
-            request.IsSerialized,
+            request.Is_Serialized,
             request.Attributes
         );
 
@@ -27,18 +32,9 @@ internal sealed class CreateProductCommandHandler(IAppDbContext context, IIdGene
 
         context.Products.Add(createProductResult.Value);
 
-        var succeeded = await context.SaveAsync(ct);
-
-        if(succeeded)
-        {
-            return productId.Value;
-        }
-
-        throw new DbSaveFailedException();
+        await context.SaveAsync(ct);
+            
+        return productId.Value;
     }
-
-    //private bool IsUniqueProductTitle(string name)
-    //{
-    //    return context.Products.Any(p => p.Title == name);
-    //}
+    
 }

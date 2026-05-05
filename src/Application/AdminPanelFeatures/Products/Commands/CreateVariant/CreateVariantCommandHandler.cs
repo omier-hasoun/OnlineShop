@@ -1,6 +1,5 @@
 
 using Application.Common.AppSettingsConfiguration.FileStoragePaths.ProductsPaths;
-using Application.Common.Exceptions;
 using Application.Common.InternalModels;
 using Application.Common.RequestModels;
 using Domain.Common.ValueObjects;
@@ -16,15 +15,12 @@ public sealed class CreateVariantCommandHandler( IAppDbContext context, IUniqueF
 {
     public async Task<Result<long>> Handle(CreateVariantCommand command, CancellationToken ct)
     {
-        // validate images
-        var imagesValidationResult = AreValidImages(command.Images);
 
-        if (imagesValidationResult.Failed)
-        {
-            return imagesValidationResult.Errors;
-        }
+        ProductId productId = new(command.Product_Id);
 
-        var product = await context.Products.Include(x => x.Variants).FirstOrDefaultAsync(x => x.Id == command.ProductId, ct);
+        Money originalPrice = Money.From(command.Price).Value;
+
+        var product = await context.Products.Include(x => x.Variants).FirstOrDefaultAsync(x => x.Id == productId, ct);
 
         if (product is null)
         {
@@ -34,30 +30,38 @@ public sealed class CreateVariantCommandHandler( IAppDbContext context, IUniqueF
         List<ProductImage> productImages = new(command.Images.Count);
         List<ImageProcessingTask> processImagesTasks = new (command.Images.Count);
 
-        foreach(var image in command.Images)
+        var imagesValidationResult = AreValidImages(command.Images);
+        if (imagesValidationResult.Failed)
+        {
+            return imagesValidationResult.Errors;
+        }
+
+        foreach (var image in command.Images)
         {
 
             if (FileHelper.TryGetExtesnionFromMediaType(image.File.ContentType, out string ext) is false)
             {
-                // need to look what we gonna do later
+                // this should not fail cause of the previous validation but just in case 
                 return ApplicationErrors.Validation.InvalidImage.WithParameters(image.File.FileName);
             }
 
             var fileName = nameGen.Generate();
             var fileNameWithExtension = fileName + ext;
-            if (await fileStore.SaveImageAsync(image.File, fileNameWithExtension, ct))
-            {
-                productImages.Add(ProductImage.From(fileName, image.SortOrder).Value);
 
-                processImagesTasks.Add(new ImageProcessingTask(fileNameWithExtension));
-                continue;
+            if (await fileStore.SaveImageAsync(image.File, fileNameWithExtension, ct) is false)
+            {
+                return ApplicationErrors.InternalError.SavingImageFileFailed;
             }
-            
+
+            productImages.Add(ProductImage.From(fileName + ".webp", image.SortOrder).Value);// i will save it as .webp because i know later it will be so
+
+            processImagesTasks.Add(new ImageProcessingTask(fileNameWithExtension));
+
         }
 
         var variandId = idGen.NewId();
 
-        var createVariantResult = product.AddVariant(variandId, Money.From(command.Price).Value,
+        var createVariantResult = product.AddVariant(variandId, originalPrice,
             command.Width, command.Height, command.Length, command.Weight,
             command.Sku, command.Slug, command.BarCode, command.Specifications, productImages);
 
@@ -66,15 +70,11 @@ public sealed class CreateVariantCommandHandler( IAppDbContext context, IUniqueF
             return createVariantResult.Errors;
         }
 
-        if (await context.SaveAsync(ct))
-        {
+        await context.SaveAsync(ct);
 
-            await imageProcessor.Process(processImagesTasks, ct);
+        await imageProcessor.Process(processImagesTasks);
 
-            return variandId.Value;
-        }
-
-        throw new DbSaveFailedException();
+        return variandId.Value;
     }
 
     private Result<Success> AreValidImages(IReadOnlyCollection<ProductVariantImageUpload> Images)

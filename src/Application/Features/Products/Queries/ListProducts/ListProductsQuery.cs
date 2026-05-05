@@ -1,10 +1,15 @@
 
 using Application.Common.ResponseModels;
 using Application.Features.Products.Dtos;
-using Domain.Brands;
-using Domain.Categories;
-using Domain.Common.ValueObjects;
 
 namespace Application.Features.Products.Queries.ListProducts;
 
-public sealed record ListProductsQuery(int PageSize, int PageNumber, Money? MaxPrice, string? SearchText, BrandId? BrandId, CategoryId? CategoryId) : IRequest<Result<PaginatedList<ProductListItemDto>>>;
+public sealed record ListProductsQuery : IRequest<Result<PaginatedList<ProductListItemDto>>>
+{
+    public required int PageNumber { get; init; }
+    public required int PageSize { get; init; }
+    public int? MaxPrice { get; init; }
+    public string? SearchText { get; init; }
+    public long? CategoryId { get; init; }
+    public Guid? BrandId { get; init; }
+}
