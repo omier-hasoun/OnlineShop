@@ -22,7 +22,7 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
             .SelectMany(
                 product => context.ProductVariants
                     .Where(variant => variant.ProductId == product.Id && variant.Status == ProductStatus.Active)
-                    .OrderBy(v => v.PriceNow)
+                    .OrderBy(v => v.Price)
                     .Take(1),
                 (product, variant) => new { product, variant }
             );
@@ -33,7 +33,7 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
         {
             var maxPrice = Money.From((int)request.MaxPrice).Value;
 
-            cheapestVariantsQuery = cheapestVariantsQuery.Where(x => x.variant.PriceNow <= maxPrice);
+            cheapestVariantsQuery = cheapestVariantsQuery.Where(x => x.variant.Price <= maxPrice);
         }
 
         var queryWithBrands = cheapestVariantsQuery.Join(
@@ -74,10 +74,10 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
                 dto = new ProductListItemDto(
                     x.product.Id,
                     x.product.Title,
-                    x.variant.OriginalPrice,
+                    x.variant.PriceBeforeDiscount,
                     x.brand.Name,
                     x.product.AverageRating,
-                    x.variant.PriceNow,
+                    x.variant.Price,
                     x.variant.Images.OrderBy(img => img.SortOrder).FirstOrDefault()!,
                     x.variant.DiscountPercentage
 

@@ -10,15 +10,15 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
     {
     }
 
-    private ProductVariant(ProductVariantId id, ProductId productId, Money originalPrice, Money priceNow, byte discountPercentage,  ProductStatus status,
+    private ProductVariant(ProductVariantId id, ProductId productId, Money? priceBeforeDiscount, Money price, byte discountPercentage,  ProductStatus status,
         int width, int height, int length, int weight, string sku, string slug, string barCode, IReadOnlyDictionary<string, string> specifications, IReadOnlyCollection<ProductImage> images)
         : base(id)
     {
         ProductId = productId;
                 
-        OriginalPrice = originalPrice;
+        PriceBeforeDiscount = priceBeforeDiscount;
         DiscountPercentage = discountPercentage;
-        PriceNow = priceNow;
+        Price = price;
         Status = status;
         Width = width;
         Height = height;
@@ -32,12 +32,12 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
         _specifications = specifications.ToDictionary();
     }
 
-    public static Result<ProductVariant> Create(ProductVariantId id, ProductId productId, Money originalPrice,
+    public static Result<ProductVariant> Create(ProductVariantId id, ProductId productId, Money Price,
         int width, int height, int length, int weight, string sku, string slug, string barCode, IReadOnlyDictionary<string, string> specifications, IReadOnlyCollection<ProductImage> images)
     {
         var validationResult = Result.ValidateAll(
                                 () => id.Validate(),
-                                () => ValidateOriginalPrice(originalPrice),
+                                () => ValidatePrice(Price),
                                 () => Validate_Width_Height_Length(width, height, length),
                                 () => ValidateSpecifications(specifications),
                                 () => ValidateSku(sku),
@@ -53,31 +53,25 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
         //defaults
 
         byte discountPercentage = 0;
-        Money priceNow = originalPrice;
+        Money? priceBeforeDisount = null;
         ProductStatus status = ProductStatus.Draft;
         
-        return new ProductVariant(id, productId, originalPrice, priceNow, discountPercentage, status,
+        return new ProductVariant(id, productId, priceBeforeDisount, Price, discountPercentage, status,
             width, height, length, weight, sku, slug, barCode, specifications, images);
     }
 
-    public ProductId ProductId { get; private set; }
+    public ProductId ProductId { get; private init; }
 
     public int Width { get; private set; }
     public int Height { get; private set; }
     public int Length { get; private set; }
     public int Weight { get; private set; }
 
-    /// <summary>
-    /// Product's original Price, used only to show the orginal price before discount
-    /// </summary>
-    public Money OriginalPrice { get; } = null!;
-
-    /// <summary>
-    /// Product's price now, used in checkout
-    /// </summary>
-    public Money PriceNow { get; } = null!;
-    public ProductStatus Status { get; private set; }
+    public Money Price { get; private init; } = null!;
+    public Money? PriceBeforeDiscount { get; private init; }
     public byte DiscountPercentage { get; private set;}
+
+    public ProductStatus Status { get; private set; }
 
     public string Sku { get; private set; } = null!;
     public string Slug { get; private set; } = null!;
@@ -119,7 +113,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
     {
         Status = ProductStatus.NotActive;
     }
-    public void Delete()
+    public void MarkDeleted()
     {
         Status = ProductStatus.Archived;
     }
@@ -146,9 +140,9 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
         }
         return Result.Success;
     }
-    private static Result<Success> ValidateOriginalPrice(Money price)
+    private static Result<Success> ValidatePrice(Money price)
     {
-        if(ValHelper.IsOutOfRange(price.Value, ProductVariantRules.MinOriginalPriceValue, ProductVariantRules.MaxOriginalPriceValue))
+        if(ValHelper.IsOutOfRange(price.Value, ProductVariantRules.MinPrice, ProductVariantRules.MaxPrice))
         {
             return DomainErrors.ProductVariants.PriceOutOfRange;
         }
@@ -218,14 +212,14 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
 
         foreach ( var spec in specifications)
         {
-            bool validSpecificationKey =
+            bool invalidKey =
             string.IsNullOrEmpty(spec.Key) || ValHelper.IsOutOfRange(spec.Key.Length, ProductVariantRules.MinSpecificationKeyLength, ProductVariantRules.MaxSpecificationKeyLength);
 
-            bool validSpecificationValue = string.IsNullOrEmpty(spec.Value) ||
+            bool invalidValue = string.IsNullOrEmpty(spec.Value) ||
             ValHelper.IsOutOfRange(spec.Value.Length, ProductVariantRules.MinSpecificationValueLength, ProductVariantRules.MaxSpecificationValueLength);
 
 
-            if (validSpecificationKey & validSpecificationValue)
+            if (invalidKey & invalidValue)
             {
                 return DomainErrors.ProductVariants.InvalidSpecification;
             }

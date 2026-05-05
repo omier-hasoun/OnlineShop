@@ -19,22 +19,22 @@ public sealed record ProductListItemDto
 {
     public long Id { get; init; }
     public string Title { get; init; } = null!;
-    public decimal PriceNow { get; init; } 
+    public double PriceNow { get; init; } 
     public string Brand { get; init; } = null!;
     public float AverageRating { get; init; }
     public string Image { get; init; } = null!;
-    public byte DiscountPercentage { get; init; }
-    public decimal OriginalPrice { get; init; }
+    public byte? DiscountPercentage { get; init; }
+    public double? PriceBeforeDiscount { get; init; }
 
-    public ProductListItemDto(ProductId id, string title, Money originalPrice, string brand, ProductAverageRating avgerageRating, Money priceNow, ProductImage image, byte discountPercentage)
+    public ProductListItemDto(ProductId id, string title, Money? priceBeforeDiscount, string brand, ProductAverageRating avgerageRating, Money priceNow, ProductImage image, byte? discountPercentage)
     {
         Id = id.Value;
         Title = title;
         Brand = brand;
-        OriginalPrice = originalPrice.Value;
-        PriceNow = priceNow.Value;
+        PriceBeforeDiscount = priceBeforeDiscount is null ? null : (double)priceBeforeDiscount.Value;
+        PriceNow = (double)priceNow.Value;
         Image = image.FileName;
         AverageRating = avgerageRating.Value;
-        DiscountPercentage = discountPercentage;
+        DiscountPercentage = discountPercentage is null || discountPercentage == 0 ? null : discountPercentage;
     }
 }

@@ -46,10 +46,10 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
                .HasConversion<string>()
                .IsRequired();
 
-        builder.Property(x => x.PriceNow)
+        builder.Property(x => x.Price)
                .IsRequired();
 
-        builder.Property(x => x.OriginalPrice)
+        builder.Property(x => x.PriceBeforeDiscount)
                .IsRequired();
 
         builder.OwnsMany(x => x.Images, b =>
@@ -72,7 +72,7 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
         builder.ToTable("ProductVariants", x =>
         {
             x.HasCheckConstraint("CK_ProductVariant_DiscountPercentage", $"[DiscountPercentage] between {ProductVariantRules.MinDiscountPercentageValue} and {ProductVariantRules.MaxDiscountPercentageValue}");
-            x.HasCheckConstraint("CK_ProductVariant_OriginalPrice", $"[OriginalPrice] between {ProductVariantRules.MinOriginalPriceValue} and {ProductVariantRules.MaxOriginalPriceValue}");
+            x.HasCheckConstraint("CK_ProductVariant_OriginalPrice", $"[OriginalPrice] between {ProductVariantRules.MinPrice} and {ProductVariantRules.MaxPrice}");
 
         });
     }

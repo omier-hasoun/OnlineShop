@@ -3,8 +3,8 @@ namespace Domain.Common.Rules;
 
 public static class ProductVariantRules
 {
-    public const byte MinOriginalPriceValue = 5;
-    public const int MaxOriginalPriceValue = 500_000;
+    public const byte MinPrice = 5;
+    public const int MaxPrice = 500_000;
 
     public const byte MaxDiscountPercentageValue = 80;// max discount is 80 percent
     public const byte MinDiscountPercentageValue = 0;// 0 when no discount is applied
@@ -18,7 +18,7 @@ public static class ProductVariantRules
     public const byte MinBarcodeLength = 6;
     public const byte MaxBarcodeLength = 14;
 
-    public const byte Min_Height_Width_Length_cm = 5;
+    public const byte Min_Height_Width_Length_cm = 2;
     public const short Max_Height_Width_Length_cm = 400;
 
     public const byte MinNumberOfImages = 0;

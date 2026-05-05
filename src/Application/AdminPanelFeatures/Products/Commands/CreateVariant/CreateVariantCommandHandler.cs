@@ -1,5 +1,4 @@
 
-using Application.Common.AppSettingsConfiguration.FileStoragePaths.ProductsPaths;
 using Application.Common.InternalModels;
 using Application.Common.RequestModels;
 using Domain.Common.ValueObjects;
@@ -18,7 +17,7 @@ public sealed class CreateVariantCommandHandler( IAppDbContext context, IUniqueF
 
         ProductId productId = new(command.Product_Id);
 
-        Money originalPrice = Money.From(command.Price).Value;
+        Money price = Money.From(command.Price).Value;
 
         var product = await context.Products.Include(x => x.Variants).FirstOrDefaultAsync(x => x.Id == productId, ct);
 
@@ -61,7 +60,7 @@ public sealed class CreateVariantCommandHandler( IAppDbContext context, IUniqueF
 
         var variandId = idGen.NewId();
 
-        var createVariantResult = product.AddVariant(variandId, originalPrice,
+        var createVariantResult = product.AddVariant(variandId, price,
             command.Width, command.Height, command.Length, command.Weight,
             command.Sku, command.Slug, command.BarCode, command.Specifications, productImages);
 
