@@ -57,6 +57,7 @@ namespace Api
             app.UseAuthentication();
             app.UseAuthorization();
 
+
             app.MapControllers();
 
             app.MapGroup("/api/auth").

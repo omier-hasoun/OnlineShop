@@ -69,7 +69,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
 
     public Money Price { get; private init; } = null!;
     public Money? PriceBeforeDiscount { get; private init; }
-    public byte DiscountPercentage { get; private set;}
+    public byte? DiscountPercentage { get; private set;}
 
     public ProductStatus Status { get; private set; }
 

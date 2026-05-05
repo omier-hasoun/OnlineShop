@@ -13,7 +13,7 @@ public class UserContext(IHttpContextAccessor context) : IUserContext
             {
                 return Id;
             }
-            return Guid.Parse("00000000-0000-0000-0000-000000000000");
+            return Guid.Parse("10000000-0000-0000-0000-000000000001");
             //throw new HttpRequestMissingUserIdException();
         }
     }

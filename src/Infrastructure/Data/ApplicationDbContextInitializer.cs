@@ -17,7 +17,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         try
         {
             //await context.Database.EnsureDeletedAsync();
-            if(!await context.Database.EnsureCreatedAsync())
+            //if(!await context.Database.EnsureCreatedAsync())
             await SeedData();
         }
         catch (Exception ex)
@@ -30,7 +30,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
     {
         var user1 = new AppUser()
         {
-            Id = Guid.Parse("00000000-0000-0000-0000-000000000000"),
+            Id = Guid.Parse("10000000-0000-0000-0000-000000000001"),
             Email = "om@gmail.com",
             NormalizedEmail = "om@gmail.com".ToUpper(),
             UserName = "om@gmail.com",

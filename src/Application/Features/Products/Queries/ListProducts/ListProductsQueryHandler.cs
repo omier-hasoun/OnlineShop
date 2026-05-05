@@ -80,7 +80,6 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
                     x.variant.Price,
                     x.variant.Images.OrderBy(img => img.SortOrder).FirstOrDefault()!,
                     x.variant.DiscountPercentage
-
                     ),
 
                 TotalCount = queryWithBrands.Count()

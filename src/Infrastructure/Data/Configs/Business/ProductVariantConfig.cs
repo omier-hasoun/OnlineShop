@@ -39,7 +39,7 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
 
         builder.Property(x => x.DiscountPercentage)
                .HasColumnType("TINYINT")
-               .IsRequired();
+               .IsRequired(false);
 
         builder.Property(x => x.Status)
                .HasColumnType("VARCHAR(50)")
@@ -50,7 +50,7 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
                .IsRequired();
 
         builder.Property(x => x.PriceBeforeDiscount)
-               .IsRequired();
+               .IsRequired(false);
 
         builder.OwnsMany(x => x.Images, b =>
         {
@@ -72,7 +72,7 @@ internal sealed class ProductVariantConfig : BaseEntityConfig<ProductVariant>
         builder.ToTable("ProductVariants", x =>
         {
             x.HasCheckConstraint("CK_ProductVariant_DiscountPercentage", $"[DiscountPercentage] between {ProductVariantRules.MinDiscountPercentageValue} and {ProductVariantRules.MaxDiscountPercentageValue}");
-            x.HasCheckConstraint("CK_ProductVariant_OriginalPrice", $"[OriginalPrice] between {ProductVariantRules.MinPrice} and {ProductVariantRules.MaxPrice}");
+            x.HasCheckConstraint("CK_ProductVariant_Price", $"[Price] between {ProductVariantRules.MinPrice} and {ProductVariantRules.MaxPrice}");
 
         });
     }

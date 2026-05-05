@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260504223847_ProductTitle_Index")]
-    partial class ProductTitle_Index
+    [Migration("20260505213458_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -689,7 +689,7 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(100)");
 
-                    b.Property<byte>("DiscountPercentage")
+                    b.Property<byte?>("DiscountPercentage")
                         .HasColumnType("TINYINT");
 
                     b.Property<int>("Height")
@@ -698,10 +698,10 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("Length")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("OriginalPrice")
+                    b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal>("PriceNow")
+                    b.Property<decimal?>("PriceBeforeDiscount")
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<long>("ProductId")
@@ -740,7 +740,7 @@ namespace Infrastructure.Data.Migrations
                         {
                             t.HasCheckConstraint("CK_ProductVariant_DiscountPercentage", "[DiscountPercentage] between 0 and 80");
 
-                            t.HasCheckConstraint("CK_ProductVariant_OriginalPrice", "[OriginalPrice] between 5 and 500000");
+                            t.HasCheckConstraint("CK_ProductVariant_Price", "[Price] between 5 and 500000");
                         });
                 });
 
