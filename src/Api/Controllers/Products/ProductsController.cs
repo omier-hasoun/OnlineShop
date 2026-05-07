@@ -1,10 +1,12 @@
 using Application.AdminPanelFeatures.Products.Commands.CreateProduct;
 using Application.AdminPanelFeatures.Products.Commands.CreateVariant;
+using Application.AdminPanelFeatures.Products.Commands.DeleteProduct;
 using Application.AdminPanelFeatures.Products.Commands.PublishProduct;
+using Application.AdminPanelFeatures.Products.Commands.UpdateVariantImages;
 using Application.Features.Products.Queries.GetProductById;
 using Application.Features.Products.Queries.ListProducts;
+using IdGen;
 using MediatR;
-using Shared.Results;
 
 namespace Api.Controllers.Products;
 
@@ -22,8 +24,7 @@ public sealed class ProductsController(IMediator mediator) : ApiController
     }
 
     [HttpPost("variants/")]
-    [Consumes("multipart/form-data")]
-    public async Task<IActionResult> CreateVariant([FromForm] CreateVariantCommand request, CancellationToken ct)
+    public async Task<IActionResult> CreateVariant([FromBody] CreateVariantCommand request, CancellationToken ct)
     {
         var result = await mediator.Send(request, ct);
 
@@ -39,18 +40,18 @@ public sealed class ProductsController(IMediator mediator) : ApiController
         return result.Match((response) => Ok(response), Problem);
     }
 
-    [HttpPatch("publish/{id}")]
-    public async Task<IActionResult> PublishProduct([FromRoute] long id, CancellationToken ct)
+    [HttpPatch("publish")]
+    public async Task<IActionResult> PublishProduct([FromQuery] PublishProductCommand request, CancellationToken ct)
     {
-        var result = await mediator.Send(new PublishProductCommand(new(id)), ct);
+        var result = await mediator.Send(request, ct);
 
         return result.Match((response) => NoContent(), Problem);
     }
 
-    [HttpPatch("unpublish/{id}")]
-    public async Task<IActionResult> UnpublishProduct([FromRoute] long id, CancellationToken ct)
+    [HttpPatch("unpublish")]
+    public async Task<IActionResult> UnpublishProduct([FromQuery] UnpublishProductCommand request, CancellationToken ct)
     {
-        var result = await mediator.Send(new UnpublishProductCommand(new(id)), ct);
+        var result = await mediator.Send(request, ct);
 
         return result.Match((response) => NoContent(), Problem);
     }
@@ -65,5 +66,22 @@ public sealed class ProductsController(IMediator mediator) : ApiController
         return result.Match((response) => Ok(response), Problem);
     }
 
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProduct([FromRoute] long id, CancellationToken ct)
+    {
 
+        var result = await mediator.Send(new DeleteProductCommand(id), ct);
+
+        return result.Match((response) => NoContent(), Problem);
+    }
+
+    [HttpPost("variants/images")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UpdateVariantImages([FromForm] UpdateVariantImagesCommand request, CancellationToken ct)
+    {
+        var result = await mediator.Send(request, ct);
+
+        return result.Match((response) => NoContent(), Problem);
+
+    }
 }

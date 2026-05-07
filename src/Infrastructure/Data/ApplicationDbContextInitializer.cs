@@ -64,10 +64,10 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         var productVariantId3 = new ProductVariantId(7);
         var productVariantId4 = new ProductVariantId(8);
 
-        product1.AddVariant(productVariantId1, Money.From(200).Value, 20, 20, 20, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "blue" } }, [ProductImage.From("12322",1).Value]);
-        product1.AddVariant(productVariantId2, Money.From(220).Value, 10, 10, 10, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } }, [ProductImage.From("12322", 1).Value]);
-        product2.AddVariant(productVariantId3, Money.From(160).Value, 10, 10, 10, 2, "ommei30273", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } }, [ProductImage.From("12322", 1).Value]);
-        product2.AddVariant(productVariantId4, Money.From(150).Value, 10, 10, 10, 2, "ommei30272", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "gold" } }, [ProductImage.From("12322", 1).Value]);
+        product1.AddVariant(productVariantId1, Money.From(200).Value, 20, 20, 20, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "blue" } });
+        product1.AddVariant(productVariantId2, Money.From(220).Value, 10, 10, 10, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
+        product2.AddVariant(productVariantId3, Money.From(160).Value, 10, 10, 10, 2, "ommei30273", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
+        product2.AddVariant(productVariantId4, Money.From(150).Value, 10, 10, 10, 2, "ommei30272", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "gold" } });
 
 
         context.Products.Add(product1);

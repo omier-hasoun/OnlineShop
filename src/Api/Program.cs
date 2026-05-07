@@ -1,6 +1,8 @@
+using System.Net;
 using Application.Common.AppSettingsConfiguration.FileStoragePaths;
 using Application.Common.AppSettingsConfiguration.FileStoragePaths.ProductsPaths;
 using Application.Common.Identity;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 
@@ -31,11 +33,10 @@ namespace Api
                             .AddApplicationServices(config)
                             .AddInfrastructureServices(config,  builder.Environment);
 
+            GlobalSetups.Init();
+
             var app = builder.Build();
 
-            NetVips.Cache.MaxFiles = 0;
-            NetVips.Cache.MaxMem = 0;
-            NetVips.NetVips.Concurrency = 2;
 
             if (app.Environment.IsDevelopment())
             {
@@ -50,6 +51,8 @@ namespace Api
 
             app.UseHttpsRedirection();
 
+
+            app.UseDefaultFiles();
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -58,10 +61,6 @@ namespace Api
             app.UseAuthorization();
 
 
-            app.MapControllers();
-
-            app.MapGroup("/api/auth").
-                MapIdentityApi<AppUser>();
 
             using (var scope = app.Services.CreateScope())
             {
@@ -72,8 +71,15 @@ namespace Api
 
                 await initialiser.InitialiseAndSeedData();
                 IOptions<ProductPathsOptions> options = scope.ServiceProvider.GetRequiredService<IOptions<ProductPathsOptions>>();
-
             }
+
+            app.MapControllers();
+
+            app.MapGroup("/api/auth").
+                MapIdentityApi<AppUser>();
+
+
+
             app.Run();
 
 

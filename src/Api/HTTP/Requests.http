@@ -1,69 +1,33 @@
-POST https://localhost:7039/products/variants
-Content-Type: multipart/form-data; boundary=----MyBoundary
+POST https://localhost:7039/api/products/variants/images
+Content-Type: multipart/form-data; boundary=MyBoundary
 
-------MyBoundary
+--MyBoundary
 Content-Disposition: form-data; name="Product_Id"
 
-23159084639322112
-------MyBoundary
-Content-Disposition: form-data; name="Price"
+24305932607422464
+--MyBoundary
+Content-Disposition: form-data; name="Variant_Id"
 
-2000
-------MyBoundary
-Content-Disposition: form-data; name="Width"
+24308028295610368
+--MyBoundary
+Content-Disposition: form-data; name="Images[0].File"; filename="OIP.png"
+Content-Type: image/png
 
-50
-------MyBoundary
-Content-Disposition: form-data; name="Height"
-
-50
-------MyBoundary
-Content-Disposition: form-data; name="Length"
-
-20
-------MyBoundary
-Content-Disposition: form-data; name="Weight"
-
-4000
-------MyBoundary
-Content-Disposition: form-data; name="Sku"
-
-Omier-23897
-------MyBoundary
-Content-Disposition: form-data; name="Slug"
-
-Omier-hasoun
-------MyBoundary
-Content-Disposition: form-data; name="BarCode"
-
-12345678919
-
-------MyBoundary
-Content-Disposition: form-data; name="Images[0].File"; filename="OIP.jpeg"
-Content-Type: image/jpeg
-
-< C:\Users\omair\OIP.jpeg
-
-------MyBoundary
-Content-Disposition: form-data; name="Images[1].File"; filename="OIP2.jpeg"
-Content-Type: image/jpeg
-
-< C:\Users\omair\OIP2.jpeg
-
-------MyBoundary
+< C:\Users\omair\OIP.Png
+--MyBoundary
 Content-Disposition: form-data; name="Images[0].SortOrder"
 
 1
-------MyBoundary
+--MyBoundary
+Content-Disposition: form-data; name="Images[1].File"; filename="OIP.png"
+Content-Type: image/png
+
+< C:\Users\omair\OIP.Png
+--MyBoundary
 Content-Disposition: form-data; name="Images[1].SortOrder"
 
-2
-------MyBoundary
-Content-Disposition: form-data; name="Specifications[color]"
-
-black
-------MyBoundary--
-
+3
+--MyBoundary--
 
 ### login
 POST https://localhost:7039/auth/login

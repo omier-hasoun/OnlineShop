@@ -22,12 +22,7 @@ internal sealed class CreateVaraintCommandValidator : AbstractValidator<CreateVa
 
         RuleFor(x => x.Specifications).Must(x => x.Count <= ProductVariantRules.MaxNumberOfSpecifications);
 
-        RuleFor(x => x.Images)
-                              .Must(x => x.Count <= ProductVariantRules.MaxNumberOfImages);
 
-        RuleForEach(x => x.Images).NotEmpty()
-                                  .Must(image => image.File.Length <= ApplicationRules.Uploads.MaxImageSizeForProducts)
-                                  .WithMessage($"A single image cannot cannot exceed 10 Mb");
                                   
 
     }

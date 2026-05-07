@@ -13,7 +13,6 @@ int Weight,
 string Sku,
 string Slug,
 string BarCode,
-List<ProductVariantImageUpload> Images,
 Dictionary<string, string> Specifications
 ) : IRequest<Result<long>>;
 

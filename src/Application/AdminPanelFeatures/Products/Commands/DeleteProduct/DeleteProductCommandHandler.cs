@@ -11,22 +11,27 @@ internal sealed class DeleteProductCommandHandler : IRequestHandler<DeleteProduc
 
     public async Task<Result<Deleted>> Handle(DeleteProductCommand request, CancellationToken ct)
     {
+        var productId = new ProductId(request.ProductId);
 
-        var product = _context.Products.FirstOrDefault(p => p.Id == request.ProductId);
+        var product = await _context.Products.Include(x => x.Variants).FirstOrDefaultAsync(x => x.Id == productId, ct);
 
         if (product is null)
         {
-            //return ProductApplicationErrors.ProductNotFound;
+            return ApplicationErrors.NotFound.Product;
         }
 
-        _context.Products.Remove(product);
+        if (product.CanDelete())
+        {
+            _context.Products.Remove(product);
+        }
+        else
+        {
+            product.Archive();
+        }
 
         await _context.SaveAsync(ct);
 
-
-        //return deleteResult.Succeeded ? Result.Deleted : 
-        //     ProductApplicationErrors.ProductDeletionFailed;
-        throw new NotImplementedException();
+        return Result.Deleted;
     }
 
 }

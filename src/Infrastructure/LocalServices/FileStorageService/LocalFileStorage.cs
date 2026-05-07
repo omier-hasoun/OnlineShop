@@ -1,5 +1,6 @@
 
 using Application.Common.AppSettingsConfiguration.FileStoragePaths;
+using Application.Common.AppSettingsConfiguration.FileStoragePaths.ProductsPaths;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -9,8 +10,8 @@ namespace Infrastructure.LocalServices.FileStorageService;
 internal sealed class LocalFileStorage : IFileStorageService
 {
     private readonly IWebHostEnvironment _env;
-    private readonly FileStoragePathsOptions _paths;
-    public LocalFileStorage(IWebHostEnvironment env, IOptions<FileStoragePathsOptions> options)
+    private readonly ProductPathsOptions _paths;
+    public LocalFileStorage(IWebHostEnvironment env, IOptions<ProductPathsOptions> options)
     {
         _env = env;
         _paths = options.Value;
@@ -21,22 +22,15 @@ internal sealed class LocalFileStorage : IFileStorageService
         if (file == null || file.Length == 0)
             return false;
 
-        var outputPath = Path.Combine( _env.WebRootPath, _paths.ProductsPaths.Images_Original + fileName);
+        var outputPath = Path.Combine(_env.WebRootPath, _paths.Images_Original + fileName);
         try
         {
 
-            Directory.CreateDirectory(outputPath);
+            Directory.CreateDirectory(Path.Combine(_env.WebRootPath, _paths.Images_Original));
 
-            await using var fileStream = new FileStream(
-                fileName,
-                FileMode.Create,
-                FileAccess.Write,
-                FileShare.None,
-                81920,
-                useAsync: true);
+            using var fileStream = new FileStream(outputPath, FileMode.Create);
 
             await file.CopyToAsync(fileStream, ct);
-            await fileStream.FlushAsync(ct);
 
             return true;
         }

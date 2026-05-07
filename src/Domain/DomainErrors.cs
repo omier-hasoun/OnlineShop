@@ -10,7 +10,7 @@ public static class DomainErrors
     public static readonly Error ProductVariantIdInvalid = ProductVariants.ProductVariantIdInvalid;
     public static readonly Error OrderIdInvalid = Orders.OrderIdInvalid;
     public static readonly Error ProductReviewIdInvalid = ProductReviews.ProductReviewIdInvalid;
-    public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+    public static readonly Error InvalidAction = Error.Validation($"{BaseErrorCode}.{nameof(InvalidAction)}");
     public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
     public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
     public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
@@ -73,8 +73,8 @@ public static class DomainErrors
 
 
         public static readonly Error MaxNumberOfVariantsReached = Error.Validation($"{BaseErrorCode}.{nameof(MaxNumberOfVariantsReached)}");
-        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
-        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error ConnotPublishArchivedProduct = Error.Validation($"{BaseErrorCode}.{nameof(ConnotPublishArchivedProduct)}");
+        public static readonly Error AlreadyUnpublished = Error.Validation($"{BaseErrorCode}.{nameof(AlreadyUnpublished)}");
         public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
         public static readonly Error CannotPublishThisProductAtLeast1VariantRequired = Error.Validation($"{BaseErrorCode}.{nameof(CannotPublishThisProductAtLeast1VariantRequired)}");
         public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");

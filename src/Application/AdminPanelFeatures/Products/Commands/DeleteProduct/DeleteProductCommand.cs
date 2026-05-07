@@ -1,5 +1,5 @@
 namespace Application.AdminPanelFeatures.Products.Commands.DeleteProduct;
 
 public sealed record DeleteProductCommand(
-    ProductId ProductId
+    long ProductId
 ) : IRequest<Result<Deleted>>;

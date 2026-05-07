@@ -11,7 +11,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
     }
 
     private ProductVariant(ProductVariantId id, ProductId productId, Money? priceBeforeDiscount, Money price, byte discountPercentage,  ProductStatus status,
-        int width, int height, int length, int weight, string sku, string slug, string barCode, IReadOnlyDictionary<string, string> specifications, IReadOnlyCollection<ProductImage> images)
+        int width, int height, int length, int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications, List<ProductImage> images)
         : base(id)
     {
         ProductId = productId;
@@ -28,12 +28,12 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
         Sku = sku;
         Slug = slug;
         Barcode = barCode;
-        _images = images.ToList();
-        _specifications = specifications.ToDictionary();
+        _images = images;
+        _specifications = specifications;
     }
 
     public static Result<ProductVariant> Create(ProductVariantId id, ProductId productId, Money Price,
-        int width, int height, int length, int weight, string sku, string slug, string barCode, IReadOnlyDictionary<string, string> specifications, IReadOnlyCollection<ProductImage> images)
+        int width, int height, int length, int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications)
     {
         var validationResult = Result.ValidateAll(
                                 () => id.Validate(),
@@ -42,7 +42,6 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
                                 () => ValidateSpecifications(specifications),
                                 () => ValidateSku(sku),
                                 () => ValidateSlug(slug),
-                                () => ValidateImages(images),
                                 () => ValidateBarcode(barCode));
 
         if (validationResult.Failed)
@@ -57,7 +56,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
         ProductStatus status = ProductStatus.Draft;
         
         return new ProductVariant(id, productId, priceBeforeDisount, Price, discountPercentage, status,
-            width, height, length, weight, sku, slug, barCode, specifications, images);
+            width, height, length, weight, sku, slug, barCode, specifications, []);
     }
 
     public ProductId ProductId { get; private init; }
@@ -113,7 +112,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
     {
         Status = ProductStatus.NotActive;
     }
-    public void MarkDeleted()
+    public void Archive()
     {
         Status = ProductStatus.Archived;
     }
@@ -128,11 +127,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
         }
     }
 
-
-
-
-
-    private static Result<Success> ValidateImages(IReadOnlyCollection<ProductImage> newImages)
+    private static Result<Success> ValidateImages(List<ProductImage> newImages)
     {
         if (newImages is null || ValHelper.IsOutOfRange(newImages.Count, ProductVariantRules.MinNumberOfImages, ProductVariantRules.MaxNumberOfImages))
         {
@@ -198,7 +193,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
         return Result.Success;
     }
 
-    private static Result<Success> ValidateSpecifications(IReadOnlyDictionary<string,string> specifications)
+    private static Result<Success> ValidateSpecifications(Dictionary<string,string> specifications)
     {
         if(specifications is null || specifications.Count == 0)
         {

@@ -34,7 +34,7 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
                             () => id.IsValid(),
                             () => brandId.IsValid(),
                             () => categoryId.IsValid()
-                          );
+                            );
         //defaults
         var averageRating = ProductAverageRating.From(0).Value;
         var status = ProductStatus.Draft;
@@ -78,14 +78,14 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
 
 
     public Result<Success> AddVariant(ProductVariantId varaintId, Money price, int width, int height,
-        int length, int weight, string sku, string slug, string barCode, IReadOnlyDictionary<string, string> specifications, IReadOnlyCollection<ProductImage> images)
+        int length, int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications)
     {
         if(_variants.Count >= ProductRules.MaxNumberOfVariants)
         {
             return DomainErrors.Products.MaxNumberOfVariantsReached;
         }
 
-        var createVariantResult = ProductVariant.Create(varaintId, Id, price, width, height, length, weight, sku, slug, barCode, specifications, images);
+        var createVariantResult = ProductVariant.Create(varaintId, Id, price, width, height, length, weight, sku, slug, barCode, specifications);
 
         if(createVariantResult.Failed)
         {
@@ -93,13 +93,14 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
         }
 
         _variants.Add(createVariantResult.Value);
+
         return Result.Success;
     }
 
 
-    public Result<Updated> UpdateVariantImages(ProductVariantId varaintId, List<ProductImage> newImages)
+    public Result<Updated> UpdateVariantImages(ProductVariantId variantId, List<ProductImage> newImages)
     {
-        var variant = _variants.FirstOrDefault(x => x.Id == varaintId);
+        var variant = _variants.FirstOrDefault(x => x.Id == variantId);
 
         if (variant is null)
             return DomainErrors.ProductVariantIdInvalid;
@@ -121,6 +122,11 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
             return DomainErrors.Products.CannotPublishThisProductAtLeast1VariantRequired;
         }
 
+        if (Status != ProductStatus.Draft && Status != ProductStatus.NotActive)
+        {
+            return DomainErrors.InvalidAction;
+        }
+
         _variants.ForEach(x => x.Publish());
         Status = ProductStatus.Active;
 
@@ -129,13 +135,35 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
 
     public Result<Success> Unpublish()
     {
+        if (Status != ProductStatus.Active)
+        {
+            return DomainErrors.InvalidAction;
+        }
+
         _variants.ForEach(x => x.Unpublish());
 
         Status = ProductStatus.NotActive;
 
         return Result.Success;
     }
+    public Result<Success> Archive()
+    {
+        // if Status == draft then it should be hard deleted, if Archived then its already Archived
+        if (Status != ProductStatus.Active && Status != ProductStatus.NotActive) 
+        {
+            return DomainErrors.InvalidAction; 
+        }
 
+        _variants.ForEach(x => x.Archive());
+        Status = ProductStatus.Archived;
+
+        return Result.Success;
+    }
+
+    public bool CanDelete()
+    {
+        return Status == ProductStatus.Draft;
+    }
 
     public Result<Success> PublishVariant(ProductVariantId variantId)
     {
