@@ -122,36 +122,36 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
             return DomainErrors.Products.CannotPublishThisProductAtLeast1VariantRequired;
         }
 
-        if (Status != ProductStatus.Draft && Status != ProductStatus.NotActive)
+        if (Status != ProductStatus.Draft && Status != ProductStatus.Unpublished)
         {
-            return DomainErrors.InvalidAction;
+            return DomainErrors.InvalidStateTransition;
         }
 
         _variants.ForEach(x => x.Publish());
-        Status = ProductStatus.Active;
+        Status = ProductStatus.Published;
 
         return Result.Success;
     }
 
     public Result<Success> Unpublish()
     {
-        if (Status != ProductStatus.Active)
+        if (Status != ProductStatus.Published)
         {
-            return DomainErrors.InvalidAction;
+            return DomainErrors.InvalidStateTransition;
         }
 
         _variants.ForEach(x => x.Unpublish());
 
-        Status = ProductStatus.NotActive;
+        Status = ProductStatus.Unpublished;
 
         return Result.Success;
     }
     public Result<Success> Archive()
     {
         // if Status == draft then it should be hard deleted, if Archived then its already Archived
-        if (Status != ProductStatus.Active && Status != ProductStatus.NotActive) 
+        if (Status != ProductStatus.Published && Status != ProductStatus.Unpublished) 
         {
-            return DomainErrors.InvalidAction; 
+            return DomainErrors.InvalidStateTransition; 
         }
 
         _variants.ForEach(x => x.Archive());
@@ -169,9 +169,15 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
     {
         var variant = _variants.FirstOrDefault(x => x.Id == variantId);
 
-        if(variant is null)
+        if (variant is null)
         {
             return DomainErrors.ProductVariantIdInvalid;
+        }
+
+        // if the product it self isn't published then you cannot publish a variant alone
+        if (this.Status != ProductStatus.Published) 
+        {
+            return DomainErrors.InvalidStateTransition;
         }
 
         variant.Publish();

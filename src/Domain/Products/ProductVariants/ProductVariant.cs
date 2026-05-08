@@ -106,11 +106,11 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
 
     public void Publish()
     {
-        Status = ProductStatus.Active;
+        Status = ProductStatus.Published;
     }
     public void Unpublish()
     {
-        Status = ProductStatus.NotActive;
+        Status = ProductStatus.Unpublished;
     }
     public void Archive()
     {

@@ -10,7 +10,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
         ProductId productId = new(request.ProductId);
 
         var query = context.Products.AsNoTracking()
-                                    .Where(x => x.Id == productId && x.Status == ProductStatus.Active)
+                                    .Where(x => x.Id == productId && x.Status == ProductStatus.Published)
                                     .Join(context.Brands, p => p.BrandId, b => b.Id, (product, brand) => new { product, brand })
                                     .Join(context.Categories, x => x.product.CategoryId, category => category.Id, (pb, category) => new { pb, category })
                                     .Select(

@@ -21,13 +21,13 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
 
         return items.Sum(item => item.TotalPrice.Value);
     }
-    //public static Result<Order> Create(OrderId id, UserId customerId, decimal shippingFees)
+    //public static Result<Order> Create(OrderId id, CustomerId customerId, decimal shippingFees)
     //{
 
     //    var result = Result.ValidateAll(
-    //        //() => ValidateOrderItems(items),
+    //        () => ValidateOrderItems(items),
     //        () => ValidateShippingFees(shippingFees),
-    //        //() => ValidateTotalItemsPrice(totalItemsPrice)
+    //        () => ValidateTotalItemsPrice(totalItemsPrice)
     //        );
 
     //    if (result.Failed)

@@ -17,8 +17,8 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         try
         {
             //await context.Database.EnsureDeletedAsync();
-            //if(!await context.Database.EnsureCreatedAsync())
-            await SeedData();
+            if(!await context.Database.EnsureCreatedAsync())
+                await SeedData();
         }
         catch (Exception ex)
         {

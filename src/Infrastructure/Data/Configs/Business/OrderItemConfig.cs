@@ -1,6 +1,5 @@
 
 
-using System.Text.Json;
 using Domain.Orders;
 using Domain.Orders.OrderItems;
 using Domain.Products.ProductVariants;
@@ -44,6 +43,15 @@ internal sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
                .WithMany(x => x.Items)
                .HasForeignKey(x => x.OrderId)
                .IsRequired();
+
+        builder.OwnsOne(x => x.ProductInfo, b =>
+        {
+            b.ToJson();
+            b.OwnsOne(x => x.Attributes);
+            b.OwnsOne(x => x.VariantSpecification);
+
+
+        });
 
         builder.HasOne<ProductVariant>()
                .WithMany()

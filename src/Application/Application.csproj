@@ -20,6 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="AdminPanelFeatures\Brands\" />
+    <Folder Include="AdminPanelFeatures\Orders\" />
     <Folder Include="AdminPanelFeatures\Products\Dtos\" />
     <Folder Include="AdminPanelFeatures\Products\Queries\" />
     <Folder Include="Features\Categories\Commands\" />

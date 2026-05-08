@@ -1,6 +1,6 @@
 
-using System.ComponentModel;
 using Domain.Common.ValueObjects;
+using Domain.Orders.ValueObjects;
 
 namespace Domain.Orders.OrderItems;
 
@@ -26,25 +26,17 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
 
     public short Quantity { get; private init; }
 
-    public Money UnitPrice { get;  }
+    public Money UnitPrice { get; }
     public Money TotalPrice { get; }
 
-    public OrderItemStatus Status
-    {
-        get; private set
-        {
-            if (!Enum.IsDefined(typeof(OrderItemStatus), value))
-            {
-                throw new InvalidEnumArgumentException(nameof(Status), (int)value, typeof(OrderItemStatus));
-            }
-            field = value;
-        }
-    }
+    public OrderItemStatus Status {get; private set;}
+
+    public ProductInfoSnapShotAtPurchase ProductInfo { get; private set; }
 
     private List<string> _serialNumbers = [];
     public IReadOnlyList<string> SerialNumbers { get{ return _serialNumbers.AsReadOnly(); } private set{_serialNumbers = value is null ?[] : value.ToList();} }
 
-    internal Result<Success> UpdateSerialNumbers(IReadOnlyCollection<string> serialNumbers)
+    internal Result<Success> UpdateSerialNumbers(List<string> serialNumbers)
     {
         ArgumentNullException.ThrowIfNull(serialNumbers, nameof(serialNumbers));
 
@@ -52,7 +44,9 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
         {
             return DomainErrors.OrderItems.SerialNumbersDoNotMatchQuantity;
         }
-        _serialNumbers = serialNumbers.ToList();
+
+        _serialNumbers = serialNumbers;
+
         return Result.Success;
     }
 

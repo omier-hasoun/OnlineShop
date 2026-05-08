@@ -10,7 +10,7 @@ public static class DomainErrors
     public static readonly Error ProductVariantIdInvalid = ProductVariants.ProductVariantIdInvalid;
     public static readonly Error OrderIdInvalid = Orders.OrderIdInvalid;
     public static readonly Error ProductReviewIdInvalid = ProductReviews.ProductReviewIdInvalid;
-    public static readonly Error InvalidAction = Error.Validation($"{BaseErrorCode}.{nameof(InvalidAction)}");
+    public static readonly Error InvalidStateTransition = Error.Validation($"{BaseErrorCode}.{nameof(InvalidStateTransition)}", "This Action is not allowed");
     public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
     public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
     public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");

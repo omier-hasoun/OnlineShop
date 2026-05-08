@@ -18,10 +18,10 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
         }
 
         var cheapestVariantsQuery = context.Products.AsNoTracking()
-            .Where(product => product.Status == ProductStatus.Active)
+            .Where(product => product.Status == ProductStatus.Published)
             .SelectMany(
                 product => context.ProductVariants
-                    .Where(variant => variant.ProductId == product.Id && variant.Status == ProductStatus.Active)
+                    .Where(variant => variant.ProductId == product.Id && variant.Status == ProductStatus.Published)
                     .OrderBy(v => v.Price)
                     .Take(1),
                 (product, variant) => new { product, variant }
