@@ -1,8 +1,6 @@
-using System.Net;
-using Application.Common.AppSettingsConfiguration.FileStoragePaths;
-using Application.Common.AppSettingsConfiguration.FileStoragePaths.ProductsPaths;
-using Application.Common.Identity;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
+
+using Application.Common.Configurations;
+using Application.Entities;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 
@@ -16,14 +14,12 @@ namespace Api
             var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
 
-            if (builder.Environment.IsProduction() || builder.Environment.IsStaging())
+            if (!builder.Environment.IsDevelopment())
                 config.AddEnvironmentVariables();
-
-            if (builder.Environment.IsDevelopment())
+            else 
                 config.AddUserSecrets("7f342e59-c0e1-4ef5-9bd1-126a96fa7a5b");
 
-            builder.Services.Configure<ProductPathsOptions>(config.GetSection(nameof(ProductPathsOptions)));
-            builder.Services.Configure<FileStoragePathsOptions>(config.GetSection(nameof(FileStoragePathsOptions)));
+            builder.Services.Configure<ProductImagePathOptions>(config.GetSection(nameof(ProductImagePathOptions)));
 
             builder.Services.Configure<IdentityOptions>(config.GetSection(nameof(IdentityOptions)));
 
@@ -45,11 +41,13 @@ namespace Api
             }
             else
             {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
+                app.UseExceptionHandler("/error");
+                app.UseStatusCodePages();
+                //app.UseHsts();
             }
 
             app.UseHttpsRedirection();
+
 
 
             app.UseDefaultFiles();
@@ -70,7 +68,7 @@ namespace Api
                     scope.ServiceProvider.GetRequiredService<RoleManager<Role>>());
 
                 await initialiser.InitialiseAndSeedData();
-                IOptions<ProductPathsOptions> options = scope.ServiceProvider.GetRequiredService<IOptions<ProductPathsOptions>>();
+                IOptions<ProductImagePathOptions> options = scope.ServiceProvider.GetRequiredService<IOptions<ProductImagePathOptions>>();
             }
 
             app.MapControllers();
@@ -78,9 +76,32 @@ namespace Api
             app.MapGroup("/api/auth").
                 MapIdentityApi<AppUser>();
 
+            app.Use(async (HttpContext context, RequestDelegate next) =>
+            {
+                var guestId = context.Request.Cookies["guest_id"];
+
+                if (!Guid.TryParse(guestId, out Guid result) || result.Version != 7)
+                {
+                    guestId = Guid.CreateVersion7().ToString();
+
+                    context.Response.Cookies.Append("guest_id", guestId,
+                    new CookieOptions
+                    {
+                        IsEssential = true,
+                        HttpOnly = true,
+                        SameSite = SameSiteMode.Strict,
+                        Expires = DateTimeOffset.Now.AddDays(7),
+                        Secure = true,
+                    });
+                }
+
+                context.Items["guest_id"] = guestId;
+                await next(context);
+            });
+            
 
 
-            app.Run();
+            await app.RunAsync();
 
 
 

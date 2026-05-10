@@ -1,4 +1,5 @@
 
+using Application.Entities;
 using Domain.Brands;
 using Domain.Categories;
 using Domain.Common.ValueObjects;
@@ -16,9 +17,9 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
     {
         try
         {
-            //await context.Database.EnsureDeletedAsync();
-            if(!await context.Database.EnsureCreatedAsync())
-                await SeedData();
+            //await context.Database.MigrateAsync();
+
+            await SeedData();
         }
         catch (Exception ex)
         {

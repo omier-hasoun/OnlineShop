@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using Application.Entities;
 
 namespace Infrastructure.LocalServices.HashingService;
 

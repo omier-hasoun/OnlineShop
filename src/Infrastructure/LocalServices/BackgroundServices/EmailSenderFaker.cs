@@ -1,3 +1,4 @@
+using Application.Entities;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Infrastructure.LocalServices.BackgroundServices;

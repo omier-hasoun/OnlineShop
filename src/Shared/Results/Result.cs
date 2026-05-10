@@ -38,7 +38,7 @@ public static class Result
                 allErrors.Add(error);
             }
         }
-        return allErrors is null ? Result.Success: allErrors ;
+        return allErrors is null ? Result.Success : allErrors; 
     }
 }
 

@@ -1,5 +1,6 @@
+using Application.Entities;
 using Domain.Common.Rules;
-using Domain.Customers;
+ 
 using Domain.ProductReviews;
 using Domain.Products;
 
@@ -40,14 +41,14 @@ internal sealed class ProductReviewConfig : BaseEntityConfig<ProductReview>
                .HasForeignKey(x => x.ProductId)
                .IsRequired();
 
-        builder.HasOne<Customer>()
+        builder.HasOne<AppUser>()
                .WithMany()
-               .HasForeignKey(x => x.CustomerId)
+               .HasForeignKey(x => x.UserId)
                .IsRequired();
 
         builder.ToTable("ProductReviews", x =>
         {
-            x.HasCheckConstraint("CK_ProductReview_Rating", "Rating between 1 and 5");
+            x.HasCheckConstraint("CK_ProductReview_Rating", "[Rating] between 1 and 5");
 
         });
     }

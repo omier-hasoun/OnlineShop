@@ -1,6 +1,4 @@
 
-using Domain.Customers;
-
 namespace Domain.Common.Abstractions;
 public interface ICreationAudited
 {

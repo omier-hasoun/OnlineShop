@@ -1,7 +1,8 @@
 
 using System.Threading.Channels;
 using Application.Common.InternalModels;
-using Domain.Customers;
+using Application.Entities;
+ 
 using Domain.Orders;
 using Domain.Products;
 using Domain.Products.ProductVariants;
@@ -37,8 +38,8 @@ public static class DependencyInjection
                 .AddIdGenServices(config)
                 .AddIdGeneratorsServices()
                 .AddIdentityServices(config, env: enviroment)
-                .AddFileSignaturesServices()
-                ;
+                .AddFileSignaturesServices();
+                
 
         return services;
     }
@@ -70,10 +71,9 @@ public static class DependencyInjection
 
     private static IServiceCollection AddIdGeneratorsServices(this IServiceCollection services)
     {
-        services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<Guid>, GuidV7Generator>("GuidV7");
+        services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<System.Guid>, GuidV7Generator>("GuidV7");
         services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<long>, SnowflakeGenerator>("Snowflake");
 
-        services.AddSingleton<App.IIdGenerator<CustomerId>, UserIdGenerator>();
         services.AddSingleton<App.IIdGenerator<ProductId>, ProductIdGenerator>();
 
         services.AddSingleton<App.IIdGenerator<ProductVariantId>, ProductVariantIdGenerator>();

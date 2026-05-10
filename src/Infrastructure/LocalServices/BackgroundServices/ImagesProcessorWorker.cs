@@ -1,6 +1,6 @@
 
 using System.Threading.Channels;
-using Application.Common.AppSettingsConfiguration.FileStoragePaths.ProductsPaths;
+using Application.Common.Configurations;
 using Domain.Products.ProductVariants;
 using Domain.Products.ValueObjects;
 using Microsoft.AspNetCore.Hosting;
@@ -13,14 +13,14 @@ namespace Infrastructure.LocalServices.BackgroundServices;
 
 internal sealed class ImagesProcessorWorker : BackgroundService
 {
-    public ImagesProcessorWorker(IOptions<ProductPathsOptions> options, IImageTaskReader reader, IWebHostEnvironment env)
+    public ImagesProcessorWorker(IOptions<ProductImagePathOptions> options, IImageTaskReader reader, IWebHostEnvironment env)
     {
         _pathsOptions = options.Value;
         _reader = reader;
         _env = env;
     }
 
-    private readonly ProductPathsOptions _pathsOptions;
+    private readonly ProductImagePathOptions _pathsOptions;
     private readonly IImageTaskReader _reader;
     private readonly IWebHostEnvironment _env;
 

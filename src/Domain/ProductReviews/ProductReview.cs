@@ -7,12 +7,12 @@ public sealed class ProductReview : AggregateRoot<ProductReviewId>, IHasCreation
     {
         
     }
-    private ProductReview(ProductReviewId id, ProductId productId, CustomerId customerId,
+    private ProductReview(ProductReviewId id, ProductId productId, Guid userId,
         byte rating, string title, string? comment, DateTime createdAt, DateTime lastModifiedAt)
         : base(id)
     {
         ProductId = productId;
-        CustomerId = customerId;
+        UserId = userId;
         Rating = rating;
         Title = title;
         Comment = comment;
@@ -20,7 +20,7 @@ public sealed class ProductReview : AggregateRoot<ProductReviewId>, IHasCreation
         LastModifiedAt = lastModifiedAt;
     }
 
-    public static Result<ProductReview> Create(ProductReviewId id, ProductId productId, CustomerId userId,
+    public static Result<ProductReview> Create(ProductReviewId id, ProductId productId, Guid userId,
         byte rating, string title, string? comment)
     {
         //if (rating < ProductRules.MinRatingValue || rating > ProductRules.MaxRatingValue)
@@ -42,7 +42,7 @@ public sealed class ProductReview : AggregateRoot<ProductReviewId>, IHasCreation
     }
 
     public ProductId ProductId { get; private set; }
-    public CustomerId CustomerId { get; private set; }
+    public Guid UserId { get; private set; }
     public byte Rating { get; private set; }
 
     public string? Comment { get; private set; }

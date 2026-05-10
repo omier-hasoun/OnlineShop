@@ -1,6 +1,4 @@
-
-
-using Application.Common.AppSettingsConfiguration;
+using Application.Entities;
 
 namespace Infrastructure.Data.Configs.Business;
 

@@ -22,7 +22,7 @@ namespace Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Application.Common.AppSettingsConfiguration.AppSettings", b =>
+            modelBuilder.Entity("Application.Entities.AppSettings", b =>
                 {
                     b.Property<string>("Key")
                         .HasColumnType("VARCHAR(100)");
@@ -38,7 +38,7 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("AppSettings", (string)null);
                 });
 
-            modelBuilder.Entity("Application.Common.Identity.AppUser", b =>
+            modelBuilder.Entity("Application.Entities.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -50,8 +50,8 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(50)");
 
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -59,6 +59,12 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModifiedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -71,7 +77,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("VARCHAR(254)");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(254)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -91,22 +98,25 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(254)");
 
                     b.HasKey("Id");
 
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("NormalizedEmail")
                         .IsUnique()
-                        .HasDatabaseName("IX_User_NormalizedEmail");
+                        .HasDatabaseName("IX_Users_NormalizedEmail");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Users_NormalizedUserName");
 
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Application.Common.Identity.Role", b =>
+            modelBuilder.Entity("Application.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -128,7 +138,7 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("Application.Common.Identity.UserClaim", b =>
+            modelBuilder.Entity("Application.Entities.UserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -154,7 +164,7 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("UserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Application.Common.Identity.UserLoginProvider", b =>
+            modelBuilder.Entity("Application.Entities.UserLoginProvider", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("VARCHAR(255)");
@@ -171,13 +181,10 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
                     b.ToTable("UserLoginProviders", (string)null);
                 });
 
-            modelBuilder.Entity("Application.Common.Identity.UserToken", b =>
+            modelBuilder.Entity("Application.Entities.UserToken", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -237,6 +244,59 @@ namespace Infrastructure.Data.Migrations
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.ToTable("Brands", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Carts.Cart", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("GuestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
+
+                    b.ToTable("Carts", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Carts.CartItems.CartItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CartId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("ProductVariantId")
+                        .HasColumnType("bigint");
+
+                    b.Property<short>("Quantity")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("ProductVariantId");
+
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Categories.Category", b =>
@@ -321,42 +381,15 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Addresses", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Customers.CartItems.CartItem", b =>
+            modelBuilder.Entity("Domain.CustomerShippingAddresses.ShippingAddress", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("ProductVariantId")
+                    b.Property<long>("AddressId")
                         .HasColumnType("bigint");
 
-                    b.Property<short>("Quantity")
-                        .HasColumnType("smallint");
-
-                    b.HasKey("Id");
-
-                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("ProductVariantId", "CustomerId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_ProductVariantId_CustomerId");
-
-                    b.ToTable("CartItems", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Customers.Customer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsDefault")
                         .HasColumnType("bit");
 
                     b.Property<Guid>("UserId")
@@ -366,39 +399,15 @@ namespace Infrastructure.Data.Migrations
 
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Customers", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Customers.CustomerShippingAddresses.CustomerShippingAddress", b =>
-                {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("AddressId")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
-
                     b.HasIndex("AddressId")
                         .IsUnique();
 
-                    b.HasIndex("CustomerId")
+                    b.HasIndex("UserId")
                         .IsUnique()
-                        .HasDatabaseName("IX_Addresses_CustomerId")
+                        .HasDatabaseName("IX_ShippingAddresses_UserId")
                         .HasFilter("[IsDefault] = 1");
 
-                    b.ToTable("CustomerShippingAddresses", (string)null);
+                    b.ToTable("ShippingAddresses", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Orders.Order", b =>
@@ -409,20 +418,20 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("ShippingFees")
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("TotalItemsPrice")
                         .HasColumnType("decimal(18,4)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders", (string)null);
                 });
@@ -580,9 +589,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("LastModifiedAt")
                         .HasColumnType("datetime2");
 
@@ -597,17 +603,20 @@ namespace Infrastructure.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("NVARCHAR");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ProductReviews", null, t =>
                         {
-                            t.HasCheckConstraint("CK_ProductReview_Rating", "Rating between 1 and 5");
+                            t.HasCheckConstraint("CK_ProductReview_Rating", "[Rating] between 1 and 5");
                         });
                 });
 
@@ -968,32 +977,42 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("UserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Application.Common.Identity.AppUser", b =>
+            modelBuilder.Entity("Application.Entities.UserClaim", b =>
                 {
-                    b.HasOne("Domain.Customers.Customer", null)
-                        .WithMany()
-                        .HasForeignKey("CustomerId");
-                });
-
-            modelBuilder.Entity("Application.Common.Identity.UserClaim", b =>
-                {
-                    b.HasOne("Application.Common.Identity.AppUser", null)
+                    b.HasOne("Application.Entities.AppUser", null)
                         .WithMany("Claims")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("Application.Common.Identity.UserLoginProvider", b =>
+            modelBuilder.Entity("Application.Entities.UserToken", b =>
                 {
-                    b.HasOne("Application.Common.Identity.AppUser", null)
-                        .WithOne("LinkedLoginProvider")
-                        .HasForeignKey("Application.Common.Identity.UserLoginProvider", "UserId");
-                });
-
-            modelBuilder.Entity("Application.Common.Identity.UserToken", b =>
-                {
-                    b.HasOne("Application.Common.Identity.AppUser", null)
+                    b.HasOne("Application.Entities.AppUser", null)
                         .WithMany("Tokens")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Carts.Cart", b =>
+                {
+                    b.HasOne("Application.Entities.AppUser", null)
+                        .WithOne()
+                        .HasForeignKey("Domain.Carts.Cart", "UserId");
+                });
+
+            modelBuilder.Entity("Domain.Carts.CartItems.CartItem", b =>
+                {
+                    b.HasOne("Domain.Carts.Cart", null)
+                        .WithMany("Items")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Products.ProductVariants.ProductVariant", null)
+                        .WithMany()
+                        .HasForeignKey("ProductVariantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1029,41 +1048,17 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("GeoLocation");
                 });
 
-            modelBuilder.Entity("Domain.Customers.CartItems.CartItem", b =>
-                {
-                    b.HasOne("Domain.Customers.Customer", null)
-                        .WithMany("CartItems")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Products.ProductVariants.ProductVariant", null)
-                        .WithMany()
-                        .HasForeignKey("ProductVariantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Customers.Customer", b =>
-                {
-                    b.HasOne("Application.Common.Identity.AppUser", null)
-                        .WithOne()
-                        .HasForeignKey("Domain.Customers.Customer", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Customers.CustomerShippingAddresses.CustomerShippingAddress", b =>
+            modelBuilder.Entity("Domain.CustomerShippingAddresses.ShippingAddress", b =>
                 {
                     b.HasOne("Domain.Common.Entities.Addresses.Address", "Address")
                         .WithOne()
-                        .HasForeignKey("Domain.Customers.CustomerShippingAddresses.CustomerShippingAddress", "AddressId")
+                        .HasForeignKey("Domain.CustomerShippingAddresses.ShippingAddress", "AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Customers.Customer", null)
+                    b.HasOne("Application.Entities.AppUser", null)
                         .WithMany("ShippingAddresses")
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1072,9 +1067,9 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Orders.Order", b =>
                 {
-                    b.HasOne("Domain.Customers.Customer", null)
+                    b.HasOne("Application.Entities.AppUser", null)
                         .WithMany()
-                        .HasForeignKey("CustomerId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1183,15 +1178,15 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.ProductReviews.ProductReview", b =>
                 {
-                    b.HasOne("Domain.Customers.Customer", null)
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Products.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Application.Entities.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1210,13 +1205,13 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Application.Common.Identity.AppUser", null)
+                    b.HasOne("Application.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Application.Common.Identity.AppUser", null)
+                    b.HasOne("Application.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("LastModifiedBy")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1328,7 +1323,7 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.ReturnItemRequestsReviews.ReturnItemRequestReview", b =>
                 {
-                    b.HasOne("Application.Common.Identity.AppUser", null)
+                    b.HasOne("Application.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1340,7 +1335,7 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Application.Common.Identity.AppUser", null)
+                    b.HasOne("Application.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("LastModifiedBy")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1358,33 +1353,31 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Application.Common.Identity.AppUser", null)
+                    b.HasOne("Application.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Application.Common.Identity.Role", null)
+                    b.HasOne("Application.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Application.Common.Identity.AppUser", b =>
+            modelBuilder.Entity("Application.Entities.AppUser", b =>
                 {
                     b.Navigation("Claims");
 
-                    b.Navigation("LinkedLoginProvider");
+                    b.Navigation("ShippingAddresses");
 
                     b.Navigation("Tokens");
                 });
 
-            modelBuilder.Entity("Domain.Customers.Customer", b =>
+            modelBuilder.Entity("Domain.Carts.Cart", b =>
                 {
-                    b.Navigation("CartItems");
-
-                    b.Navigation("ShippingAddresses");
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Domain.Orders.Order", b =>

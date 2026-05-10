@@ -1,4 +1,5 @@
-using Domain.Customers;
+
+using Application.Entities;
 using Domain.Orders;
 
 namespace Infrastructure.Data.Configs.Business;
@@ -26,9 +27,9 @@ internal sealed class OrderConfig : BaseEntityConfig<Order>
         builder.Property(x => x.ShippingFees)
                .IsRequired();
 
-        builder.HasOne<Customer>()
+        builder.HasOne<AppUser>()
                .WithMany()
-               .HasForeignKey(x => x.CustomerId)
+               .HasForeignKey(x => x.UserId)
                .IsRequired();
 
         builder.ToTable("Orders");

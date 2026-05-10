@@ -36,7 +36,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
         int width, int height, int length, int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications)
     {
         var validationResult = Result.ValidateAll(
-                                () => id.Validate(),
+                                () => id.IsValid(),
                                 () => ValidatePrice(Price),
                                 () => Validate_Width_Height_Length(width, height, length),
                                 () => ValidateSpecifications(specifications),

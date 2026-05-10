@@ -9,7 +9,7 @@ public readonly record struct ProductVariantId
         Value = value;
     }
 
-    public Result<Success> Validate()
+    public Result<Success> IsValid()
     {
         if (Value <= 0)
         {

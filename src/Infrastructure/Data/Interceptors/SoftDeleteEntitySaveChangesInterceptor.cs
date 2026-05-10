@@ -9,7 +9,7 @@ internal sealed class SoftDeleteEntitySaveChangesInterceptor : SaveChangesInterc
         if (eventData.Context is null)
             return await ValueTask.FromResult(result);
 
-        var entries = eventData.Context.ChangeTracker.Entries<ISoftDeleted>();
+        var entries = eventData.Context.ChangeTracker.Entries<ISoftDelete>();
 
         foreach (var entry in entries)
         {

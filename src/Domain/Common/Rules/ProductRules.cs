@@ -7,7 +7,7 @@ public static class ProductRules
     public const byte MaxTitleLength = 60;
 
     // Description length limits
-    public const byte MinDescriptionLength = 20;
+    public const short MinDescriptionLength = 5;
     public const short MaxDescriptionLength = 300;
 
     // Product variant count limits

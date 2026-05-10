@@ -17,5 +17,4 @@ global using Infrastructure.Data.Configs.Abstractions;
 global using Shared;
 global using Shared.Helpers;
 global using Microsoft.Extensions.DependencyInjection;
-global using Application.Common.Identity;
 global using Infrastructure.Common.Abstractions;

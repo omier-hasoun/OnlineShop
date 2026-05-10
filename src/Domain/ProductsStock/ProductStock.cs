@@ -21,7 +21,7 @@ public sealed class ProductStock : IEntity // i want to a composite id in this e
     public int Quantity { get; private set; }
     public int ReservedQuantity { get; private set; }
 
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly() ;
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
     private readonly List<IDomainEvent> _domainEvents = [];
 
     public Result<Success> ReserveItem(short quantity)

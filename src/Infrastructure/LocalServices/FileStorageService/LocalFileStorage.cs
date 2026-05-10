@@ -1,6 +1,6 @@
 
-using Application.Common.AppSettingsConfiguration.FileStoragePaths;
-using Application.Common.AppSettingsConfiguration.FileStoragePaths.ProductsPaths;
+using Application.Common.Configurations;
+ 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -10,8 +10,8 @@ namespace Infrastructure.LocalServices.FileStorageService;
 internal sealed class LocalFileStorage : IFileStorageService
 {
     private readonly IWebHostEnvironment _env;
-    private readonly ProductPathsOptions _paths;
-    public LocalFileStorage(IWebHostEnvironment env, IOptions<ProductPathsOptions> options)
+    private readonly ProductImagePathOptions _paths;
+    public LocalFileStorage(IWebHostEnvironment env, IOptions<ProductImagePathOptions> options)
     {
         _env = env;
         _paths = options.Value;

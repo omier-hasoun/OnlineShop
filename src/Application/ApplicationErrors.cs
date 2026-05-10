@@ -61,7 +61,7 @@ public static class ApplicationErrors
         public static readonly Error OrderItem = Error.NotFound(GenerateErrorCode(nameof(OrderItem)));
         public static readonly Error ProductReview = Error.NotFound(GenerateErrorCode(nameof(ProductReview)));
 
-        public static readonly Error rename1 = Error.NotFound(GenerateErrorCode(nameof(rename1)));
+        public static readonly Error User = Error.NotFound(GenerateErrorCode(nameof(User)));
         public static readonly Error rename2 = Error.NotFound(GenerateErrorCode(nameof(rename2)));
         public static readonly Error rename3 = Error.NotFound(GenerateErrorCode(nameof(rename3)));
 

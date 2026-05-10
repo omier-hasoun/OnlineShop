@@ -6,10 +6,10 @@ namespace Domain.Orders;
 public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
 {
 
-    private Order(OrderId id, CustomerId customerId, Money totalItemsPrice, Money shippingFees, DateTime createdAt)
+    private Order(OrderId id, Guid userId, Money totalItemsPrice, Money shippingFees, DateTime createdAt)
         : base(id)
     {
-        CustomerId = customerId;
+        UserId = userId;
         TotalItemsPrice = totalItemsPrice;
         ShippingFees = shippingFees;
         CreatedAt = createdAt;
@@ -21,7 +21,7 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
 
         return items.Sum(item => item.TotalPrice.Value);
     }
-    //public static Result<Order> Create(OrderId id, CustomerId customerId, decimal shippingFees)
+    //public static Result<Order> Create(OrderId id, UserId userId, decimal shippingFees)
     //{
 
     //    var result = Result.ValidateAll(
@@ -36,9 +36,9 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
     //    }
 
 
-    //    return new Order(id, customerId, totalItemsPrice, shippingFees, items, TimeService.UtcNow);
+    //    return new Order(id, userId, totalItemsPrice, shippingFees, items, TimeService.UtcNow);
     //}
-    public CustomerId CustomerId { get; private init; }
+    public Guid UserId { get; private init; }
     public Money TotalItemsPrice { get; private set; }
     public Money ShippingFees { get; private set; }
     public DateTime CreatedAt { get; set; }

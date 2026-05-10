@@ -1,6 +1,7 @@
 
 
-using Domain.Customers;
+using Application.Entities;
+ 
 
 namespace Infrastructure.Data.Configs.Identity;
 
@@ -23,6 +24,15 @@ internal sealed class AppUserConfig : BaseEntityConfig<AppUser>
         builder.Property(x => x.NormalizedEmail)
                .HasColumnType("VARCHAR(254)")
                .IsRequired();
+
+        builder.Property(x => x.UserName)
+               .HasColumnType("VARCHAR(254)")
+               .IsRequired();
+
+        builder.Property(x => x.NormalizedUserName)
+               .HasColumnType("VARCHAR(254)")
+               .IsRequired();
+
 
         builder.Property(x => x.PhoneNumber)
                .HasColumnType("VARCHAR(30)")
@@ -56,15 +66,10 @@ internal sealed class AppUserConfig : BaseEntityConfig<AppUser>
                .WithMany()
                .UsingEntity<IdentityUserRole<Guid>>();
 
-        builder.HasOne(x => x.LinkedLoginProvider)
-               .WithOne()
-               .HasForeignKey<UserLoginProvider>(x => x.UserId)
-               .IsRequired(false);
-
         builder.HasMany(x => x.Claims)
                .WithOne()
                .HasForeignKey(x => x.UserId)
-               .IsRequired(false);
+               .IsRequired();
 
         builder.HasMany(x => x.Tokens)
                .WithOne()
@@ -73,12 +78,11 @@ internal sealed class AppUserConfig : BaseEntityConfig<AppUser>
 
         builder.HasIndex(x => x.NormalizedEmail)
                .IsUnique()
-               .HasDatabaseName("IX_User_NormalizedEmail");
+               .HasDatabaseName("IX_Users_NormalizedEmail");
 
-        builder.HasOne<Customer>()
-               .WithMany()
-               .HasForeignKey(x => x.CustomerId)
-               .IsRequired(false);
+        builder.HasIndex(x => x.NormalizedUserName)
+               .IsUnique()
+               .HasDatabaseName("IX_Users_NormalizedUserName");
 
         builder.ToTable("Users");
     }

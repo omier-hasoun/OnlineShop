@@ -1,4 +1,6 @@
 
+using Application.Entities;
+
 namespace Infrastructure.Data.Configs.Identity;
 
 public sealed class RoleConfig : IEntityTypeConfiguration<Role>
