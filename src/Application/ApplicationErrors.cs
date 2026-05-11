@@ -18,7 +18,7 @@ public static class ApplicationErrors
         public static readonly Error PageSizeTooBig = Error.Validation("Application.Validation.PageSizeTooBig");
         public static readonly Error InvalidImageDimensions = Error.Validation("Application.Validation.InvalidImageDimensions");
 
-        public static readonly Error rename1 = Error.Validation(GenerateErrorCode(nameof(rename1)));
+        public static readonly Error ProductStatusInvalid = Error.Validation(GenerateErrorCode(nameof(ProductStatusInvalid)));
         public static readonly Error rename2 = Error.Validation(GenerateErrorCode(nameof(rename2)));
         public static readonly Error rename3 = Error.Validation(GenerateErrorCode(nameof(rename3)));
         public static readonly Error rename4 = Error.Validation(GenerateErrorCode(nameof(rename4)));
@@ -87,7 +87,7 @@ public static class ApplicationErrors
             return $"{BaseErrorCode}.{error}";
         }
 
-        public static readonly Error SavingImageFileFailed = Error.Conflict(GenerateErrorCode(nameof(SavingImageFileFailed)));
+        public static readonly Error SavingImageFileFailed = Error.Unexpected(GenerateErrorCode(nameof(SavingImageFileFailed)));
         public static readonly Error rename1 = Error.Unexpected(GenerateErrorCode(nameof(rename1)));
         public static readonly Error rename2 = Error.Unexpected(GenerateErrorCode(nameof(rename2)));
         public static readonly Error rename3 = Error.Unexpected(GenerateErrorCode(nameof(rename3)));

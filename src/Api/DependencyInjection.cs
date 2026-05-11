@@ -14,7 +14,6 @@ public static class DependencyInjection
 
 
         services.AddCustomServices()
-                
                 .AddHttpContextAccessor()
                 .AddOpenApiAndScalarServices()
                 .AddAuthenticationServices()
@@ -28,7 +27,11 @@ public static class DependencyInjection
         // for simple dependency injection Transient/Singleton/Scoped
         services.AddTransient<IEmailSender, EmailSenderFaker>();
         services.AddScoped<IUserContext, UserContext>();
-        services.AddControllers();
+
+        services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.WriteAsString;
+        });
         return services;
     }
 

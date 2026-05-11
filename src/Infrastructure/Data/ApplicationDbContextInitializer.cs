@@ -56,8 +56,8 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
 
         var productId1 = new ProductId(3);
         var productId2 = new ProductId(4);
-        var product1 = Product.Create(productId1, brandId1, categoryId1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }.AsReadOnly()).Value;
-        var product2 = Product.Create(productId2, brandId2, categoryId2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }.AsReadOnly()).Value;
+        var product1 = Product.Create(productId1, brandId1, categoryId1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }).Value;
+        var product2 = Product.Create(productId2, brandId2, categoryId2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }).Value;
 
 
         var productVariantId1 = new ProductVariantId(5);

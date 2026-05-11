@@ -20,10 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\StaffOnly\Products\Dtos\" />
-    <Folder Include="Features\StaffOnly\Products\Queries\" />
-    <Folder Include="Features\StaffOnly\Categories\Commands\" />
-    <Folder Include="Features\StaffOnly\Categories\Queries\" />
+    <Folder Include="Features\Management\Products\Dtos\" />
+    <Folder Include="Features\Management\Products\Queries\" />
+    <Folder Include="Features\Management\Categories\Commands\" />
+    <Folder Include="Features\Management\Categories\Queries\" />
     <Folder Include="Features\Public\Orders\Commands\" />
     <Folder Include="Features\Public\Orders\Queries\" />
   </ItemGroup>

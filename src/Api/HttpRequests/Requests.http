@@ -1,14 +1,6 @@
-POST https://localhost:7039/api/products/variants/images
+PUT https://localhost:7039/api/management/products/25774633353478144/variants/25775452740124672/images
 Content-Type: multipart/form-data; boundary=MyBoundary
 
---MyBoundary
-Content-Disposition: form-data; name="Product_Id"
-
-24305932607422464
---MyBoundary
-Content-Disposition: form-data; name="Variant_Id"
-
-24308028295610368
 --MyBoundary
 Content-Disposition: form-data; name="Images[0].File"; filename="OIP.png"
 Content-Type: image/png

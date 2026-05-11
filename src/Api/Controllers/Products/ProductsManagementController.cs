@@ -1,15 +1,15 @@
 
+using Api.Requests;
 using Application.Features.Management.Products.Commands.CreateProduct;
 using Application.Features.Management.Products.Commands.CreateVariant;
-using Application.Features.Management.Products.Commands.DeleteProduct;
-using Application.Features.Management.Products.Commands.PublishProduct;
-using Application.Features.Management.Products.Commands.UnpublishProduct;
+using Application.Features.Management.Products.Commands.ChangeProductState;
+using Application.Features.Management.Products.Commands.ChangeVariantState;
 using Application.Features.Management.Products.Commands.UpdateVariantImages;
 using MediatR;
 
 namespace Api.Controllers.Products;
 
-[Route("api/management/products")]
+[Route("api/management/products/")]
 public sealed class ProductsManagementController(IMediator mediator) : ApiController
 {
 
@@ -19,49 +19,59 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
 
         var result = await mediator.Send(request, ct);
 
-        return result.Match((response) => Ok(response), Problem);
+        return result.Match((response) => Created(Url.Action("api/management/products/", new { response }), new { response }), Problem);
     }
 
-    [HttpPost("variants/")]
-    public async Task<IActionResult> CreateVariant([FromBody] CreateVariantCommand request, CancellationToken ct)
+    [HttpPost("{productId:long}/variants")]
+    public async Task<IActionResult> CreateVariant(long productId, [FromBody] CreateVariantRequest request, CancellationToken ct)
     {
-        var result = await mediator.Send(request, ct);
+        var command = new CreateVariantCommand(
+            productId,
+            request.Price,
+            request.Width,
+            request.Height,
+            request.Length,
+            request.Weight,
+            request.Sku,
+            request.Slug,
+            request.BarCode,
+            request.Specifications);
 
-        return result.Match((response) => Ok(response), Problem);
+        var result = await mediator.Send(command, ct);
+
+        return result.Match((response) => Created( Url.Action($"api/management/products/{productId}/variants/", new { response }), response), Problem);
     }
 
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteProduct([FromRoute] long id, CancellationToken ct)
+    [HttpPatch("{productId:required}")]
+    public async Task<IActionResult> ChangeProductState(long productId, [FromBody] ChangeProductStatusRequest request, CancellationToken ct)
     {
 
-        var result = await mediator.Send(new DeleteProductCommand(id), ct);
+        var result = await mediator.Send(new ChangeProductStateCommand(productId, request.status), ct);
 
         return result.Match((response) => NoContent(), Problem);
     }
 
-    [HttpPatch("publish")]
-    public async Task<IActionResult> PublishProduct([FromQuery] PublishProductCommand request, CancellationToken ct)
+    [HttpPatch("{productId:required}/variants/{variantId:required}")]
+    public async Task<IActionResult> ChangeVariantState(long productId, long variantId, [FromBody] ChangeVariantStatusRequest request, CancellationToken ct)
     {
-        var result = await mediator.Send(request, ct);
-
-        return result.Match((response) => NoContent(), Problem);
-    }
-
-    [HttpPatch("unpublish")]
-    public async Task<IActionResult> UnpublishProduct([FromQuery] UnpublishProductCommand request, CancellationToken ct)
-    {
-        var result = await mediator.Send(request, ct);
+        var result = await mediator.Send(new ChangeVariantStateCommand(productId, variantId, request.status), ct);
 
         return result.Match((response) => NoContent(), Problem);
     }
 
 
-    [HttpPost("variants/images")]
+    [HttpPut("{productId:required}/variants/{variantId:required}/images")]
     [Consumes("multipart/form-data")]
-    public async Task<IActionResult> UpdateVariantImages([FromForm] UpdateVariantImagesCommand request, CancellationToken ct)
+    public async Task<IActionResult> UpdateVariantImages(long productId, long variantId, [FromForm] UpdateProductImagesRequest request, CancellationToken ct)
     {
-        var result = await mediator.Send(request, ct);
+        var command = new UpdateVariantImagesCommand
+        {
+            Images = request.Images,
+            VariantId = variantId,
+            ProductId = productId
+        };
+        var result = await mediator.Send(command, ct);
 
         return result.Match((response) => NoContent(), Problem);
 

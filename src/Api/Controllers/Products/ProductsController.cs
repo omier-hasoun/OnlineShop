@@ -1,17 +1,11 @@
 
 using Application.Features.Public.Products.Queries.GetProductById;
 using Application.Features.Public.Products.Queries.ListProducts;
-using Application.Features.Management.Products.Commands.CreateProduct;
-using Application.Features.Management.Products.Commands.CreateVariant;
-using Application.Features.Management.Products.Commands.DeleteProduct;
-using Application.Features.Management.Products.Commands.PublishProduct;
-using Application.Features.Management.Products.Commands.UnpublishProduct;
-using Application.Features.Management.Products.Commands.UpdateVariantImages;
 using MediatR;
 
 namespace Api.Controllers.Products;
 
-
+[Route("api/products")]
 public sealed class ProductsController(IMediator mediator) : ApiController
 {
 

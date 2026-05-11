@@ -204,9 +204,115 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
         return Result.Updated;
     }
 
-    public Result<Success> Publish()
+    public Result<Updated> ChangeStatus(ProductStatus status)
     {
-        if(_variants.Count == 0)
+        if (status == ProductStatus.Draft)
+        {
+            if (this.Status == ProductStatus.Draft)
+                return Result.Updated;
+            else
+                return DomainErrors.InvalidStateTransition;
+        }
+
+        if (status == ProductStatus.Published)
+        {
+            return Publish();
+        }
+
+        if (status == ProductStatus.Unpublished)
+        {
+            return Unpublish();
+        }
+
+        if (status == ProductStatus.Archived)
+        {
+            return Archive();
+        }
+
+        return DomainErrors.InvalidStateTransition;
+    }
+
+    public Result<Updated> ChangeVariantStatus(ProductVariantId variantId, ProductStatus status)
+    {
+        var variant = _variants.FirstOrDefault(x => x.Id == variantId);
+
+        if (variant is null)
+        {
+            return DomainErrors.ProductVariantIdInvalid;
+        }
+
+        if (status == ProductStatus.Draft)
+        {
+            if (variant.Status == ProductStatus.Draft)
+                return Result.Updated;
+            else
+                return DomainErrors.InvalidStateTransition;
+        }
+
+        if (status == ProductStatus.Published)
+        {
+            return PublishVariant(variant);
+        }
+
+        if (status == ProductStatus.Unpublished)
+        {
+            return UnpublishVariant(variant);
+        }
+
+        //if (status == ProductStatus.Archived)
+        //{
+        //    return Archive();
+        //}
+
+        return DomainErrors.InvalidStateTransition;
+    }
+
+
+
+    private Result<Updated> PublishVariant(ProductVariant variant)
+    {
+
+        if (this.Status == ProductStatus.Archived)
+            return DomainErrors.InvalidStateTransition;
+
+        if (this.Status != ProductStatus.Published)
+        {
+            var publishProductResult = Publish();
+
+            if (publishProductResult.Failed)
+            {
+                return publishProductResult.Errors;
+            }
+        }
+
+        variant.Publish();
+
+        return Result.Updated;
+    }
+
+    private Result<Updated> UnpublishVariant(ProductVariant variant)
+    {
+        if (this.Status == ProductStatus.Archived )
+            return DomainErrors.InvalidStateTransition;
+
+        if (this.Status == ProductStatus.Published)
+            variant.Unpublish();
+        else
+            return DomainErrors.InvalidStateTransition;
+
+        return Result.Updated;
+    }
+
+
+
+
+
+
+
+
+    private Result<Updated> Publish()
+    {
+        if (_variants.Count == 0)
         {
             return DomainErrors.Products.CannotPublishThisProductAtLeast1VariantRequired;
         }
@@ -219,10 +325,10 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
         _variants.ForEach(x => x.Publish());
         Status = ProductStatus.Published;
 
-        return Result.Success;
+        return Result.Updated;
     }
 
-    public Result<Success> Unpublish()
+    private Result<Updated> Unpublish()
     {
         if (Status != ProductStatus.Published)
         {
@@ -233,69 +339,20 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
 
         Status = ProductStatus.Unpublished;
 
-        return Result.Success;
+        return Result.Updated;
     }
-    public Result<Success> Archive()
+    private Result<Updated> Archive()
     {
-        // if Status == draft then it should be hard deleted, if Archived then its already Archived
-        if (Status != ProductStatus.Published && Status != ProductStatus.Unpublished) 
+        if (Status == ProductStatus.Archived)
         {
-            return DomainErrors.InvalidStateTransition; 
+            return Result.Updated;
         }
 
         _variants.ForEach(x => x.Archive());
         Status = ProductStatus.Archived;
 
-        return Result.Success;
+        return Result.Updated;
     }
-
-    public bool CanDelete()
-    {
-        return Status == ProductStatus.Draft;
-    }
-
-    public Result<Success> PublishVariant(ProductVariantId variantId)
-    {
-        var variant = _variants.FirstOrDefault(x => x.Id == variantId);
-
-        if (variant is null)
-        {
-            return DomainErrors.ProductVariantIdInvalid;
-        }
-
-        // if the product it self isn't published then you cannot publish a variant alone
-        if (this.Status != ProductStatus.Published) 
-        {
-            return DomainErrors.InvalidStateTransition;
-        }
-
-        variant.Publish();
-
-        return Result.Success;
-    }
-
-    public Result<Success> UnpublishVariant(ProductVariantId variantId)
-    {
-
-        var variant = _variants.FirstOrDefault(x => x.Id == variantId);
-
-        if (variant is null)
-        {
-            return DomainErrors.ProductVariantIdInvalid;
-        }
-
-        variant.Unpublish();
-
-        return Result.Success;
-    }
-
-
-
-
-
-
-
-
 
 
 

@@ -18,8 +18,8 @@ internal sealed class UpdateVariantImagesCommandHandler
             return ApplicationErrors.Validation.InvalidImage.WithParameters(invalidFileName!);
 
 
-        ProductId productId = new(command.Product_Id);
-        ProductVariantId variantId = new(command.Variant_Id);
+        ProductId productId = new(command.ProductId);
+        ProductVariantId variantId = new(command.VariantId);
 
         List<ProductImage> productImages = new (command.Images.Count);
         List<ImageProcessingTask> processImagesTasks = new (command.Images.Count);
@@ -64,7 +64,7 @@ internal sealed class UpdateVariantImagesCommandHandler
         return Result.Updated;
     }
 
-    private bool AreValidImages(List<ProductVariantImageUpload> Images, out string? fileName)
+    private bool AreValidImages(List<ProductImageUpload> Images, out string? fileName)
     {
         fileName = null;
 
