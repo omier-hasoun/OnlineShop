@@ -1,6 +1,6 @@
 using Domain.Products.ValueObjects;
 
-namespace Application.Features.Public.Products.Dtos;
+namespace Application.Common.ResponseModels;
 
 public sealed record ImageDto
 {

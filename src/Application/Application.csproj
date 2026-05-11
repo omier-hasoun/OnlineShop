@@ -20,8 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Management\Products\Dtos\" />
-    <Folder Include="Features\Management\Products\Queries\" />
     <Folder Include="Features\Management\Categories\Commands\" />
     <Folder Include="Features\Management\Categories\Queries\" />
     <Folder Include="Features\Public\Orders\Commands\" />

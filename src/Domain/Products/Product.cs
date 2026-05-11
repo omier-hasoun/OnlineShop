@@ -31,7 +31,7 @@ public sealed class Product : AggregateRoot<ProductId>, IFullAudited
     {
         // Add domain validation logic here
         var validationResult = Result.ValidateAll(
-                            () => id.IsValid(),
+                            () => id.Validate(),
                             () => brandId.IsValid(),
                             () => categoryId.IsValid()
                             );

@@ -7,6 +7,7 @@ using Application.Features.Management.Products.Commands.ChangeVariantState;
 using Application.Features.Management.Products.Commands.UpdateVariantImages;
 using MediatR;
 using Application.Features.Management.Products.Commands.UpdateProduct;
+using Application.Features.Management.Products.Queries.ListProducts;
 
 namespace Api.Controllers.Products;
 
@@ -94,5 +95,15 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
 
         return result.Match((response) => NoContent(), Problem);
 
+    }
+
+
+    [HttpGet()]
+    public async Task<IActionResult> ListProducts([FromQuery] ListProductsQuery request, CancellationToken ct)
+    {
+
+        var result = await mediator.Send(request, ct);
+
+        return result.Match((response) => Ok(response), Problem);
     }
 }

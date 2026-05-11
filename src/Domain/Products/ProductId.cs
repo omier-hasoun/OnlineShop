@@ -8,7 +8,7 @@ public readonly record struct ProductId
         Value = value;
     }
 
-    public Result<Success> IsValid()
+    public Result<Success> Validate()
     {
         if (Value <= 0)
         {

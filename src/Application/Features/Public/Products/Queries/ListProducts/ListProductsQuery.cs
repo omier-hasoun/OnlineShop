@@ -11,4 +11,10 @@ public sealed record ListProductsQuery : IRequest<Result<PaginatedList<ProductLi
     public string? SearchText { get; init; }
     public long? CategoryId { get; init; }
     public Guid? BrandId { get; init; }
+
+
+    public ListProductsQuery()
+    {
+        
+    }
 }

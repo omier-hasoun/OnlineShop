@@ -10,7 +10,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
     {
     }
 
-    private ProductVariant(ProductVariantId id, ProductId productId, Money? priceBeforeDiscount, Money price, byte discountPercentage,  ProductStatus status,
+    private ProductVariant(ProductVariantId id, ProductId productId, Money? priceBeforeDiscount, Money price, byte? discountPercentage,  ProductStatus status,
         int width, int height, int length, int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications, List<ProductImage> images)
         : base(id)
     {
@@ -51,7 +51,7 @@ public sealed class ProductVariant : BaseEntity<ProductVariantId>
 
         //defaults
 
-        byte discountPercentage = 0;
+        byte? discountPercentage = null;
         Money? priceBeforeDisount = null;
         ProductStatus status = ProductStatus.Draft;
         
