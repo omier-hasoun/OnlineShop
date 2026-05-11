@@ -10,7 +10,7 @@ public sealed record ProductListItemDto
     public string Title { get; init; } = null!;
     public double Price { get; init; }
     public string Brand { get; init; } = null!;
-    public string Status { get; }
+    public string Status { get; init; }
     public float Average_Rating { get; init; }
     public string? Image_File_Name { get; init; }
     public byte? Discount_Percentage { get; init; }
