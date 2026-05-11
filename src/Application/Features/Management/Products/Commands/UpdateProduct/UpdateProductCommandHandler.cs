@@ -3,12 +3,17 @@ using Domain.Categories;
 
 namespace Application.Features.Management.Products.Commands.UpdateProduct;
 
-internal sealed class CreateProductCommandHandler(IAppDbContext context) : IRequestHandler<UpdateProductCommand, Result<Updated>>
+internal sealed class UpdateProductCommandHandler(IAppDbContext context) : IRequestHandler<UpdateProductCommand, Result<Updated>>
 {
-    public async Task<Result<Updated>> Handle(UpdateProductCommand request, CancellationToken ct)
+    public async Task<Result<Updated>> Handle(UpdateProductCommand command, CancellationToken ct)
     {
 
-        ProductId productId = new(request.Product_Id);
+        ProductId productId = new(command.ProductId);
+
+        if (!command.HasChanges())
+        {
+            return Result.Updated;
+        }
 
         var product = await context.Products.FindAsync(productId);
 
@@ -18,11 +23,11 @@ internal sealed class CreateProductCommandHandler(IAppDbContext context) : IRequ
         }
 
 
-        BrandId? brandId = request.New_Brand_Id  is null ? null : new (request.New_Brand_Id.Value);
+        BrandId? brandId = command.BrandId  is null ? null : new (command.BrandId.Value);
 
-        CategoryId? categoryId = request.New_Category_Id is null ? null : new(request.New_Category_Id.Value);
+        CategoryId? categoryId = command.CategoryId is null ? null : new(command.CategoryId.Value);
 
-        var updateResult = product.Update(brandId, categoryId, request.New_Title, request.New_Description, request.New_Is_Serialized, request.New_Attributes);
+        var updateResult = product.Update(brandId, categoryId, command.Title, command.Description, command.IsSerialized, command.Attributes);
 
         if (updateResult.Failed)
             return updateResult.Errors;

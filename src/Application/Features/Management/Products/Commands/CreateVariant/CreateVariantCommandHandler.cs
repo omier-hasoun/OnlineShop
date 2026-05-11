@@ -9,7 +9,7 @@ public sealed class CreateVariantCommandHandler( IAppDbContext context, IIdGener
     public async Task<Result<long>> Handle(CreateVariantCommand command, CancellationToken ct)
     {
 
-        ProductId productId = new(command.Product_Id);
+        ProductId productId = new(command.ProductId);
 
         Money price = Money.From(command.Price).Value;
 

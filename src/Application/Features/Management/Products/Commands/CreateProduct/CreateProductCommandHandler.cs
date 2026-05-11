@@ -5,13 +5,13 @@ namespace Application.Features.Management.Products.Commands.CreateProduct;
 
 internal sealed class CreateProductCommandHandler(IAppDbContext context, IIdGenerator<ProductId> idGen) : IRequestHandler<CreateProductCommand, Result<long>>
 {
-    public async Task<Result<long>> Handle(CreateProductCommand request, CancellationToken ct)
+    public async Task<Result<long>> Handle(CreateProductCommand command, CancellationToken ct)
     {
 
 
-        BrandId brandId = new(request.Brand_Id);
+        BrandId brandId = new(command.BrandId);
 
-        CategoryId categoryId = new(request.Category_Id);
+        CategoryId categoryId = new(command.CategoryId);
 
         ProductId productId = idGen.NewId();
 
@@ -19,10 +19,10 @@ internal sealed class CreateProductCommandHandler(IAppDbContext context, IIdGene
             productId,
             brandId,
             categoryId,
-            request.Title,
-            request.Description,
-            request.Is_Serialized,
-            request.Attributes
+            command.Title,
+            command.Description,
+            command.IsSerialized,
+            command.Attributes
         );
 
         if (createProductResult.Failed)

@@ -17,9 +17,9 @@ internal sealed class CreateProductCommandValidator : AbstractValidator<CreatePr
         RuleFor(x => x.Description).NotEmpty()
                                    .Length(ProductRules.MinDescriptionLength, ProductRules.MaxDescriptionLength);
 
-        RuleFor(x => x.Brand_Id).NotEmpty();
+        RuleFor(x => x.BrandId).NotEmpty();
 
-        RuleFor(x => x.Category_Id).NotEmpty();
+        RuleFor(x => x.CategoryId).NotEmpty();
 
         RuleFor(x => x.Attributes).NotEmpty()
                                   .Must(x => x.Count <= ProductRules.MaxNumberOfAttributes)

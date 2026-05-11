@@ -3,7 +3,7 @@ namespace Application.Features.Management.Products.Commands.CreateVariant;
 
 public sealed record CreateVariantCommand 
 (
-long Product_Id,
+long ProductId,
 decimal Price,
 int Width,
 int Height,

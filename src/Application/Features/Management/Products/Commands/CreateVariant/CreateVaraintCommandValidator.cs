@@ -6,7 +6,7 @@ internal sealed class CreateVaraintCommandValidator : AbstractValidator<CreateVa
 {
     public CreateVaraintCommandValidator()
     {
-        RuleFor(x => x.Product_Id).NotEmpty();
+        RuleFor(x => x.ProductId).NotEmpty();
 
         RuleFor(x => x.Price).Must(x => x > 0);
 
@@ -21,8 +21,11 @@ internal sealed class CreateVaraintCommandValidator : AbstractValidator<CreateVa
 
         RuleFor(x => x.Specifications).Must(x => x.Count <= ProductVariantRules.MaxNumberOfSpecifications);
 
+        RuleForEach(x => x.Specifications).Must(x => x.Key.Length <= 50 && x.Value.Length <= 50 && !string.IsNullOrWhiteSpace(x.Key) && !string.IsNullOrWhiteSpace(x.Value) );
 
-                                  
+
+
+
 
     }
 }

@@ -6,6 +6,7 @@ using Application.Features.Management.Products.Commands.ChangeProductState;
 using Application.Features.Management.Products.Commands.ChangeVariantState;
 using Application.Features.Management.Products.Commands.UpdateVariantImages;
 using MediatR;
+using Application.Features.Management.Products.Commands.UpdateProduct;
 
 namespace Api.Controllers.Products;
 
@@ -21,6 +22,24 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
 
         return result.Match((response) => Created(Url.Action("api/management/products/", new { response }), new { response }), Problem);
     }
+
+    [HttpPut("{productId:required}")]
+    public async Task<IActionResult> UpdateProduct(long productId, [FromBody] UpdateProductRequest request, CancellationToken ct)
+    {
+        var command = new UpdateProductCommand(
+            productId,
+            request.New_Brand_Id,
+            request.New_Category_Id,
+            request.New_Description,
+            request.New_Description,
+            request.New_Is_Serialized,
+            request.New_Attributes);
+
+        var result = await mediator.Send(command, ct);
+
+        return result.Match((response) => NoContent(), Problem);
+    }
+
 
     [HttpPost("{productId:long}/variants")]
     public async Task<IActionResult> CreateVariant(long productId, [FromBody] CreateVariantRequest request, CancellationToken ct)
