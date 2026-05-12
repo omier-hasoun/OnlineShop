@@ -18,4 +18,9 @@ public readonly record struct ProductReviewId
 
         return Result.Success;
     }
+
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 }

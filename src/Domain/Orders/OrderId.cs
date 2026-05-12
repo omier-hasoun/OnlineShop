@@ -19,4 +19,8 @@ public readonly record struct OrderId
 
         return Result.Success;
     }
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 }

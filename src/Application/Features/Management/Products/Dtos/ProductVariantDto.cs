@@ -9,7 +9,7 @@ namespace Application.Features.Management.Products.Dtos;
 
 public sealed record ProductVariantDto
 {
-    public long Id { get; init; }
+    public string Id { get; init; }
     public double Price { get; init; }
     public double? PriceBeforeDiscount { get; init; }
     public byte? DiscountPercentage { get; init; }
@@ -20,7 +20,7 @@ public sealed record ProductVariantDto
 
     public ProductVariantDto(ProductVariantId id, Money price, byte? discountPercentage, Money? priceBeforeDiscount, List<ProductImage> images, string slug, Dictionary<string, string> specifications)
     {
-        Id = id.Value;
+        Id = id.ToString();
         Slug = slug;
         Price = (double)price.Value;
         PriceBeforeDiscount = priceBeforeDiscount is null ? null : (double)priceBeforeDiscount.Value;

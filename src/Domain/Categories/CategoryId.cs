@@ -17,4 +17,9 @@ public readonly record struct CategoryId
 
         return Result.Success;
     }
+
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 }

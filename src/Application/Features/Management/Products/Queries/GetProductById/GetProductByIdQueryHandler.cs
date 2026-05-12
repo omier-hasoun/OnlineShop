@@ -9,7 +9,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
     public async Task<Result<ProductDto>> Handle(GetProductByIdQuery query, CancellationToken ct)
     {
 
-        var productId = new ProductId(query.ProductId);
+        var productId = query.ProductId;
 
         var getProductQuery = context.Products.AsNoTracking()
                                               .Include(x => x.Variants)
@@ -23,7 +23,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
                                                     (pb, c) => new { pb, c }
                                               )
                                               .Select(
-                                                  x => new ProductDto(x.pb.p.Title, x.pb.p.Description, x.pb.p.Attributes.ToDictionary()
+                                                  x => new ProductDto(x.pb.p.Id, x.pb.p.Title, x.pb.p.Description, x.pb.p.Attributes.ToDictionary()
                                                   , x.pb.p.BrandId, x.pb.b.Name, x.c.Id, x.c.Name, x.pb.p.AverageRating,
 
                                                   x.pb.p.Variants.Select(v => new ProductVariantDto(v.Id, v.Price, v.DiscountPercentage, v.PriceBeforeDiscount, v.Images.ToList(),

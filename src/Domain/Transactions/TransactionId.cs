@@ -18,6 +18,11 @@ public readonly record struct TransactionId
 
         return Result.Success;
     }
+
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 }
 
 

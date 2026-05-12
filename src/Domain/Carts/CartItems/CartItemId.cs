@@ -17,4 +17,8 @@ public readonly record struct CartItemId
 
         return Result.Success;
     }
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 }

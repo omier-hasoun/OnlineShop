@@ -19,4 +19,9 @@ public readonly record struct BrandId
 
         return Result.Success;
     }
+
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 }

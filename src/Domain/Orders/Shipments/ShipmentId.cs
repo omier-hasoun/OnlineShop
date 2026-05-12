@@ -18,5 +18,10 @@ public readonly record struct ShipmentId
 
         return Result.Success;
     }
+
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 }
 

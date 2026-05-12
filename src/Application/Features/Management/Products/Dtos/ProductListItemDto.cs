@@ -6,7 +6,7 @@ namespace Application.Features.Management.Products.Dtos;
 
 public sealed record ProductListItemDto
 {
-    public long Id { get; init; }
+    public string Id { get; init; }
     public string Title { get; init; } = null!;
     public double Price { get; init; }
     public string Brand { get; init; } = null!;
@@ -18,7 +18,7 @@ public sealed record ProductListItemDto
 
     public ProductListItemDto(ProductId id, string title, Money? priceBeforeDiscount, string brand, ProductAverageRating avgerageRating, Money priceNow, ProductImage? primaryImage, byte? discountPercentage, ProductStatus productStatus)
     {
-        Id = id.Value;
+        Id = id.ToString();
         Title = title;
         Brand = brand;
         Status = productStatus.ToString();

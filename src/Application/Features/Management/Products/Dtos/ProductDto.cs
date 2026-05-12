@@ -9,6 +9,7 @@ namespace Application.Features.Management.Products.Dtos;
 
 public sealed record ProductDto
 {
+    public string Id { get; }
     public string Title { get; init; } = null!;
     public string Description { get; init; } = null!;
 
@@ -19,9 +20,11 @@ public sealed record ProductDto
     public List<ProductVariantDto> Variants { get; init; } = null!;
 
 
-    public ProductDto(string title, string description, Dictionary<string, string> attributes, BrandId brandId, string brandName, CategoryId categoryId, string categoryName, ProductAverageRating averageRating,
+    public ProductDto(ProductId id, string title, string description, Dictionary<string, string> attributes,
+        BrandId brandId, string brandName, CategoryId categoryId, string categoryName, ProductAverageRating averageRating,
         List<ProductVariantDto> variants)
     {
+        Id = id.ToString();
         Title = title;
         Description = description;
         Attributes = attributes;
