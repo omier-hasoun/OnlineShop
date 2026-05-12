@@ -8,6 +8,7 @@ using Application.Features.Management.Products.Commands.UpdateVariantImages;
 using MediatR;
 using Application.Features.Management.Products.Commands.UpdateProduct;
 using Application.Features.Management.Products.Queries.ListProducts;
+using Application.Features.Management.Products.Queries.GetProductById;
 
 namespace Api.Controllers.Products;
 
@@ -103,6 +104,15 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
     {
 
         var result = await mediator.Send(request, ct);
+
+        return result.Match((response) => Ok(response), Problem);
+    }
+
+    [HttpGet("{productId:required}")]
+    public async Task<IActionResult> GetProductById(long productId, CancellationToken ct)
+    {
+
+        var result = await mediator.Send(new GetProductByIdQuery(productId), ct);
 
         return result.Match((response) => Ok(response), Problem);
     }

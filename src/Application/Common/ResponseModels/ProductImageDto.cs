@@ -2,15 +2,15 @@ using Domain.Products.ValueObjects;
 
 namespace Application.Common.ResponseModels;
 
-public sealed record ImageDto
+public sealed record ProductImageDto
 {
     public string Image { get; init; } = null!;
-    public byte Sort_Order { get; init; }
+    public byte SortOrder { get; init; }
 
-    public ImageDto(ProductImage image)
+    public ProductImageDto(ProductImage image)
     {
         Image = image.FileName;
-        Sort_Order = image.SortOrder;
+        SortOrder = image.SortOrder;
         
     }
 }

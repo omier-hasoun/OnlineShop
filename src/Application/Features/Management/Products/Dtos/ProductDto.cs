@@ -1,0 +1,34 @@
+
+using Application.Features.Management.Brands.Dtos;
+using Application.Features.Management.Categories.Dtos;
+using Domain.Brands;
+using Domain.Categories;
+using Domain.Products.ValueObjects;
+
+namespace Application.Features.Management.Products.Dtos;
+
+public sealed record ProductDto
+{
+    public string Title { get; init; } = null!;
+    public string Description { get; init; } = null!;
+
+    public float AverageRating { get; init; }
+    public CategoryBasicDto Category { get; init; } = null!;
+    public BrandBasicDto Brand { get; init; }
+    public Dictionary<string, string> Attributes { get; init; } = null!;
+    public List<ProductVariantDto> Variants { get; init; } = null!;
+
+
+    public ProductDto(string title, string description, Dictionary<string, string> attributes, BrandId brandId, string brandName, CategoryId categoryId, string categoryName, ProductAverageRating averageRating,
+        List<ProductVariantDto> variants)
+    {
+        Title = title;
+        Description = description;
+        Attributes = attributes;
+        Brand = new(brandId, brandName);
+        Category = new CategoryBasicDto(categoryId, categoryName);
+        Variants = variants;
+        AverageRating = averageRating.Value;
+
+    }
+}

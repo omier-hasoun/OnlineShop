@@ -1,11 +1,15 @@
+
+
 using Application.Common.ResponseModels;
 using Domain.Common.ValueObjects;
+using Domain.Products.ProductVariants;
 using Domain.Products.ValueObjects;
 
-namespace Application.Features.Public.Products.Dtos;
+namespace Application.Features.Management.Products.Dtos;
 
 public sealed record ProductVariantDto
 {
+    public long Id { get; init; }
     public double Price { get; init; }
     public double? PriceBeforeDiscount { get; init; }
     public byte? DiscountPercentage { get; init; }
@@ -14,13 +18,14 @@ public sealed record ProductVariantDto
     public Dictionary<string, string> Specifications { get; init; } = [];
     public string Slug { get; init; } = null!;
 
-    public ProductVariantDto(Money price, byte? discountPercentage, Money? priceBeforeDiscount, List<ProductImage> images, string slug, Dictionary<string, string> specifications)
+    public ProductVariantDto(ProductVariantId id, Money price, byte? discountPercentage, Money? priceBeforeDiscount, List<ProductImage> images, string slug, Dictionary<string, string> specifications)
     {
+        Id = id.Value;
         Slug = slug;
         Price = (double)price.Value;
         PriceBeforeDiscount = priceBeforeDiscount is null ? null : (double)priceBeforeDiscount.Value;
 
-        DiscountPercentage = discountPercentage is null || discountPercentage == 0 ? null : discountPercentage;
+        DiscountPercentage = discountPercentage ?? discountPercentage;
 
         images.ForEach(productImage => Images.Add(new ProductImageDto(productImage)));
 
@@ -28,5 +33,4 @@ public sealed record ProductVariantDto
 
 
     }
-
 }

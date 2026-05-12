@@ -1,4 +1,5 @@
 //using Api.Services;
+using System.Text.Json;
 using Api.Services;
 using Infrastructure.LocalServices.BackgroundServices;
 using Infrastructure.LocalServices.HashingService;
@@ -30,7 +31,7 @@ public static class DependencyInjection
 
         services.AddControllers().AddJsonOptions(options =>
         {
-            options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.WriteAsString;
+            options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         });
         return services;
     }
@@ -50,7 +51,7 @@ public static class DependencyInjection
 
                         options.AccessDeniedPath = "/Account/AccessDenied";
                         options.SlidingExpiration = true;
-                        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                        options.ExpireTimeSpan = TimeSpan.FromDays(7);
                         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 })
 

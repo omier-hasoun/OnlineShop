@@ -12,18 +12,9 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
 {
     public async Task<Result<PaginatedList<ProductListItemDto>>> Handle(ListProductsQuery query, CancellationToken ct)
     {
-        if (query.PageSize > 50)
+        if (query.Size > 50)
         {
             return ApplicationErrors.Validation.PageSizeTooBig;
-        }
-
-        if (long.TryParse(query.SearchText, out var value))
-        {
-            var productId = new ProductId(value);
-            if(productId.Validate().Succeeded)
-            {
-                // should get the product by id
-            }
         }
 
         var stateQuery = context.Products.AsNoTracking();
@@ -97,12 +88,12 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
             queryWithBrands = queryWithBrands.Where(x => x.product.Title.ToLower().Contains(query.SearchText));
         }
 
-        int skip = ((query.PageNumber - 1) * query.PageSize);
+        int skip = ((query.Page - 1) * query.Size);
 
         var finalQuery = queryWithBrands
             .OrderBy(x => x.product.Id)
             .Skip(skip)
-            .Take(query.PageSize)
+            .Take(query.Size)
             .Select(x => new
             {
                 dto = new ProductListItemDto(
@@ -113,7 +104,8 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
                     x.product.AverageRating,
                     x.variant.Price,
                     x.variant.Images.OrderBy(img => img.SortOrder).FirstOrDefault()!,
-                    x.variant.DiscountPercentage
+                    x.variant.DiscountPercentage,
+                    x.product.Status
                     ),
 
                 TotalCount = queryWithBrands.Count()
@@ -124,7 +116,7 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
 
         int resultTotalCount = result.Select(x => x.TotalCount).FirstOrDefault();
 
-        var productsPage = result.Select(x => x.dto).ToList().ToPaginatedList(query.PageNumber, resultTotalCount);
+        var productsPage = result.Select(x => x.dto).ToList().ToPaginatedList(query.Page, resultTotalCount);
 
         return productsPage;
 

@@ -12,9 +12,9 @@ public static class CollectionsExtensions
         return new PaginatedList<TResult>()
         {
             Items = elements.ToList(),
-            PageNumber = pageNumber,
-            PageSize = elements.Count,
-            TotalCount = totalCount,
+            Page = pageNumber,
+            Size = elements.Count,
+            TotalSize = totalCount,
             TotalPages = elements.Count == 0 ? 1 : (int)Math.Ceiling(((decimal)(decimal)totalCount / (decimal)elements.Count ))
 
         };

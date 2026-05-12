@@ -11,7 +11,7 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
 {
     public async Task<Result<PaginatedList<ProductListItemDto>>> Handle(ListProductsQuery request, CancellationToken ct)
     {
-        if(request.PageSize > 50)
+        if(request.Size > 50)
         {
             return ApplicationErrors.Validation.PageSizeTooBig;
         }
@@ -62,12 +62,12 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
             queryWithBrands = queryWithBrands.Where(x => x.product.Title.ToLower().Contains(request.SearchText));
         }
 
-        int skip = ((request.PageNumber - 1) * request.PageSize);
+        int skip = ((request.Page - 1) * request.Size);
 
         var finalQuery = queryWithBrands
             .OrderBy(x => x.product.Id)
             .Skip(skip)
-            .Take(request.PageSize)
+            .Take(request.Size)
             .Select(x => new
             {
                 dto = new ProductListItemDto(
@@ -89,7 +89,7 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
 
         int resultTotalCount = result.Select(x => x.TotalCount).FirstOrDefault();
 
-        var productsPage = result.Select(x => x.dto).ToList().ToPaginatedList(request.PageNumber, resultTotalCount);
+        var productsPage = result.Select(x => x.dto).ToList().ToPaginatedList(request.Page, resultTotalCount);
 
         return productsPage;
 

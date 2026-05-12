@@ -17,7 +17,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
                                             new ProductDto(
                                                x.pb.product.Title,
                                                x.pb.product.Description,
-                                               x.pb.product.Attributes,
+                                               x.pb.product.Attributes.ToDictionary(),
                                                x.pb.brand.Name,
                                                x.category.Name,
                                                x.pb.product.AverageRating,
@@ -26,9 +26,9 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
                                                    price: x.Price,
                                                    discountPercentage : x.DiscountPercentage,
                                                    priceBeforeDiscount:x.PriceBeforeDiscount,
-                                                   images : x.Images,
+                                                   images : x.Images.ToList(),
                                                    slug: x.Slug,
-                                                   specifications: x.Specifications
+                                                   specifications: x.Specifications.ToDictionary()
                                                    
                                                )).ToList()
                                             )

@@ -1,5 +1,4 @@
 
-using Domain.Common.ValueObjects;
 using Domain.Products.ValueObjects;
 
 namespace Domain.Products;
