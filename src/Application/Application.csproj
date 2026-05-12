@@ -24,7 +24,9 @@
     <Folder Include="Features\Management\Brands\Queries\" />
     <Folder Include="Features\Management\Categories\Commands\" />
     <Folder Include="Features\Management\Categories\Queries\" />
+    <Folder Include="Features\Public\Carts\Queries\" />
     <Folder Include="Features\Public\Orders\Commands\" />
+    <Folder Include="Features\Public\Orders\Dtos\" />
     <Folder Include="Features\Public\Orders\Queries\" />
   </ItemGroup>
 
