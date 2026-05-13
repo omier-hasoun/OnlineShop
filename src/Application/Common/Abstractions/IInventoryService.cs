@@ -1,4 +1,4 @@
-using Domain.ProductGroups.Products;
+using Domain.ProductsGroups.Products;
 
 namespace Application.Common.Abstractions;
 

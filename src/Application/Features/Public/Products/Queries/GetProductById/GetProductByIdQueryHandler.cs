@@ -1,4 +1,5 @@
 using Application.Features.Public.Products.Dtos;
+using Domain.ProductsGroups.Products;
 
 namespace Application.Features.Public.Products.Queries.GetProductById;
 
@@ -6,10 +7,10 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
 {
     public async Task<Result<ProductDto>> Handle(GetProductByIdQuery request, CancellationToken ct)
     {
-        ProductGroupId productId = request.ProductId;
+        ProductsGroupId productId = request.ProductId;
 
         var query = context.ProductGroups.AsNoTracking()
-                                    .Where(x => x.Id == productId && x.Status == ProductStatus.Published)
+                                    .Where(x => x.Id == productId && x.Status == ProductsGroupStatus.Published)
                                     .Join(context.Brands, p => p.BrandId, b => b.Id, (product, brand) => new { product, brand })
                                     .Join(context.Categories, x => x.product.CategoryId, category => category.Id, (pb, category) => new { pb, category })
                                     .Select(

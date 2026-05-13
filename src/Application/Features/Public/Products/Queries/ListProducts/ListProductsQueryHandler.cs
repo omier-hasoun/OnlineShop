@@ -4,6 +4,7 @@ using Application.Features.Public.Products.Dtos;
 using Domain.Brands;
 using Domain.Categories;
 using Domain.Common.ValueObjects;
+using Domain.ProductsGroups.Products;
 
 namespace Application.Features.Public.Products.Queries.ListProducts;
 
@@ -17,10 +18,10 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
         }
 
         var cheapestVariantsQuery = context.ProductGroups.AsNoTracking()
-            .Where(product => product.Status == ProductStatus.Published)
+            .Where(product => product.Status == ProductsGroupStatus.Published)
             .SelectMany(
                 product => context.Products
-                    .Where(variant => variant.ProductGroupId == product.Id && variant.Status == ProductStatus.Published)
+                    .Where(variant => variant.ProductsGroupId == product.Id && variant.Status == ProductStatus.Published)
                     .OrderBy(v => v.Price)
                     .Take(1),
                 (product, variant) => new { product, variant }

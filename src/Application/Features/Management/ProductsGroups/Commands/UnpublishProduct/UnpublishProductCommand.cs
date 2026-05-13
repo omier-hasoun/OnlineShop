@@ -1,0 +1,13 @@
+
+
+using Domain.ProductsGroups.Products;
+
+namespace Application.Features.Management.ProductsGroups.Commands.UnpublishProduct;
+
+public sealed record UnpublishProductCommand(long ProductGroupId, long ProductId) : IRequest<Result<Success>>
+{
+    internal ProductId ParsedProductId =>
+    new(ProductId);
+    internal ProductsGroupId ParsedProductGroupId =>
+        new(ProductGroupId);
+}

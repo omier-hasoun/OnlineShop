@@ -3,9 +3,9 @@ using Application.Features.Public.Carts.Dtos;
 
 namespace Application.Features.Public.Carts.Commands.GetItemsByGuestId;
 
-internal sealed class GetItemsByGuestIdQueryHandler : IRequestHandler<GetItemsByGuestIdQuery, Result<CartDto>>
+internal sealed class GetItemsByGuestIdQueryHandler(IAppDbContext context) : IRequestHandler<GetItemsByGuestIdQuery, Result<CartDto>>
 {
-    public Task<Result<CartDto>> Handle(GetItemsByGuestIdQuery request, CancellationToken cancellationToken)
+    public Task<Result<CartDto>> Handle(GetItemsByGuestIdQuery query, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

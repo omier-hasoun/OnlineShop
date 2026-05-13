@@ -1,6 +1,6 @@
 
 using Application.Entities;
-using Domain.CustomerShippingAddresses;
+using Domain.ShippingAddresses;
 
 namespace Infrastructure.Data.Configs.Business;
 

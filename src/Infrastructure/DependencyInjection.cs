@@ -4,8 +4,8 @@ using Application.Common.InternalModels;
 using Application.Entities;
  
 using Domain.Orders;
-using Domain.ProductGroups;
-using Domain.ProductGroups.Products;
+using Domain.ProductsGroups;
+using Domain.ProductsGroups.Products;
 using FileSignatures;
 using IdGen;
 using Infrastructure.Channels;
@@ -74,7 +74,7 @@ public static class DependencyInjection
         services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<System.Guid>, GuidV7Generator>("GuidV7");
         services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<long>, SnowflakeGenerator>("Snowflake");
 
-        services.AddSingleton<App.IIdGenerator<ProductGroupId>, ProductGroupIdGenerator>();
+        services.AddSingleton<App.IIdGenerator<ProductsGroupId>, ProductGroupIdGenerator>();
 
         services.AddSingleton<App.IIdGenerator<ProductId>, ProductIdGenerator>();
 

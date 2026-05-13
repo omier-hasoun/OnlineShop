@@ -1,5 +1,5 @@
-using Domain.ProductGroups;
-using Domain.ProductGroups.Products;
+using Domain.ProductsGroups;
+using Domain.ProductsGroups.Products;
 using App = Application.Common.Abstractions;
 namespace Infrastructure.Data.IdGenerators;
 

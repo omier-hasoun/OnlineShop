@@ -1,7 +1,7 @@
 using Application.Common.ResponseModels;
 using Domain.Common.ValueObjects;
-using Domain.ProductGroups.Products;
-using Domain.ProductGroups.ValueObjects;
+using Domain.ProductsGroups.Products;
+using Domain.ProductsGroups.ValueObjects;
 
 namespace Application.Features.Public.Products.Dtos;
 

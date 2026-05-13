@@ -1,4 +1,4 @@
-using Domain.ProductGroups.ValueObjects;
+using Domain.ProductsGroups.ValueObjects;
 
 namespace Application.Features.Public.Products.Dtos;
 
@@ -14,7 +14,7 @@ public sealed record ProductDto
 
     public List<ProductVariantDto> Variants { get; init; } = null!;
 
-    public ProductDto(ProductGroupId id, string title, string description, Dictionary<string, string> attributes, string brand, string category, ProductAverageRating averageRating,
+    public ProductDto(ProductsGroupId id, string title, string description, Dictionary<string, string> attributes, string brand, string category, ProductAverageRating averageRating,
         List<ProductVariantDto> variants)
     {
         Id = id.Value;

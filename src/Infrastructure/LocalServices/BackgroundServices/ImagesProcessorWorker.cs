@@ -1,8 +1,8 @@
 
 using System.Threading.Channels;
 using Application.Common.Configurations;
-using Domain.ProductGroups.Products;
-using Domain.ProductGroups.ValueObjects;
+using Domain.ProductsGroups.Products;
+using Domain.ProductsGroups.ValueObjects;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;

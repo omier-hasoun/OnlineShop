@@ -10,11 +10,6 @@ public sealed record GetItemsByGuestIdQuery : IRequest<Result<CartDto>>
 
     public GetItemsByGuestIdQuery(Guid guestId)
     {
-        if(guestId == default)
-        {
-            throw new ArgumentException("guestId is invalid");
-        }
-
         GuestId = new GuestAccountId(guestId);
     }
 

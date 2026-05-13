@@ -2,7 +2,7 @@
 
 using Domain.Orders;
 using Domain.Orders.OrderItems;
-using Domain.ProductGroups.Products;
+using Domain.ProductsGroups.Products;
 using Infrastructure.Common.EfCore.ValueComparers;
 using Infrastructure.Common.EfCore.ValueConverters;
 

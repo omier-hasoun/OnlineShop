@@ -1,7 +1,7 @@
 using Domain;
 using Domain.Carts.CartItems;
 using Domain.Common.Entities.Addresses;
-using Domain.CustomerShippingAddresses;
+using Domain.ShippingAddresses;
 
 namespace Application.Entities;
 

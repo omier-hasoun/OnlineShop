@@ -1,5 +1,5 @@
 
-using Domain.ProductGroups.Products;
+using Domain.ProductsGroups.Products;
 using Domain.Carts.CartItems;
 
 namespace Infrastructure.Data.Configs.Business;

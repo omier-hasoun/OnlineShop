@@ -5,14 +5,14 @@ using Domain.Orders.OrderItems;
 using Domain.Orders.Shipments;
 using Domain.PaymentProviders;
 using Domain.ProductReviews;
-using Domain.ProductGroups.Products;
+using Domain.ProductsGroups.Products;
 using Domain.ProductsStock;
 using Domain.ReturnItemRequestsReviews;
 using Domain.ReturnItemRequests;
 using Domain.Transactions;
 using Domain.UsersPaymentMethodsLogs;
 using Domain.Warehouses;
-using Domain.CustomerShippingAddresses;
+using Domain.ShippingAddresses;
 using Application.Entities;
 using Domain.Carts.CartItems;
 
@@ -27,7 +27,7 @@ public interface IAppDbContext
     DbSet<OrderItem> OrderItems {get; }
 
     DbSet<ProductReview> ProductReviews {get; }
-    DbSet<ProductGroup> ProductGroups {get; }
+    DbSet<ProductsGroup> ProductGroups {get; }
     DbSet<Product> Products { get; }
 
     DbSet<Brand> Brands { get; }

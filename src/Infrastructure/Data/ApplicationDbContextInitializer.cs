@@ -3,9 +3,9 @@ using Application.Entities;
 using Domain.Brands;
 using Domain.Categories;
 using Domain.Common.ValueObjects;
-using Domain.ProductGroups;
-using Domain.ProductGroups.Products;
-using Domain.ProductGroups.ValueObjects;
+using Domain.ProductsGroups;
+using Domain.ProductsGroups.Products;
+using Domain.ProductsGroups.ValueObjects;
 using Microsoft.Extensions.Logging;
 using static Domain.DomainErrors;
 
@@ -54,10 +54,10 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         context.Categories.Add(Category.Create(categoryId1, "Smart phones", null).Value);
         context.Categories.Add(Category.Create(categoryId2, "Books", null).Value);
 
-        var productId1 = new ProductGroupId(3);
-        var productId2 = new ProductGroupId(4);
-        var product1 = ProductGroup.Create(productId1, brandId1, categoryId1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }).Value;
-        var product2 = ProductGroup.Create(productId2, brandId2, categoryId2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }).Value;
+        var productId1 = new ProductsGroupId(3);
+        var productId2 = new ProductsGroupId(4);
+        var product1 = ProductsGroup.Create(productId1, brandId1, categoryId1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }).Value;
+        var product2 = ProductsGroup.Create(productId2, brandId2, categoryId2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }).Value;
 
 
         var productVariantId1 = new ProductId(5);

@@ -1,7 +1,7 @@
 global using System;
 global using Domain.Orders;
 global using Domain.Common.Abstractions;
-global using Domain.ProductGroups;
+global using Domain.ProductsGroups;
 global using Domain.ProductReviews;
 global using Shared.Results;
 global using Domain.Common;
@@ -9,7 +9,7 @@ global using Domain.Common.Rules;
 global using Shared;
 global using Domain.Transactions;
 global using Domain.Categories;
-global using Domain.ProductGroups.Products;
+global using Domain.ProductsGroups.Products;
 global using Domain.Warehouses;
 global using Domain.Brands;
 global using Domain.PaymentProviders;
