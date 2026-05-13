@@ -12,7 +12,7 @@ public readonly record struct ShippingAddressId
     {
         if (Value <= 0)
         {
-            return DomainErrors.CustomerShippingAddresses.CustomerShippingAddressesIdInvalid;
+            return DomainErrors.ShippingAddresses.CustomerShippingAddressesIdInvalid;
         }
 
         return Result.Success;

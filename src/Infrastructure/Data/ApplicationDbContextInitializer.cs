@@ -3,9 +3,9 @@ using Application.Entities;
 using Domain.Brands;
 using Domain.Categories;
 using Domain.Common.ValueObjects;
-using Domain.Products;
-using Domain.Products.ProductVariants;
-using Domain.Products.ValueObjects;
+using Domain.ProductGroups;
+using Domain.ProductGroups.Products;
+using Domain.ProductGroups.ValueObjects;
 using Microsoft.Extensions.Logging;
 using static Domain.DomainErrors;
 
@@ -54,25 +54,25 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         context.Categories.Add(Category.Create(categoryId1, "Smart phones", null).Value);
         context.Categories.Add(Category.Create(categoryId2, "Books", null).Value);
 
-        var productId1 = new ProductId(3);
-        var productId2 = new ProductId(4);
-        var product1 = Product.Create(productId1, brandId1, categoryId1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }).Value;
-        var product2 = Product.Create(productId2, brandId2, categoryId2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }).Value;
+        var productId1 = new ProductGroupId(3);
+        var productId2 = new ProductGroupId(4);
+        var product1 = ProductGroup.Create(productId1, brandId1, categoryId1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }).Value;
+        var product2 = ProductGroup.Create(productId2, brandId2, categoryId2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }).Value;
 
 
-        var productVariantId1 = new ProductVariantId(5);
-        var productVariantId2 = new ProductVariantId(6);
-        var productVariantId3 = new ProductVariantId(7);
-        var productVariantId4 = new ProductVariantId(8);
+        var productVariantId1 = new ProductId(5);
+        var productVariantId2 = new ProductId(6);
+        var productVariantId3 = new ProductId(7);
+        var productVariantId4 = new ProductId(8);
 
-        product1.AddVariant(productVariantId1, Money.From(200).Value, 20, 20, 20, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "blue" } });
-        product1.AddVariant(productVariantId2, Money.From(220).Value, 10, 10, 10, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
-        product2.AddVariant(productVariantId3, Money.From(160).Value, 10, 10, 10, 2, "ommei30273", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
-        product2.AddVariant(productVariantId4, Money.From(150).Value, 10, 10, 10, 2, "ommei30272", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "gold" } });
+        product1.AddProduct(productVariantId1, Money.From(200).Value, 20, 20, 20, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "blue" } });
+        product1.AddProduct(productVariantId2, Money.From(220).Value, 10, 10, 10, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
+        product2.AddProduct(productVariantId3, Money.From(160).Value, 10, 10, 10, 2, "ommei30273", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
+        product2.AddProduct(productVariantId4, Money.From(150).Value, 10, 10, 10, 2, "ommei30272", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "gold" } });
 
 
-        context.Products.Add(product1);
-        context.Products.Add(product2);
+        context.ProductGroups.Add(product1);
+        context.ProductGroups.Add(product2);
 
         
         await context.SaveChangesAsync();

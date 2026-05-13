@@ -1,9 +1,9 @@
 
 using Domain.Orders;
-using Domain.Products;
+using Domain.ProductGroups;
 using Domain.Orders.OrderPayments;
 using Domain.Orders.OrderItems;
-using Domain.Products.ProductVariants;
+using Domain.ProductGroups.Products;
 using Domain.Brands;
 using Domain.Warehouses;
 using Domain.PaymentProviders;
@@ -19,7 +19,7 @@ using Infrastructure.Common.EfCore.ValueConverters;
 using Infrastructure.Common.EfCore.ValueComparers;
 using Domain.ProductsStock;
 using Domain.Common.ValueObjects;
-using Domain.Products.ValueObjects;
+using Domain.ProductGroups.ValueObjects;
 using Domain.CustomerShippingAddresses;
 using Application.Entities;
 using Domain.Carts.CartItems;
@@ -32,11 +32,12 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<ProductReview> Reviews => Set<ProductReview>();
-    public DbSet<Product> Products => Set<Product>();
     public DbSet<CartItem> CartItems => Set<CartItem>();
     public DbSet<Shipment> Shipments => Set<Shipment>();
     public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
-    public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<ProductGroup> ProductGroups => Set<ProductGroup>();
+
     public DbSet<Brand> Brands => Set<Brand>();
     public DbSet<AppSettings> AppSettings => Set<AppSettings>();
     public DbSet<Warehouse> Warehouses => Set<Warehouse>();

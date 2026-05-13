@@ -1,7 +1,7 @@
 namespace Api.Requests;
 
 public sealed record CreateVariantRequest(
-decimal Price,
+double Price,
 int Width,
 int Height,
 int Length,

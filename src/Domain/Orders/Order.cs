@@ -1,6 +1,4 @@
 
-using Domain.Common.ValueObjects;
-
 namespace Domain.Orders;
 
 public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
@@ -14,13 +12,13 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
         ShippingFees = shippingFees;
         CreatedAt = createdAt;
     }
-    private static decimal CalculateTotalItemsPrice(IReadOnlyList<OrderItem> items)
-    {
-        if(items == null)
-            return 0;
+    //private static decimal CalculateTotalItemsPrice(IReadOnlyList<OrderItem> items)
+    //{
+    //    if(items == null)
+    //        return 0;
 
-        return items.Sum(item => item.TotalPrice.Value);
-    }
+    //    return items.Sum(item => item.TotalPrice.Value);
+    //}
     //public static Result<Order> Create(OrderId id, UserId userId, decimal shippingFees)
     //{
 
@@ -72,11 +70,11 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
         }
         return Result.Success;
     }
-    private static Result<Success> ValidateOrderItems(IReadOnlyList<OrderItem> orderItems)
+    private static Result<Success> ValidateOrderItems(List<OrderItem> orderItems)
     {
         if (orderItems is null || ValHelper.IsOutOfRange(orderItems.Count, OrderRules.MinOrderItemsCount, OrderRules.MaxOrderItemsCount))
         {
-            return DomainErrors.Orders.OrderItemsNumberOutOfRange;
+            return DomainErrors.Orders.ItemsOutOfRange;
         }
         return Result.Success;
     }

@@ -285,23 +285,23 @@
         }
 
         /* ── PRODUCT GRID ── */
-        .product-grid {
+        .productGroup-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 28px;
         }
 
-        .product-card {
+        .productGroup-card {
             background: var(--cream);
             border: 1px solid var(--border);
             position: relative;
         }
 
-            .product-card:hover .product-actions {
+            .productGroup-card:hover .productGroup-actions {
                 opacity: 1;
             }
 
-        .product-badge {
+        .productGroup-badge {
             position: absolute;
             top: 12px;
             left: 12px;
@@ -315,12 +315,12 @@
             z-index: 1;
         }
 
-            .product-badge.new {
+            .productGroup-badge.new {
                 background: var(--sage);
                 color: var(--dark-brown);
             }
 
-        .product-image {
+        .productGroup-image {
             background: var(--parchment);
             aspect-ratio: 3/4;
             width: 100%;
@@ -331,7 +331,7 @@
             overflow: hidden;
         }
 
-        .product-image-inner {
+        .productGroup-image-inner {
             width: 100%;
             height: 100%;
             display: flex;
@@ -340,39 +340,39 @@
         }
 
         /* Each card gets a soft gradient feel */
-        .product-card:nth-child(1) .product-image {
+        .productGroup-card:nth-child(1) .productGroup-image {
             background: linear-gradient(145deg, #f5e8d8, #eedcc6);
         }
 
-        .product-card:nth-child(2) .product-image {
+        .productGroup-card:nth-child(2) .productGroup-image {
             background: linear-gradient(145deg, #e8e0d0, #d8cfbe);
         }
 
-        .product-card:nth-child(3) .product-image {
+        .productGroup-card:nth-child(3) .productGroup-image {
             background: linear-gradient(145deg, #f0e4d0, #e4d4bc);
         }
 
-        .product-card:nth-child(4) .product-image {
+        .productGroup-card:nth-child(4) .productGroup-image {
             background: linear-gradient(145deg, #e4dcd0, #d8cfc0);
         }
 
-        .product-card:nth-child(5) .product-image {
+        .productGroup-card:nth-child(5) .productGroup-image {
             background: linear-gradient(145deg, #f2e8dc, #e8d8c8);
         }
 
-        .product-card:nth-child(6) .product-image {
+        .productGroup-card:nth-child(6) .productGroup-image {
             background: linear-gradient(145deg, #ece4d8, #e0d4c4);
         }
 
-        .product-card:nth-child(7) .product-image {
+        .productGroup-card:nth-child(7) .productGroup-image {
             background: linear-gradient(145deg, #f0e6dc, #e6d8c8);
         }
 
-        .product-card:nth-child(8) .product-image {
+        .productGroup-card:nth-child(8) .productGroup-image {
             background: linear-gradient(145deg, #e8e0d4, #dcd0c4);
         }
 
-        .product-icon {
+        .productGroup-icon {
             width: 56px;
             height: 56px;
             stroke: var(--sand);
@@ -381,7 +381,7 @@
             opacity: 0.7;
         }
 
-        .product-actions {
+        .productGroup-actions {
             position: absolute;
             bottom: 0;
             left: 0;
@@ -393,7 +393,7 @@
             transition: opacity 0.25s ease;
         }
 
-            .product-actions a {
+            .productGroup-actions a {
                 display: block;
                 color: var(--cream);
                 font-size: 11px;
@@ -403,17 +403,17 @@
                 border: 1px solid rgba(253,248,242,0.3);
             }
 
-                .product-actions a:hover {
+                .productGroup-actions a:hover {
                     background: var(--muted-rose);
                     border-color: var(--muted-rose);
                     color: #fff;
                 }
 
-        .product-info {
+        .productGroup-info {
             padding: 16px;
         }
 
-        .product-category {
+        .productGroup-category {
             font-size: 10px;
             letter-spacing: 0.14em;
             text-transform: uppercase;
@@ -421,7 +421,7 @@
             margin-bottom: 5px;
         }
 
-        .product-name {
+        .productGroup-name {
             font-family: 'Playfair Display', Georgia, serif;
             font-size: 15px;
             color: var(--dark-brown);
@@ -429,7 +429,7 @@
             line-height: 1.35;
         }
 
-        .product-price {
+        .productGroup-price {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -850,42 +850,42 @@
             <h2 class="section-title">New Arrivals</h2>
             <a href="#" class="section-link">View all</a>
         </div>
-        <div class="product-grid">
+        <div class="productGroup-grid">
 
-            <div class="product-card">
-                <span class="product-badge new">New</span>
-                <div class="product-image">
-                    <div class="product-image-inner">
-                        <svg class="product-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="8" width="28" height="40" rx="2" /><line x1="20" y1="20" x2="36" y2="20" /><line x1="20" y1="28" x2="36" y2="28" /></svg>
+            <div class="productGroup-card">
+                <span class="productGroup-badge new">New</span>
+                <div class="productGroup-image">
+                    <div class="productGroup-image-inner">
+                        <svg class="productGroup-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="8" width="28" height="40" rx="2" /><line x1="20" y1="20" x2="36" y2="20" /><line x1="20" y1="28" x2="36" y2="28" /></svg>
                     </div>
-                    <div class="product-actions">
+                    <div class="productGroup-actions">
                         <a href="#">Add to Bag</a>
                     </div>
                 </div>
-                <div class="product-info">
-                    <p class="product-category">Tops</p>
-                    <p class="product-name">Linen Oversized Blouse</p>
-                    <div class="product-price">
+                <div class="productGroup-info">
+                    <p class="productGroup-category">Tops</p>
+                    <p class="productGroup-name">Linen Oversized Blouse</p>
+                    <div class="productGroup-price">
                         <span class="price">€68.00</span>
                     </div>
                     <div class="stars">★★★★★</div>
                 </div>
             </div>
 
-            <div class="product-card">
-                <span class="product-badge">Sale</span>
-                <div class="product-image">
-                    <div class="product-image-inner">
-                        <svg class="product-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="28" cy="22" rx="12" ry="16" /><path d="M16 38 C16 46 40 46 40 38" /></svg>
+            <div class="productGroup-card">
+                <span class="productGroup-badge">Sale</span>
+                <div class="productGroup-image">
+                    <div class="productGroup-image-inner">
+                        <svg class="productGroup-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><ellipse cx="28" cy="22" rx="12" ry="16" /><path d="M16 38 C16 46 40 46 40 38" /></svg>
                     </div>
-                    <div class="product-actions">
+                    <div class="productGroup-actions">
                         <a href="#">Add to Bag</a>
                     </div>
                 </div>
-                <div class="product-info">
-                    <p class="product-category">Dresses</p>
-                    <p class="product-name">Midi Wrap Dress — Chalk</p>
-                    <div class="product-price">
+                <div class="productGroup-info">
+                    <p class="productGroup-category">Dresses</p>
+                    <p class="productGroup-name">Midi Wrap Dress — Chalk</p>
+                    <div class="productGroup-price">
                         <span class="price">€94.00</span>
                         <span class="price-old">€138.00</span>
                     </div>
@@ -893,39 +893,39 @@
                 </div>
             </div>
 
-            <div class="product-card">
-                <div class="product-image">
-                    <div class="product-image-inner">
-                        <svg class="product-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="18" width="36" height="26" rx="2" /><path d="M20 18 V14 a8 8 0 0 1 16 0 V18" /></svg>
+            <div class="productGroup-card">
+                <div class="productGroup-image">
+                    <div class="productGroup-image-inner">
+                        <svg class="productGroup-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="18" width="36" height="26" rx="2" /><path d="M20 18 V14 a8 8 0 0 1 16 0 V18" /></svg>
                     </div>
-                    <div class="product-actions">
+                    <div class="productGroup-actions">
                         <a href="#">Add to Bag</a>
                     </div>
                 </div>
-                <div class="product-info">
-                    <p class="product-category">Bags</p>
-                    <p class="product-name">Woven Straw Tote</p>
-                    <div class="product-price">
+                <div class="productGroup-info">
+                    <p class="productGroup-category">Bags</p>
+                    <p class="productGroup-name">Woven Straw Tote</p>
+                    <div class="productGroup-price">
                         <span class="price">€112.00</span>
                     </div>
                     <div class="stars">★★★★★</div>
                 </div>
             </div>
 
-            <div class="product-card">
-                <span class="product-badge new">New</span>
-                <div class="product-image">
-                    <div class="product-image-inner">
-                        <svg class="product-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><circle cx="28" cy="28" r="16" /><path d="M22 28 h12 M28 22 v12" /></svg>
+            <div class="productGroup-card">
+                <span class="productGroup-badge new">New</span>
+                <div class="productGroup-image">
+                    <div class="productGroup-image-inner">
+                        <svg class="productGroup-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><circle cx="28" cy="28" r="16" /><path d="M22 28 h12 M28 22 v12" /></svg>
                     </div>
-                    <div class="product-actions">
+                    <div class="productGroup-actions">
                         <a href="#">Add to Bag</a>
                     </div>
                 </div>
-                <div class="product-info">
-                    <p class="product-category">Home</p>
-                    <p class="product-name">Ceramic Candle — Vetiver</p>
-                    <div class="product-price">
+                <div class="productGroup-info">
+                    <p class="productGroup-category">Home</p>
+                    <p class="productGroup-name">Ceramic Candle — Vetiver</p>
+                    <div class="productGroup-price">
                         <span class="price">€34.00</span>
                     </div>
                     <div class="stars">★★★★★</div>
@@ -951,60 +951,60 @@
             <h2 class="section-title">Best Sellers</h2>
             <a href="#" class="section-link">View all</a>
         </div>
-        <div class="product-grid">
+        <div class="productGroup-grid">
 
-            <div class="product-card">
-                <div class="product-image">
-                    <div class="product-image-inner">
-                        <svg class="product-icon" viewBox="0 0 56 56"><path d="M14 14 L42 14 L38 42 L18 42 Z" /><line x1="20" y1="22" x2="22" y2="36" /><line x1="28" y1="22" x2="28" y2="36" /><line x1="36" y1="22" x2="34" y2="36" /></svg>
+            <div class="productGroup-card">
+                <div class="productGroup-image">
+                    <div class="productGroup-image-inner">
+                        <svg class="productGroup-icon" viewBox="0 0 56 56"><path d="M14 14 L42 14 L38 42 L18 42 Z" /><line x1="20" y1="22" x2="22" y2="36" /><line x1="28" y1="22" x2="28" y2="36" /><line x1="36" y1="22" x2="34" y2="36" /></svg>
                     </div>
-                    <div class="product-actions">
+                    <div class="productGroup-actions">
                         <a href="#">Add to Bag</a>
                     </div>
                 </div>
-                <div class="product-info">
-                    <p class="product-category">Trousers</p>
-                    <p class="product-name">Wide-Leg Linen Trousers</p>
-                    <div class="product-price">
+                <div class="productGroup-info">
+                    <p class="productGroup-category">Trousers</p>
+                    <p class="productGroup-name">Wide-Leg Linen Trousers</p>
+                    <div class="productGroup-price">
                         <span class="price">€88.00</span>
                     </div>
                     <div class="stars">★★★★★</div>
                 </div>
             </div>
 
-            <div class="product-card">
-                <div class="product-image">
-                    <div class="product-image-inner">
-                        <svg class="product-icon" viewBox="0 0 56 56"><rect x="18" y="10" width="20" height="36" rx="10" /><line x1="28" y1="10" x2="28" y2="46" /></svg>
+            <div class="productGroup-card">
+                <div class="productGroup-image">
+                    <div class="productGroup-image-inner">
+                        <svg class="productGroup-icon" viewBox="0 0 56 56"><rect x="18" y="10" width="20" height="36" rx="10" /><line x1="28" y1="10" x2="28" y2="46" /></svg>
                     </div>
-                    <div class="product-actions">
+                    <div class="productGroup-actions">
                         <a href="#">Add to Bag</a>
                     </div>
                 </div>
-                <div class="product-info">
-                    <p class="product-category">Beauty</p>
-                    <p class="product-name">Organic Rose Face Oil</p>
-                    <div class="product-price">
+                <div class="productGroup-info">
+                    <p class="productGroup-category">Beauty</p>
+                    <p class="productGroup-name">Organic Rose Face Oil</p>
+                    <div class="productGroup-price">
                         <span class="price">€52.00</span>
                     </div>
                     <div class="stars">★★★★★</div>
                 </div>
             </div>
 
-            <div class="product-card">
-                <span class="product-badge">Sale</span>
-                <div class="product-image">
-                    <div class="product-image-inner">
-                        <svg class="product-icon" viewBox="0 0 56 56"><rect x="12" y="20" width="32" height="26" rx="2" /><path d="M20 20 V16 a8 8 0 0 1 16 0 V20" /><rect x="24" y="30" width="8" height="8" rx="1" /></svg>
+            <div class="productGroup-card">
+                <span class="productGroup-badge">Sale</span>
+                <div class="productGroup-image">
+                    <div class="productGroup-image-inner">
+                        <svg class="productGroup-icon" viewBox="0 0 56 56"><rect x="12" y="20" width="32" height="26" rx="2" /><path d="M20 20 V16 a8 8 0 0 1 16 0 V20" /><rect x="24" y="30" width="8" height="8" rx="1" /></svg>
                     </div>
-                    <div class="product-actions">
+                    <div class="productGroup-actions">
                         <a href="#">Add to Bag</a>
                     </div>
                 </div>
-                <div class="product-info">
-                    <p class="product-category">Bags</p>
-                    <p class="product-name">Leather Crossbody — Camel</p>
-                    <div class="product-price">
+                <div class="productGroup-info">
+                    <p class="productGroup-category">Bags</p>
+                    <p class="productGroup-name">Leather Crossbody — Camel</p>
+                    <div class="productGroup-price">
                         <span class="price">€148.00</span>
                         <span class="price-old">€210.00</span>
                     </div>
@@ -1012,19 +1012,19 @@
                 </div>
             </div>
 
-            <div class="product-card">
-                <div class="product-image">
-                    <div class="product-image-inner">
-                        <svg class="product-icon" viewBox="0 0 56 56"><path d="M14 42 C14 28 28 12 28 12 C28 12 42 28 42 42 Z" /></svg>
+            <div class="productGroup-card">
+                <div class="productGroup-image">
+                    <div class="productGroup-image-inner">
+                        <svg class="productGroup-icon" viewBox="0 0 56 56"><path d="M14 42 C14 28 28 12 28 12 C28 12 42 28 42 42 Z" /></svg>
                     </div>
-                    <div class="product-actions">
+                    <div class="productGroup-actions">
                         <a href="#">Add to Bag</a>
                     </div>
                 </div>
-                <div class="product-info">
-                    <p class="product-category">Home</p>
-                    <p class="product-name">Pressed Flower Print — A3</p>
-                    <div class="product-price">
+                <div class="productGroup-info">
+                    <p class="productGroup-category">Home</p>
+                    <p class="productGroup-name">Pressed Flower Print — A3</p>
+                    <div class="productGroup-price">
                         <span class="price">€28.00</span>
                     </div>
                     <div class="stars">★★★★★</div>

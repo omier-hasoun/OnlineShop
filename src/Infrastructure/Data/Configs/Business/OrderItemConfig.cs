@@ -2,7 +2,7 @@
 
 using Domain.Orders;
 using Domain.Orders.OrderItems;
-using Domain.Products.ProductVariants;
+using Domain.ProductGroups.Products;
 using Infrastructure.Common.EfCore.ValueComparers;
 using Infrastructure.Common.EfCore.ValueConverters;
 
@@ -53,9 +53,9 @@ internal sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
 
         });
 
-        builder.HasOne<ProductVariant>()
+        builder.HasOne<Product>()
                .WithMany()
-               .HasForeignKey(x => x.ProductVariantId)
+               .HasForeignKey(x => x.ProductId)
                .IsRequired();
 
         builder.ToTable("OrderItems");

@@ -1,5 +1,6 @@
 //using Api.Services;
 using System.Text.Json;
+using Api.Common.JsonConverters;
 using Api.Services;
 using Infrastructure.LocalServices.BackgroundServices;
 using Infrastructure.LocalServices.HashingService;
@@ -32,6 +33,7 @@ public static class DependencyInjection
         services.AddControllers().AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            options.JsonSerializerOptions.Converters.Add(new LongAsStringJsonConverter());
         });
         return services;
     }

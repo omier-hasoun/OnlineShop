@@ -5,7 +5,7 @@ using Domain.Orders.OrderItems;
 using Domain.Orders.Shipments;
 using Domain.PaymentProviders;
 using Domain.ProductReviews;
-using Domain.Products.ProductVariants;
+using Domain.ProductGroups.Products;
 using Domain.ProductsStock;
 using Domain.ReturnItemRequestsReviews;
 using Domain.ReturnItemRequests;
@@ -27,8 +27,8 @@ public interface IAppDbContext
     DbSet<OrderItem> OrderItems {get; }
 
     DbSet<ProductReview> ProductReviews {get; }
-    DbSet<Product> Products {get; }
-    DbSet<ProductVariant> ProductVariants { get; }
+    DbSet<ProductGroup> ProductGroups {get; }
+    DbSet<Product> Products { get; }
 
     DbSet<Brand> Brands { get; }
 

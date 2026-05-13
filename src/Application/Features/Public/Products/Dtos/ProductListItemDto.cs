@@ -1,5 +1,5 @@
 using Domain.Common.ValueObjects;
-using Domain.Products.ValueObjects;
+using Domain.ProductGroups.ValueObjects;
 
 namespace Application.Features.Public.Products.Dtos;
 /// <summary>
@@ -16,7 +16,7 @@ namespace Application.Features.Public.Products.Dtos;
 /// <param name="OriginalPrice"></param>
 public sealed record ProductListItemDto
 {
-    public long Id { get; init; }
+    public string Id { get; init; }
     public string Title { get; init; } = null!;
     public double Price { get; init; } 
     public string Brand { get; init; } = null!;
@@ -25,9 +25,9 @@ public sealed record ProductListItemDto
     public byte? DiscountPercentage { get; init; }
     public double? PriceBeforeDiscount { get; init; }
 
-    public ProductListItemDto(ProductId id, string title, Money? priceBeforeDiscount, string brand, ProductAverageRating avgerageRating, Money priceNow, ProductImage? primaryImage, byte? discountPercentage)
+    public ProductListItemDto(ProductGroupId id, string title, Money? priceBeforeDiscount, string brand, ProductAverageRating avgerageRating, Money priceNow, ProductImage? primaryImage, byte? discountPercentage)
     {
-        Id = id.Value;
+        Id = id.ToString();
         Title = title;
         Brand = brand;
         PriceBeforeDiscount = priceBeforeDiscount is null ? null : (double)priceBeforeDiscount.Value;

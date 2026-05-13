@@ -6,23 +6,23 @@ namespace Domain.Orders.OrderItems;
 
 public sealed class OrderItem : BaseEntity<OrderItemId>
 {
-    private OrderItem(OrderItemId id, OrderId orderId, ProductVariantId productVariantId, short quantity, Money unitPrice, OrderItemStatus status)
+    private OrderItem(OrderItemId id, OrderId orderId, ProductId productId, short quantity, Money unitPrice, OrderItemStatus status)
         : base(id)
     {
         OrderId = orderId;
-        ProductVariantId = productVariantId;
+        ProductId = productId;
         Quantity = quantity;
         UnitPrice = unitPrice;
         Status = status;
     }
-    internal static Result<OrderItem> Create(OrderItemId id, OrderId orderId, ProductVariantId productVariantId, short quantity, Money unitPrice)
+    internal static Result<OrderItem> Create(OrderItemId id, OrderId orderId, ProductId productId, short quantity, Money unitPrice)
     {
 
-        return new OrderItem(id, orderId, productVariantId, quantity, unitPrice, OrderItemStatus.Pending);
+        return new OrderItem(id, orderId, productId, quantity, unitPrice, OrderItemStatus.Pending);
     }
 
     public OrderId OrderId { get; private init; }
-    public ProductVariantId ProductVariantId { get; private init; }
+    public ProductId ProductId { get; private init; }
 
     public short Quantity { get; private init; }
 
@@ -42,7 +42,7 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
 
         if (serialNumbers.Count != Quantity)
         {
-            return DomainErrors.OrderItems.SerialNumbersDoNotMatchQuantity;
+            return DomainErrors.Orders.SerialNumbersOutOfRange;
         }
 
         _serialNumbers = serialNumbers;

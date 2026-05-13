@@ -2,22 +2,22 @@ namespace Domain.ProductsStock;
 
 public sealed class ProductStock : IEntity // i want to a composite id in this entity, i cant do that if i inherit BaseEntity 
 {
-    private ProductStock(WarehouseId warehouseId, ProductVariantId productVariantId, int quantity, int reservedQuantity)
+    private ProductStock(WarehouseId warehouseId, ProductId productId, int quantity, int reservedQuantity)
     {
         WarehouseId = warehouseId;
-        ProductVariantId = productVariantId;
+        ProductId = productId;
         Quantity = quantity;
         ReservedQuantity = reservedQuantity;
     }
 
-    public static Result<ProductStock> Create(WarehouseId warehouseId, ProductVariantId productVariantId, int quantity)
+    public static Result<ProductStock> Create(WarehouseId warehouseId, ProductId productId, int quantity)
     {
 
-        return new ProductStock(warehouseId, productVariantId, quantity, 0);
+        return new ProductStock(warehouseId, productId, quantity, 0);
     }
 
     public WarehouseId WarehouseId { get; private init; }
-    public ProductVariantId ProductVariantId { get; private init; }
+    public ProductId ProductId { get; private init; }
     public int Quantity { get; private set; }
     public int ReservedQuantity { get; private set; }
 

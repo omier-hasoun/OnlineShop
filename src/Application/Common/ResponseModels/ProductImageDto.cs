@@ -1,4 +1,4 @@
-using Domain.Products.ValueObjects;
+using Domain.ProductGroups.ValueObjects;
 
 namespace Application.Common.ResponseModels;
 

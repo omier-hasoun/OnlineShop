@@ -14,7 +14,7 @@ public readonly record struct OrderItemId
     {
         if (Value <= 0)
         {
-            return DomainErrors.OrderItems.OrderItemIdInvalid;
+            return DomainErrors.Orders.OrderItemIdInvalid;
         }
 
         return Result.Success;

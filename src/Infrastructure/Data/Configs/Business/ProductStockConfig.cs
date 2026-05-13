@@ -1,5 +1,5 @@
 
-using Domain.Products.ProductVariants;
+using Domain.ProductGroups.Products;
 using Domain.ProductsStock;
 using Domain.Warehouses;
 
@@ -11,12 +11,12 @@ internal sealed class ProductStockConfig : BaseEntityConfig<ProductStock>
     {
         base.Configure(builder);
 
-        builder.HasKey(x => new { x.ProductVariantId, x.WarehouseId })
+        builder.HasKey(x => new { x.ProductId, x.WarehouseId })
                .IsClustered();
 
-        builder.HasOne<ProductVariant>()
+        builder.HasOne<Product>()
                .WithMany()
-               .HasForeignKey(x => x.ProductVariantId)
+               .HasForeignKey(x => x.ProductId)
                .IsRequired();
 
         builder.HasOne<Warehouse>()

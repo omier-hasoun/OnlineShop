@@ -1,25 +1,38 @@
+
 namespace Domain.Common.Rules;
 
 public static class ProductRules
 {
-    // Name length limits
-    public const byte MinTitleLength = 5;
-    public const byte MaxTitleLength = 60;
+    public const byte MinPrice = 5;
+    public const int MaxPrice = 500_000;
 
-    // Description length limits
-    public const short MinDescriptionLength = 5;
-    public const short MaxDescriptionLength = 300;
+    public const byte MaxDiscountPercentageValue = 80;// max discount is 80 percent
+    public const byte MinDiscountPercentageValue = 1;// 0 when no discount is applied
 
-    // Product variant count limits
-    public const byte MinNumberOfVariants = 1;
-    public const byte MaxNumberOfVariants = 15;
+    public const byte MinSkuLength = 8;
+    public const byte MaxSkuLength = 50;
 
-    // Product attributes count limits
-    public const byte MinNumberOfAttributes = 0;
-    public const byte MaxNumberOfAttributes= 50;
+    public const byte MinSlugLength = 5;
+    public const byte MaxSlugLength = 80;
 
-    // Rating limits. 1 to 5 stars or 0 if no one rated it 
-    public const byte MinAverageRatingValue = 0;
-    public const byte MaxAverageRatingValue = 5;
+    public const byte MinBarcodeLength = 6;
+    public const byte MaxBarcodeLength = 14;
 
+    public const byte Min_Height_Width_Length_cm = 2;
+    public const short Max_Height_Width_Length_cm = 400;
+
+    public const byte MinNumberOfImages = 0;
+    public const byte MaxNumberOfImages = 10;
+
+    public const byte MinNumberOfSpecifications = 1;
+
+    public const byte MaxNumberOfSpecifications = 50;
+
+    public const byte MinSpecificationKeyLength = 1;
+
+    public const byte MaxSpecificationKeyLength = 40;
+
+    public const byte MinSpecificationValueLength = 1;
+
+    public const byte MaxSpecificationValueLength = 50;
 }

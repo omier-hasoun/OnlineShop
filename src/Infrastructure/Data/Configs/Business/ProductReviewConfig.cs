@@ -2,7 +2,7 @@ using Application.Entities;
 using Domain.Common.Rules;
  
 using Domain.ProductReviews;
-using Domain.Products;
+using Domain.ProductGroups;
 
 namespace Infrastructure.Data.Configs.Business;
 
@@ -36,9 +36,9 @@ internal sealed class ProductReviewConfig : BaseEntityConfig<ProductReview>
                .HasColumnType("TINYINT")
                .IsRequired();
 
-        builder.HasOne<Product>()
+        builder.HasOne<ProductGroup>()
                .WithMany()
-               .HasForeignKey(x => x.ProductId)
+               .HasForeignKey(x => x.ProductGroupId)
                .IsRequired();
 
         builder.HasOne<AppUser>()

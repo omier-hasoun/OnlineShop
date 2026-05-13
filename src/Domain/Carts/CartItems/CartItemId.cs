@@ -12,7 +12,7 @@ public readonly record struct CartItemId
     {
         if (Value <= 0)
         {
-            return DomainErrors.CartItems.CartItemIdInvalid;
+            return DomainErrors.Carts.CartItemIdInvalid;
         }
 
         return Result.Success;

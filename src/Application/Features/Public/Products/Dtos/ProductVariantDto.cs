@@ -1,26 +1,29 @@
 using Application.Common.ResponseModels;
 using Domain.Common.ValueObjects;
-using Domain.Products.ValueObjects;
+using Domain.ProductGroups.Products;
+using Domain.ProductGroups.ValueObjects;
 
 namespace Application.Features.Public.Products.Dtos;
 
 public sealed record ProductVariantDto
 {
-    public double Price { get; init; }
-    public double? PriceBeforeDiscount { get; init; }
-    public byte? DiscountPercentage { get; init; }
+    public long Id { get; }
+    public double Price { get; }
+    public double? PriceBeforeDiscount { get; }
+    public byte? DiscountPercentage { get; }
 
-    public List<ProductImageDto> Images { get; init; } = [];
-    public Dictionary<string, string> Specifications { get; init; } = [];
-    public string Slug { get; init; } = null!;
+    public List<ProductImageDto> Images { get; } = [];
+    public Dictionary<string, string> Specifications { get; } = [];
+    public string Slug { get; } = null!;
 
-    public ProductVariantDto(Money price, byte? discountPercentage, Money? priceBeforeDiscount, List<ProductImage> images, string slug, Dictionary<string, string> specifications)
+    public ProductVariantDto(ProductId id, Money price, byte? discountPercentage, Money? priceBeforeDiscount, List<ProductImage> images, string slug, Dictionary<string, string> specifications)
     {
+        Id = id.Value;
         Slug = slug;
         Price = (double)price.Value;
         PriceBeforeDiscount = priceBeforeDiscount is null ? null : (double)priceBeforeDiscount.Value;
 
-        DiscountPercentage = discountPercentage is null || discountPercentage == 0 ? null : discountPercentage;
+        DiscountPercentage = discountPercentage ?? discountPercentage;
 
         images.ForEach(productImage => Images.Add(new ProductImageDto(productImage)));
 

@@ -60,7 +60,7 @@ public sealed class Cart : AggregateRoot<CartId>, IHasModificationTime
 
 
 
-    public Result<Success> AddItem(CartItemId cartItemId, ProductVariantId productVariantId, short quantity)
+    public Result<Success> AddItem(CartItemId cartItemId, ProductId productVariantId, short quantity)
     {
         if (_items.Count >= CartRules.MaxNumberOfCartItems)
         {

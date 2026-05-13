@@ -1,5 +1,5 @@
 
-using Domain.Products.ProductVariants;
+using Domain.ProductGroups.Products;
 using Domain.Carts.CartItems;
 
 namespace Infrastructure.Data.Configs.Business;
@@ -20,12 +20,12 @@ internal sealed class CartItemConfig : BaseEntityConfig<CartItem>
         builder.Property(x => x.Quantity)
                .IsRequired();
 
-        builder.Property(x => x.ProductVariantId)
+        builder.Property(x => x.ProductId)
                .IsRequired();
 
-        builder.HasOne<ProductVariant>()
+        builder.HasOne<Product>()
                .WithMany()
-               .HasForeignKey(x => x.ProductVariantId)
+               .HasForeignKey(x => x.ProductId)
                .IsRequired();
 
         builder.ToTable("CartItems", x =>

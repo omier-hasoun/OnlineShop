@@ -55,8 +55,8 @@ public static class ApplicationErrors
             return $"{BaseErrorCode}.{error}.NotFound";
         }
 
+        public static readonly Error ProductGroup = Error.NotFound(GenerateErrorCode(nameof(ProductGroup)));
         public static readonly Error Product = Error.NotFound(GenerateErrorCode(nameof(Product)));
-        public static readonly Error ProductVariant = Error.NotFound(GenerateErrorCode(nameof(ProductVariant)));
         public static readonly Error Order = Error.NotFound(GenerateErrorCode(nameof(Order)));
         public static readonly Error OrderItem = Error.NotFound(GenerateErrorCode(nameof(OrderItem)));
         public static readonly Error ProductReview = Error.NotFound(GenerateErrorCode(nameof(ProductReview)));

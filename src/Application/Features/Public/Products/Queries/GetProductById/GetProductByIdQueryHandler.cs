@@ -6,23 +6,24 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
 {
     public async Task<Result<ProductDto>> Handle(GetProductByIdQuery request, CancellationToken ct)
     {
-        ProductId productId = new(request.ProductId);
+        ProductGroupId productId = request.ProductId;
 
-        var query = context.Products.AsNoTracking()
+        var query = context.ProductGroups.AsNoTracking()
                                     .Where(x => x.Id == productId && x.Status == ProductStatus.Published)
                                     .Join(context.Brands, p => p.BrandId, b => b.Id, (product, brand) => new { product, brand })
                                     .Join(context.Categories, x => x.product.CategoryId, category => category.Id, (pb, category) => new { pb, category })
                                     .Select(
                                             x =>
                                             new ProductDto(
+                                               x.pb.product.Id,
                                                x.pb.product.Title,
                                                x.pb.product.Description,
                                                x.pb.product.Attributes.ToDictionary(),
                                                x.pb.brand.Name,
                                                x.category.Name,
                                                x.pb.product.AverageRating,
-                                               x.pb.product.Variants.Select(x => new ProductVariantDto(
-                                               
+                                               x.pb.product.Products.Select(x => new ProductVariantDto(
+                                                   id: x.Id,
                                                    price: x.Price,
                                                    discountPercentage : x.DiscountPercentage,
                                                    priceBeforeDiscount:x.PriceBeforeDiscount,

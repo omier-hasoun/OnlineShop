@@ -16,11 +16,11 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
             return ApplicationErrors.Validation.PageSizeTooBig;
         }
 
-        var cheapestVariantsQuery = context.Products.AsNoTracking()
+        var cheapestVariantsQuery = context.ProductGroups.AsNoTracking()
             .Where(product => product.Status == ProductStatus.Published)
             .SelectMany(
-                product => context.ProductVariants
-                    .Where(variant => variant.ProductId == product.Id && variant.Status == ProductStatus.Published)
+                product => context.Products
+                    .Where(variant => variant.ProductGroupId == product.Id && variant.Status == ProductStatus.Published)
                     .OrderBy(v => v.Price)
                     .Take(1),
                 (product, variant) => new { product, variant }
@@ -44,15 +44,15 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
 
 
 
-        if (request.BrandId != null)
+        if (request.BrandId.HasValue)
         {
-            var brandId = new BrandId((Guid)request.BrandId);
+            var brandId =request.ParsedBrandId;
             queryWithBrands = queryWithBrands.Where(x => x.product.BrandId == brandId);
         }
 
-        if (request.CategoryId != null)
+        if (request.CategoryId.HasValue)
         {
-            var categoryId = new CategoryId((long)request.CategoryId);
+            var categoryId = request.ParsedCategoryId;
 
             queryWithBrands = queryWithBrands.Where(x => x.product.CategoryId == categoryId);
         }

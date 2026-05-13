@@ -1,6 +1,6 @@
 
 
-using Domain.Products.ProductVariants;
+using Domain.ProductGroups.Products;
 
 namespace Application.Common.InternalModels;
 

@@ -3,19 +3,19 @@ namespace Domain.Carts.CartItems;
 public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
 {
 
-    private CartItem(CartItemId id, CartId cartId, ProductVariantId productVariantId, short quantity, DateTime createdAt) : base(id)
+    private CartItem(CartItemId id, CartId cartId, ProductId productId, short quantity, DateTime createdAt) : base(id)
     {
         CartId = cartId;
-        ProductVariantId = productVariantId;
+        ProductId = productId;
         Quantity = quantity;
         CreatedAt = createdAt;
     }
 
-    public static Result<CartItem> Create(CartItemId id, CartId cartId, ProductVariantId productVariantId, short quantity)
+    public static Result<CartItem> Create(CartItemId id, CartId cartId, ProductId productId, short quantity)
     {
         var validationResult = Result.ValidateAll(
                                  () => id.IsValid(),
-                                 () => productVariantId.IsValid(),
+                                 () => productId.IsValid(),
                                  () => ValidateQuantity(quantity)
                                  );
 
@@ -25,11 +25,11 @@ public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
         }
 
 
-        return new CartItem(id, cartId, productVariantId, quantity, DateTime.UtcNow);
+        return new CartItem(id, cartId, productId, quantity, DateTime.UtcNow);
     }
 
     public CartId CartId { get; private init; }
-    public ProductVariantId ProductVariantId { get; private init; }
+    public ProductId ProductId { get; private init; }
     public short Quantity { get; private set; }
     public DateTime CreatedAt { get; set; }
 
@@ -52,7 +52,7 @@ public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
     {
         if (quantity < CartItemRules.MinQuantity || quantity > CartItemRules.MaxQuantity)
         {
-            return DomainErrors.CartItems.QuantityOutOfRange;
+            return DomainErrors.Carts.QuantityOutOfRange;
         }
 
         return Result.Success;
