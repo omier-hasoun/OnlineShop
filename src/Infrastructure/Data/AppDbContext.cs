@@ -23,6 +23,7 @@ using Domain.ProductsGroups.ValueObjects;
 using Domain.ShippingAddresses;
 using Application.Entities;
 using Domain.Carts.CartItems;
+using Domain.Carts;
 
 
 namespace Infrastructure.Data;
@@ -38,6 +39,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     public DbSet<Product> Products => Set<Product>();
     public DbSet<ProductsGroup> ProductGroups => Set<ProductsGroup>();
 
+    public DbSet<Cart> Carts => Set<Cart>();
     public DbSet<Brand> Brands => Set<Brand>();
     public DbSet<AppSettings> AppSettings => Set<AppSettings>();
     public DbSet<Warehouse> Warehouses => Set<Warehouse>();

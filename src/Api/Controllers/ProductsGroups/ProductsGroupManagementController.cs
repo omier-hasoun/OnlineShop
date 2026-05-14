@@ -6,7 +6,7 @@ using Application.Features.Management.ProductsGroups.Commands.UpdateProductImage
 using MediatR;
 using Application.Features.Management.ProductsGroups.Commands.UpdateProductGroup;
 using Application.Features.Management.ProductsGroups.Queries.ListProducts;
-using Application.Features.Management.ProductsGroups.Queries.GetProductById;
+using Application.Features.Management.ProductsGroups.Queries.GetProductsGroupById;
 using Application.Features.Management.ProductsGroups.Commands.PublishProduct;
 using Application.Features.Management.ProductsGroups.Commands.UnpublishProduct;
 using Application.Features.Management.ProductsGroups.Commands.ArchiveProductGroup;
@@ -146,7 +146,7 @@ public sealed class ProductsGroupManagementController(IMediator mediator) : ApiC
     public async Task<IActionResult> GetProductById(long productGroupId, CancellationToken ct)
     {
 
-        var result = await mediator.Send(new GetProductByIdQuery(productGroupId), ct);
+        var result = await mediator.Send(new GetProductsGroupByIdQuery(productGroupId), ct);
 
         return result.Match((response) => Ok(response), Problem);
     }

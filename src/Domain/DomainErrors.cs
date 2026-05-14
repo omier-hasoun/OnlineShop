@@ -310,7 +310,7 @@ public static class DomainErrors
 
         public static readonly Error CartIdInvalid = Error.Validation($"{BaseErrorCode}.{nameof(CartIdInvalid)}");
 
-        public static readonly Error MaxNumberOfCartItemsReached = Error.Validation($"{BaseErrorCode}.{nameof(MaxNumberOfCartItemsReached)}");
+        public static readonly Error MaxNumberOfItemsReached = Error.Validation($"{BaseErrorCode}.{nameof(MaxNumberOfItemsReached)}");
 
         public static readonly Error CartItemIdInvalid = Error.Validation($"{BaseErrorCode}.{nameof(CartItemIdInvalid)}");
 

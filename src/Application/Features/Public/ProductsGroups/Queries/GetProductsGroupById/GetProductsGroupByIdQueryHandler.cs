@@ -1,11 +1,11 @@
-using Application.Features.Public.Products.Dtos;
+using Application.Features.Public.ProductsGroups.Dtos;
 using Domain.ProductsGroups.Products;
 
-namespace Application.Features.Public.Products.Queries.GetProductById;
+namespace Application.Features.Public.ProductsGroups.Queries.GetProductsGroupById;
 
-internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IRequestHandler<GetProductByIdQuery, Result<ProductDto>>
+internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : IRequestHandler<GetProductsGroupByIdQuery, Result<ProductsGroupDto>>
 {
-    public async Task<Result<ProductDto>> Handle(GetProductByIdQuery request, CancellationToken ct)
+    public async Task<Result<ProductsGroupDto>> Handle(GetProductsGroupByIdQuery request, CancellationToken ct)
     {
         ProductsGroupId productId = request.ProductId;
 
@@ -15,7 +15,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
                                     .Join(context.Categories, x => x.product.CategoryId, category => category.Id, (pb, category) => new { pb, category })
                                     .Select(
                                             x =>
-                                            new ProductDto(
+                                            new ProductsGroupDto(
                                                x.pb.product.Id,
                                                x.pb.product.Title,
                                                x.pb.product.Description,
@@ -23,7 +23,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
                                                x.pb.brand.Name,
                                                x.category.Name,
                                                x.pb.product.AverageRating,
-                                               x.pb.product.Products.Select(x => new ProductVariantDto(
+                                               x.pb.product.Products.Select(x => new ProductDto(
                                                    id: x.Id,
                                                    price: x.Price,
                                                    discountPercentage : x.DiscountPercentage,
@@ -38,7 +38,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
 
                                     );
 
-        ProductDto? productDto = await query.FirstOrDefaultAsync(ct);
+        ProductsGroupDto? productDto = await query.FirstOrDefaultAsync(ct);
 
         if (productDto is null)
         {

@@ -50,8 +50,6 @@
       <Folder Include="Controllers\Orders\" />
       <Folder Include="Controllers\Users\" />
       <Folder Include="HTTP\" />
-      <Folder Include="Responses\" />
-      <Folder Include="wwwroot\Pages\" />
     </ItemGroup>
     
     <PropertyGroup>

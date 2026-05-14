@@ -4,10 +4,10 @@ namespace Infrastructure.Data.Interceptors;
 
 internal sealed class AuditedEntitySaveChangesInterceptor : SaveChangesInterceptor
 {
-    private readonly IUserContext _user;
+    private readonly ICurrentUserService _user;
     private readonly TimeProvider _time;
 
-    public AuditedEntitySaveChangesInterceptor(IUserContext user, TimeProvider time)
+    public AuditedEntitySaveChangesInterceptor(ICurrentUserService user, TimeProvider time)
     {
         _user = user;
         _time = time;
@@ -41,10 +41,10 @@ internal sealed class AuditedEntitySaveChangesInterceptor : SaveChangesIntercept
                 mTime.LastModifiedAt = utcNow;
 
             if (entry.Entity is ICreationAudited cUser && isAdded)
-                cUser.CreatedBy = _user.Id;
+                cUser.CreatedBy = _user.Id ?? Guid.Parse("10000000-0000-0000-0000-000000000001");
 
             if (entry.Entity is IModificationAudited mUser && (isAdded || isModified))
-                mUser.LastModifiedBy = _user.Id;
+                mUser.LastModifiedBy = _user.Id ?? Guid.Parse("10000000-0000-0000-0000-000000000001"); ;
         }
     }
 }

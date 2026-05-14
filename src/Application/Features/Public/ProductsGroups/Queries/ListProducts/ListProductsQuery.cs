@@ -1,9 +1,9 @@
 using Application.Common.ResponseModels;
-using Application.Features.Public.Products.Dtos;
+using Application.Features.Public.ProductsGroups.Dtos;
 using Domain.Brands;
 using Domain.Categories;
 
-namespace Application.Features.Public.Products.Queries.ListProducts;
+namespace Application.Features.Public.ProductsGroups.Queries.ListProducts;
 
 public sealed record ListProductsQuery : IRequest<Result<PaginatedList<ProductListItemDto>>>
 {

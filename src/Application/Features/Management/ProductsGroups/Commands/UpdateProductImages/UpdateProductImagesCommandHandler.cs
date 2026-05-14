@@ -43,7 +43,7 @@ internal sealed class UpdateProductImagesCommandHandler
 
             if (await fileStore.SaveImageAsync(image.File, fileNameWithExtension, ct) is false)
             {
-                return ApplicationErrors.InternalError.SavingImageFileFailed;
+                return ApplicationErrors.Unexpected.SavingImageFileFailed;
             }
 
             productImages.Add(ProductImage.From(fileName + ".webp", image.SortOrder).Value);// saving as .webp because the image will be converted to webp

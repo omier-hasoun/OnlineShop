@@ -15,6 +15,7 @@ using Domain.Warehouses;
 using Domain.ShippingAddresses;
 using Application.Entities;
 using Domain.Carts.CartItems;
+using Domain.Carts;
 
 namespace Application.Common.Abstractions;
 
@@ -51,6 +52,7 @@ public interface IAppDbContext
     DbSet<Address> Addresses {get; }
     DbSet<ShippingAddress> ShippingAddresses { get; }
 
+    DbSet<Cart> Carts { get; }
 
     DbSet<CartItem> CartItems {get; }
 

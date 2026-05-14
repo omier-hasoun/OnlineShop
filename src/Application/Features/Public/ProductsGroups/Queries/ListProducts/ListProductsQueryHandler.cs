@@ -1,12 +1,12 @@
 using Application.Common.Extensions;
 using Application.Common.ResponseModels;
-using Application.Features.Public.Products.Dtos;
+using Application.Features.Public.ProductsGroups.Dtos;
 using Domain.Brands;
 using Domain.Categories;
 using Domain.Common.ValueObjects;
 using Domain.ProductsGroups.Products;
 
-namespace Application.Features.Public.Products.Queries.ListProducts;
+namespace Application.Features.Public.ProductsGroups.Queries.ListProducts;
 
 internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequestHandler<ListProductsQuery, Result<PaginatedList<ProductListItemDto>>>
 {
@@ -17,7 +17,7 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
             return ApplicationErrors.Validation.PageSizeTooBig;
         }
 
-        var cheapestVariantsQuery = context.ProductGroups.AsNoTracking()
+        var cheapestProductQuery = context.ProductGroups.AsNoTracking()
             .Where(product => product.Status == ProductsGroupStatus.Published)
             .SelectMany(
                 product => context.Products
@@ -33,10 +33,10 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
         {
             var maxPrice = Money.From((int)request.MaxPrice).Value;
 
-            cheapestVariantsQuery = cheapestVariantsQuery.Where(x => x.variant.Price <= maxPrice);
+            cheapestProductQuery = cheapestProductQuery.Where(x => x.variant.Price <= maxPrice);
         }
 
-        var queryWithBrands = cheapestVariantsQuery.Join(
+        var queryWithBrands = cheapestProductQuery.Join(
             context.Brands,
             pv => pv.product.BrandId, 
             brand => brand.Id,

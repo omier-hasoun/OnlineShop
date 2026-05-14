@@ -19,5 +19,10 @@ public readonly record struct GuestAccountId
 
         return Result.Success;
     }
+
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
 }
 

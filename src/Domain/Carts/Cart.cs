@@ -60,14 +60,14 @@ public sealed class Cart : AggregateRoot<CartId>, IHasModificationTime
 
 
 
-    public Result<Success> AddItem(CartItemId cartItemId, ProductId productVariantId, short quantity)
+    public Result<Success> AddItem(CartItemId cartItemId, ProductId productId, short quantity)
     {
-        if (_items.Count >= CartRules.MaxNumberOfCartItems)
+        if (_items.Count >= CartRules.MaxNumberOfItems)
         {
-            return DomainErrors.Carts.MaxNumberOfCartItemsReached;
+            return DomainErrors.Carts.MaxNumberOfItemsReached;
         }
 
-        var createItemResult = CartItem.Create(cartItemId, this.Id, productVariantId, quantity);
+        var createItemResult = CartItem.Create(cartItemId, this.Id, productId, quantity);
 
         if (createItemResult.Failed)
             return createItemResult.Errors;

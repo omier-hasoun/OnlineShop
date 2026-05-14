@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -689,11 +689,18 @@ namespace Infrastructure.Data.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Carts_GuestId",
+                table: "Carts",
+                column: "GuestId",
+                unique: true,
+                filter: "[GuestId] is not null");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Carts_UserId",
                 table: "Carts",
                 column: "UserId",
                 unique: true,
-                filter: "[UserId] IS NOT NULL");
+                filter: "[UserId] is not null");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_ParentCategoryId",

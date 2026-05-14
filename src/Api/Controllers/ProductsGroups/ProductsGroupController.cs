@@ -1,11 +1,11 @@
 
-using Application.Features.Public.Products.Queries.GetProductById;
-using Application.Features.Public.Products.Queries.ListProducts;
+using Application.Features.Public.ProductsGroups.Queries.GetProductsGroupById;
+using Application.Features.Public.ProductsGroups.Queries.ListProducts;
 using MediatR;
 
 namespace Api.Controllers.ProductsGroups;
 
-[Route("api/products-group")]
+[Route("api/products-groups")]
 public sealed class ProductsGroupController(IMediator mediator) : ApiController
 {
 
@@ -23,7 +23,7 @@ public sealed class ProductsGroupController(IMediator mediator) : ApiController
     public async Task<IActionResult> GetProductById([FromRoute] long id, CancellationToken ct)
     {
 
-        var result = await mediator.Send(new GetProductByIdQuery(id), ct);
+        var result = await mediator.Send(new GetProductsGroupByIdQuery(id), ct);
 
         return result.Match((response) => Ok(response), Problem);
     }

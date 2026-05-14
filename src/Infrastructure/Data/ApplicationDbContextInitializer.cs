@@ -1,13 +1,14 @@
 
 using Application.Entities;
 using Domain.Brands;
+using Domain.Carts;
+using Domain.Carts.CartItems;
 using Domain.Categories;
 using Domain.Common.ValueObjects;
 using Domain.ProductsGroups;
 using Domain.ProductsGroups.Products;
 using Domain.ProductsGroups.ValueObjects;
 using Microsoft.Extensions.Logging;
-using static Domain.DomainErrors;
 
 namespace Infrastructure.Data;
 
@@ -54,27 +55,42 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         context.Categories.Add(Category.Create(categoryId1, "Smart phones", null).Value);
         context.Categories.Add(Category.Create(categoryId2, "Books", null).Value);
 
-        var productId1 = new ProductsGroupId(3);
-        var productId2 = new ProductsGroupId(4);
-        var product1 = ProductsGroup.Create(productId1, brandId1, categoryId1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }).Value;
-        var product2 = ProductsGroup.Create(productId2, brandId2, categoryId2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }).Value;
+        var productGroupId1 = new ProductsGroupId(3);
+        var productGroupId2 = new ProductsGroupId(4);
+        var productGroup1 = ProductsGroup.Create(productGroupId1, brandId1, categoryId1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }).Value;
+        var productGroup2 = ProductsGroup.Create(productGroupId2, brandId2, categoryId2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }).Value;
 
 
-        var productVariantId1 = new ProductId(5);
-        var productVariantId2 = new ProductId(6);
-        var productVariantId3 = new ProductId(7);
-        var productVariantId4 = new ProductId(8);
+        var productId1 = new ProductId(5);
+        var productId2 = new ProductId(6);
+        var productId3 = new ProductId(7);
+        var productId4 = new ProductId(8);
 
-        product1.AddProduct(productVariantId1, Money.From(200).Value, 20, 20, 20, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "blue" } });
-        product1.AddProduct(productVariantId2, Money.From(220).Value, 10, 10, 10, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
-        product2.AddProduct(productVariantId3, Money.From(160).Value, 10, 10, 10, 2, "ommei30273", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
-        product2.AddProduct(productVariantId4, Money.From(150).Value, 10, 10, 10, 2, "ommei30272", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "gold" } });
+        productGroup1.AddProduct(productId1, Money.From(200).Value, 20, 20, 20, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "blue" } });
+        productGroup1.AddProduct(productId2, Money.From(220).Value, 10, 10, 10, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
+        productGroup2.AddProduct(productId3, Money.From(160).Value, 10, 10, 10, 2, "ommei30273", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
+        productGroup2.AddProduct(productId4, Money.From(150).Value, 10, 10, 10, 2, "ommei30272", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "gold" } });
 
 
-        context.ProductGroups.Add(product1);
-        context.ProductGroups.Add(product2);
+        context.ProductGroups.Add(productGroup1);
+        context.ProductGroups.Add(productGroup2);
 
-        
+        var cart1 = Cart.CreateForGuest(new CartId(20), new GuestAccountId(Guid.Parse("019e0f1a-7b38-79e5-8912-9a9f83a4a549"))).Value;
+        var cart2 = Cart.CreateForUser(new CartId(21), Guid.Parse("10000000-0000-0000-0000-000000000001")).Value;
+
+
+        cart1.AddItem(new CartItemId(10), productId2, 3);
+        cart1.AddItem(new CartItemId(11), productId4, 1);
+
+        cart2.AddItem(new CartItemId(12), productId3, 2);
+        cart2.AddItem(new CartItemId(112), productId4, 10);
+
+
+        context.Carts.Add(cart1);
+        context.Carts.Add(cart2);
+
+
+
         await context.SaveChangesAsync();
     }
 

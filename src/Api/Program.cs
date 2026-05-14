@@ -1,4 +1,5 @@
 
+using Api.Minimals;
 using Application.Common.Configurations;
 using Application.Entities;
 using Microsoft.Extensions.Options;
@@ -71,35 +72,37 @@ namespace Api
                 IOptions<ProductImagePathOptions> options = scope.ServiceProvider.GetRequiredService<IOptions<ProductImagePathOptions>>();
             }
 
+            app.Use(async (HttpContext context, RequestDelegate next) =>
+            {
+                if(!Guid.TryParse(context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var _))
+                {
+                    var guestId = context.Request.Cookies["guest_id"];
+
+                    if (!Guid.TryParse(guestId, out var _))
+                    {
+                        guestId = Guid.CreateVersion7().ToString();
+
+                        context.Response.Cookies.Append("guest_id", guestId,
+                        new CookieOptions
+                        {
+                            IsEssential = true,
+                            HttpOnly = true,
+                            SameSite = SameSiteMode.Strict,
+                            Expires = DateTimeOffset.Now.AddDays(7),
+                            Secure = true,
+                        });
+                        context.Items["guest_id"] = guestId;
+                    }
+
+                }
+                await next(context);
+
+            });
+
             app.MapControllers();
 
             app.MapGroup("/api/auth").
                 MapIdentityApi<AppUser>();
-
-            app.Use(async (HttpContext context, RequestDelegate next) =>
-            {
-                var guestId = context.Request.Cookies["guest_id"];
-
-                if (!Guid.TryParse(guestId, out Guid result) || result.Version != 7)
-                {
-                    guestId = Guid.CreateVersion7().ToString();
-
-                    context.Response.Cookies.Append("guest_id", guestId,
-                    new CookieOptions
-                    {
-                        IsEssential = true,
-                        HttpOnly = true,
-                        SameSite = SameSiteMode.Strict,
-                        Expires = DateTimeOffset.Now.AddDays(7),
-                        Secure = true,
-                    });
-                }
-
-                context.Items["guest_id"] = guestId;
-                await next(context);
-            });
-            
-
 
             await app.RunAsync();
 

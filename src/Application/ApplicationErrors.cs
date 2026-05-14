@@ -62,7 +62,7 @@ public static class ApplicationErrors
         public static readonly Error ProductReview = Error.NotFound(GenerateErrorCode(nameof(ProductReview)));
 
         public static readonly Error User = Error.NotFound(GenerateErrorCode(nameof(User)));
-        public static readonly Error rename2 = Error.NotFound(GenerateErrorCode(nameof(rename2)));
+        public static readonly Error Cart = Error.NotFound(GenerateErrorCode(nameof(Cart)));
         public static readonly Error rename3 = Error.NotFound(GenerateErrorCode(nameof(rename3)));
 
     }
@@ -79,16 +79,16 @@ public static class ApplicationErrors
         public static readonly Error ProductTitleMustBeUnique = Error.Conflict("Application.Conflict.ProductTitleMustBeUnique");
     }
 
-    public static class InternalError
+    public static class Unexpected
     {
-        public const string BaseErrorCode = $"ApplicationErrors.InternalError";
+        public const string BaseErrorCode = $"ApplicationErrors.Unexpected";
         public static string GenerateErrorCode(string error)
         {
             return $"{BaseErrorCode}.{error}";
         }
 
         public static readonly Error SavingImageFileFailed = Error.Unexpected(GenerateErrorCode(nameof(SavingImageFileFailed)));
-        public static readonly Error rename1 = Error.Unexpected(GenerateErrorCode(nameof(rename1)));
+        public static readonly Error UnableToAddThisItem = Error.Unexpected(GenerateErrorCode(nameof(UnableToAddThisItem)));
         public static readonly Error rename2 = Error.Unexpected(GenerateErrorCode(nameof(rename2)));
         public static readonly Error rename3 = Error.Unexpected(GenerateErrorCode(nameof(rename3)));
 

@@ -1,8 +1,8 @@
 using Domain.ProductsGroups.ValueObjects;
 
-namespace Application.Features.Public.Products.Dtos;
+namespace Application.Features.Public.ProductsGroups.Dtos;
 
-public sealed record ProductDto
+public sealed record ProductsGroupDto
 {
     public long Id { get; }
     public string Title { get; init; } = null!;
@@ -12,10 +12,10 @@ public sealed record ProductDto
     public string Category { get; init; } = null!;
     public float AverageRating { get; init; }
 
-    public List<ProductVariantDto> Variants { get; init; } = null!;
+    public List<ProductDto> Variants { get; init; } = null!;
 
-    public ProductDto(ProductsGroupId id, string title, string description, Dictionary<string, string> attributes, string brand, string category, ProductAverageRating averageRating,
-        List<ProductVariantDto> variants)
+    public ProductsGroupDto(ProductsGroupId id, string title, string description, Dictionary<string, string> attributes, string brand, string category, ProductAverageRating averageRating,
+        List<ProductDto> variants)
     {
         Id = id.Value;
         Title = title;

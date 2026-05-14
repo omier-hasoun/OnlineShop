@@ -2,11 +2,11 @@
 
 using Application.Features.Management.ProductsGroups.Dtos;
 
-namespace Application.Features.Management.ProductsGroups.Queries.GetProductById;
+namespace Application.Features.Management.ProductsGroups.Queries.GetProductsGroupById;
 
-internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IRequestHandler<GetProductByIdQuery, Result<ProductDto>>
+internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : IRequestHandler<GetProductsGroupByIdQuery, Result<ProductsGroupDto>>
 {
-    public async Task<Result<ProductDto>> Handle(GetProductByIdQuery query, CancellationToken ct)
+    public async Task<Result<ProductsGroupDto>> Handle(GetProductsGroupByIdQuery query, CancellationToken ct)
     {
 
         var productId = query.ProductId;
@@ -23,10 +23,10 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
                                                     (pb, c) => new { pb, c }
                                               )
                                               .Select(
-                                                  x => new ProductDto(x.pb.p.Id, x.pb.p.Title, x.pb.p.Description, x.pb.p.Attributes.ToDictionary()
+                                                  x => new ProductsGroupDto(x.pb.p.Id, x.pb.p.Title, x.pb.p.Description, x.pb.p.Attributes.ToDictionary()
                                                   , x.pb.p.BrandId, x.pb.b.Name, x.c.Id, x.c.Name, x.pb.p.AverageRating,
 
-                                                  x.pb.p.Products.Select(v => new ProductVariantDto(v.Id, v.Price, v.DiscountPercentage, v.PriceBeforeDiscount, v.Images.ToList(),
+                                                  x.pb.p.Products.Select(v => new ProductDto(v.Id, v.Price, v.DiscountPercentage, v.PriceBeforeDiscount, v.Images.ToList(),
                                                   v.Slug, v.Specifications.ToDictionary())).ToList())
 
                                               );

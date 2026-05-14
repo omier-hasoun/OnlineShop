@@ -20,7 +20,8 @@ internal sealed class CartConfig : BaseEntityConfig<Cart>
 
         builder.Property(x => x.GuestId)
                .HasConversion(x => x!.Value.Value, value => new GuestAccountId(value))
-               .ValueGeneratedNever();
+               .ValueGeneratedNever()
+               .IsRequired(false);
 
         builder.HasMany(x => x.Items)
                .WithOne()
@@ -30,7 +31,18 @@ internal sealed class CartConfig : BaseEntityConfig<Cart>
         builder.HasOne<AppUser>()
                .WithOne()
                .HasForeignKey<Cart>(x => x.UserId)
-               .IsRequired(false); 
+               .IsRequired(false);
+
+        builder.HasIndex(x => x.GuestId)
+               .HasFilter("[GuestId] is not null")
+               .IsUnique()
+               .HasDatabaseName("IX_Carts_GuestId");
+
+
+        builder.HasIndex(x => x.UserId)
+               .HasFilter("[UserId] is not null")
+               .IsUnique()
+               .HasDatabaseName("IX_Carts_UserId");
 
         builder.ToTable("Carts", x =>
         {

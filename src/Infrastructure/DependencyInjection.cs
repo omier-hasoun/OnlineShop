@@ -2,7 +2,8 @@
 using System.Threading.Channels;
 using Application.Common.InternalModels;
 using Application.Entities;
- 
+using Domain.Carts;
+using Domain.Carts.CartItems;
 using Domain.Orders;
 using Domain.ProductsGroups;
 using Domain.ProductsGroups.Products;
@@ -50,7 +51,7 @@ public static class DependencyInjection
         services.AddSingleton<IFileStorageService, LocalFileStorage>();
         services.AddHostedService<ImagesProcessorWorker>();
 
-        services.AddSingleton<Channel<ImageProcessingTask>>(sp => {
+        services.AddSingleton(sp => {
 
             return Channel.CreateBounded<ImageProcessingTask>(new BoundedChannelOptions(100)
             {
@@ -79,6 +80,9 @@ public static class DependencyInjection
         services.AddSingleton<App.IIdGenerator<ProductId>, ProductIdGenerator>();
 
         services.AddSingleton<App.IIdGenerator<OrderId>, OrderIdGenerator>();
+        services.AddSingleton<App.IIdGenerator<CartId>, CartIdGenerator>();
+        services.AddSingleton<App.IIdGenerator<CartItemId>, CartItemIdGenerator>();
+
 
 
         return services;

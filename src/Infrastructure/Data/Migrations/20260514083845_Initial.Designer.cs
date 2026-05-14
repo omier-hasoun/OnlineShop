@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260513054342_Init")]
-    partial class Init
+    [Migration("20260514083845_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -267,9 +267,15 @@ namespace Infrastructure.Data.Migrations
 
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
+                    b.HasIndex("GuestId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Carts_GuestId")
+                        .HasFilter("[GuestId] is not null");
+
                     b.HasIndex("UserId")
                         .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                        .HasDatabaseName("IX_Carts_UserId")
+                        .HasFilter("[UserId] is not null");
 
                     b.ToTable("Carts", (string)null);
                 });

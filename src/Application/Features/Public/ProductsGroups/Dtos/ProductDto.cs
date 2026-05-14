@@ -3,9 +3,9 @@ using Domain.Common.ValueObjects;
 using Domain.ProductsGroups.Products;
 using Domain.ProductsGroups.ValueObjects;
 
-namespace Application.Features.Public.Products.Dtos;
+namespace Application.Features.Public.ProductsGroups.Dtos;
 
-public sealed record ProductVariantDto
+public sealed record ProductDto
 {
     public long Id { get; }
     public double Price { get; }
@@ -16,7 +16,7 @@ public sealed record ProductVariantDto
     public Dictionary<string, string> Specifications { get; } = [];
     public string Slug { get; } = null!;
 
-    public ProductVariantDto(ProductId id, Money price, byte? discountPercentage, Money? priceBeforeDiscount, List<ProductImage> images, string slug, Dictionary<string, string> specifications)
+    public ProductDto(ProductId id, Money price, byte? discountPercentage, Money? priceBeforeDiscount, List<ProductImage> images, string slug, Dictionary<string, string> specifications)
     {
         Id = id.Value;
         Slug = slug;

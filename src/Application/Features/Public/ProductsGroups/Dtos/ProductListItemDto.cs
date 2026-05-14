@@ -1,7 +1,7 @@
 using Domain.Common.ValueObjects;
 using Domain.ProductsGroups.ValueObjects;
 
-namespace Application.Features.Public.Products.Dtos;
+namespace Application.Features.Public.ProductsGroups.Dtos;
 /// <summary>
 /// This Dto used to for listing Products when requested
 /// </summary>

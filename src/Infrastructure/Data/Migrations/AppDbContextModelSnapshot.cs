@@ -264,9 +264,15 @@ namespace Infrastructure.Data.Migrations
 
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
+                    b.HasIndex("GuestId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Carts_GuestId")
+                        .HasFilter("[GuestId] is not null");
+
                     b.HasIndex("UserId")
                         .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                        .HasDatabaseName("IX_Carts_UserId")
+                        .HasFilter("[UserId] is not null");
 
                     b.ToTable("Carts", (string)null);
                 });
