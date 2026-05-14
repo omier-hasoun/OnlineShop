@@ -15,7 +15,7 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
         base.Configure(builder);
 
         builder.Ignore(x => x.Specifications);
-
+        builder.Ignore(x => x.HasActiveDiscount);
 
         builder.HasKey(e => e.Id)
                .IsClustered();
@@ -33,8 +33,8 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
                .HasColumnType("VARCHAR(80)")
                .IsRequired();
 
-        builder.Property(x => x.Barcode)
-               .HasColumnType("VARCHAR(100)")
+        builder.Property(x => x.BarCode)
+               .HasColumnType("VARCHAR(50)")
                .IsRequired();
 
         builder.Property(x => x.DiscountPercentage)

@@ -17,7 +17,9 @@ public sealed record ProductListItemDto
     public byte? DiscountPercentage { get; init; }
     public double? PriceBeforeDiscount { get; init; }
 
-    public ProductListItemDto(ProductsGroupId id, string title, Money? priceBeforeDiscount, string brand, ProductAverageRating avgerageRating, Money priceNow, ProductImage? primaryImage, byte? discountPercentage, ProductsGroupStatus productsGroupStatus)
+    public ProductListItemDto(ProductsGroupId id, string title, Money? priceBeforeDiscount,
+        string brand, ProductAverageRating avgerageRating, Money priceNow, ProductImage? primaryImage,
+        byte? discountPercentage, ProductsGroupStatus productsGroupStatus)
     {
         Id = id.ToString();
         Title = title;

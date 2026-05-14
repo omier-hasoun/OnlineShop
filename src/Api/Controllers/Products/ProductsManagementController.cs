@@ -28,9 +28,11 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
                     nameof(GetProductGroupById),
                     "ProductsManagement",
                     new { productGroupId = response }),
-                response),
 
-            Problem);
+                    new { productGroupId = response }),
+
+                    Problem
+        );
     }
 
     [HttpPut("{productGroupId:required}")]

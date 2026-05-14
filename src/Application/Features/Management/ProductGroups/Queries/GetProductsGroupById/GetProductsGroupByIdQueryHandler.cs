@@ -4,11 +4,10 @@ using Application.Features.Management.ProductGroups.Dtos;
 
 namespace Application.Features.Management.ProductGroups.Queries.GetProductsGroupById;
 
-internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : IRequestHandler<GetProductsGroupByIdQuery, Result<ProductsGroupDto>>
+internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : IRequestHandler<GetProductsGroupByIdQuery, Result<ProductGroupDto>>
 {
-    public async Task<Result<ProductsGroupDto>> Handle(GetProductsGroupByIdQuery query, CancellationToken ct)
+    public async Task<Result<ProductGroupDto>> Handle(GetProductsGroupByIdQuery query, CancellationToken ct)
     {
-
         var productId = query.ProductId;
 
         var getProductQuery = context.ProductGroups.AsNoTracking()
@@ -23,11 +22,14 @@ internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : 
                                                     (pb, c) => new { pb, c }
                                               )
                                               .Select(
-                                                  x => new ProductsGroupDto(x.pb.p.Id, x.pb.p.Title, x.pb.p.Description, x.pb.p.Attributes.ToDictionary()
+                                                  x => new ProductGroupDto(x.pb.p.Id, x.pb.p.Title, x.pb.p.Description, x.pb.p.Attributes.ToDictionary()
                                                   , x.pb.p.BrandId, x.pb.b.Name, x.c.Id, x.c.Name, x.pb.p.AverageRating,
 
-                                                  x.pb.p.Products.Select(v => new ProductDto(v.Id, v.Price, v.DiscountPercentage, v.PriceBeforeDiscount, v.Images.ToList(),
-                                                  v.Slug, v.Specifications.ToDictionary())).ToList())
+                                                  x.pb.p.Products.Select(v => new ProductGroupListProductsDto(
+                                                                            v.Id, v.Price, v.HasActiveDiscount, v.DiscountPercentage,
+                                                                            v.PriceBeforeDiscount, v.DiscountExpiresOn, v.Status, v.Images.FirstOrDefault()))
+                                              
+                                                  .ToList())
 
                                               );
 

@@ -23,6 +23,7 @@
     <Folder Include="Features\Management\Brands\Commands\" />
     <Folder Include="Features\Management\Brands\Queries\" />
     <Folder Include="Features\Management\Categories\Commands\" />
+    <Folder Include="Features\Management\Categories\Dtos\" />
     <Folder Include="Features\Management\Categories\Queries\" />
     <Folder Include="Features\Public\Orders\Commands\" />
     <Folder Include="Features\Public\Orders\Dtos\" />

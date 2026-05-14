@@ -8,7 +8,7 @@ public sealed class Product : BaseEntity<ProductId>
     {
     }
 
-    private Product(ProductId id, ProductsGroupId productsGroupId, Money? priceBeforeDiscount, Money price, byte? discountPercentage,  ProductStatus status,
+    private Product(ProductId id, ProductsGroupId productsGroupId, Money? priceBeforeDiscount, Money price, byte? discountPercentage, DateOnly? discountExpiresOn, ProductStatus status,
         int width, int height, int length, int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications, List<ProductImage> images)
         : base(id)
     {
@@ -16,6 +16,7 @@ public sealed class Product : BaseEntity<ProductId>
                 
         PriceBeforeDiscount = priceBeforeDiscount;
         DiscountPercentage = discountPercentage;
+        DiscountExpiresOn = discountExpiresOn;
         Price = price;
         Status = status;
         Width = width;
@@ -25,7 +26,7 @@ public sealed class Product : BaseEntity<ProductId>
 
         Sku = sku;
         Slug = slug;
-        Barcode = barCode;
+        BarCode = barCode;
         _images = images;
         _specifications = specifications;
     }
@@ -51,31 +52,46 @@ public sealed class Product : BaseEntity<ProductId>
 
         byte? discountPercentage = null;
         Money? priceBeforeDisount = null;
+        DateOnly? discountExpiresOn = null;
         ProductStatus status = ProductStatus.Draft;
-        
-        return new Product(id, productsGroupId, priceBeforeDisount, Price, discountPercentage, status,
-            width, height, length, weight, sku, slug, barCode, specifications, []);
+        List<ProductImage> images = [];
+
+
+        return new Product(id, productsGroupId, priceBeforeDisount, Price, discountPercentage, discountExpiresOn, status,
+            width, height, length, weight, sku, slug, barCode, specifications, images);
     }
 
     public ProductsGroupId ProductsGroupId { get; private init; }
+
+    public bool HasActiveDiscount =>
+        DiscountPercentage is not null &&
+        DiscountExpiresOn.HasValue &&
+        DateOnly.FromDateTime(DateTime.UtcNow) <= DiscountExpiresOn.Value;
 
     public int Width { get; private set; }
     public int Height { get; private set; }
     public int Length { get; private set; }
     public int Weight { get; private set; }
 
-    public Money Price { get; private init; } = null!;
-    public Money? PriceBeforeDiscount { get; private init; }
+    public Money Price { get; private set; } = null!;
+
+    public DateOnly? DiscountExpiresOn { get; private set; }
+
+    public Money? PriceBeforeDiscount { get; private set; }
     public byte? DiscountPercentage { get; private set;}
 
     public ProductStatus Status { get; private set; }
 
     public string Sku { get; private set; } = null!;
+
     public string Slug { get; private set; } = null!;
-    public string Barcode { get; private init; } = null!;
+
+    public string BarCode { get; private init; } = null!;
+
 
     private List<ProductImage> _images = [];
     public IReadOnlyCollection<ProductImage> Images { get { return _images.AsReadOnly(); } private set { _images = value is null ? [] : value.ToList(); } }
+
 
     private Dictionary<string, string> _specifications = [];
     public IReadOnlyDictionary<string, string> Specifications { get { return _specifications.AsReadOnly(); } private set { _specifications = value is null ?[] :value.ToDictionary(); } }
@@ -113,6 +129,11 @@ public sealed class Product : BaseEntity<ProductId>
     public void Archive()
     {
         Status = ProductStatus.Archived;
+    }
+
+    public Result<Success> ApplyDiscount()
+    {
+        throw new NotImplementedException();
     }
 
 
