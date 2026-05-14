@@ -1,12 +1,14 @@
 
 using Api.Requests;
 using Application.Features.Public.Carts.Commands.AddCartItem;
+using Application.Features.Public.Carts.Commands.RemoveCartItem;
+using Application.Features.Public.Carts.Commands.UpdateCartItem;
 using Application.Features.Public.Carts.Queries.GetCart;
 using MediatR;
 
 namespace Api.Controllers.Carts;
 
-[Route("api/cart")]
+[Route("api/my-cart")]
 public sealed class CartsController(IMediator mediator, ICartIdentityService cartIdentity) : ApiController
 {
     [HttpGet()]
@@ -14,7 +16,7 @@ public sealed class CartsController(IMediator mediator, ICartIdentityService car
     {
         var result = await mediator.Send(new GetCartQuery(cartIdentity.GetCurrentIdentity()), ct);
 
-        return result.Match((response) => Ok(response), Problem );
+        return result.Match((response) => Ok(response), Problem);
     }
 
     [HttpPost()]
@@ -23,5 +25,21 @@ public sealed class CartsController(IMediator mediator, ICartIdentityService car
         var result = await mediator.Send(new AddCartItemCommand(cartIdentity.GetCurrentIdentity(), request.ProductId, request.Quantity), ct);
 
         return result.Match((response) => Ok(new { cartItemId = response }), Problem);
+    }
+
+    [HttpDelete("{cartItemId:required}")]
+    public async Task<IActionResult> RemoveItem(long cartItemId, CancellationToken ct)
+    {
+        var result = await mediator.Send(new RemoveCartItemCommand(cartItemId, cartIdentity.GetCurrentIdentity()), ct);
+
+        return result.Match((response) => NoContent(), Problem);
+    }
+
+    [HttpPut("{cartItemId:required}")]
+    public async Task<IActionResult> UpdateItem(long cartItemId, [FromBody] UpdateCartItemRequest request, CancellationToken ct)
+    {
+        var result = await mediator.Send(new UpdateCartItemCommand(cartIdentity.GetCurrentIdentity(), cartItemId, request.Quantity), ct);
+
+        return result.Match((response) => NoContent(), Problem);
     }
 }

@@ -33,7 +33,7 @@ public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
     public short Quantity { get; private set; }
     public DateTime CreatedAt { get; set; }
 
-    public Result<Success> UpdateQuantity(short newQuantity)
+    public Result<Updated> UpdateQuantity(short newQuantity)
     {
         var validationResult = ValidateQuantity(newQuantity);
 
@@ -44,13 +44,13 @@ public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
 
         Quantity = newQuantity;
 
-        return Result.Success;
+        return Result.Updated;
     }
 
 
     private static Result<Success> ValidateQuantity(short quantity)
     {
-        if (quantity < CartItemRules.MinQuantity || quantity > CartItemRules.MaxQuantity)
+        if (ValHelper.IsOutOfRange(quantity, CartItemRules.MinQuantity, CartItemRules.MaxQuantity))
         {
             return DomainErrors.Carts.QuantityOutOfRange;
         }

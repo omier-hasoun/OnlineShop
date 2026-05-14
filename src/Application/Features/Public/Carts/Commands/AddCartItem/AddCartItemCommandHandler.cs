@@ -16,11 +16,11 @@ internal sealed class AddCartItemCommandHandler(IAppDbContext context, IIdGenera
 
         if (cartIdentity.IsUser)
         {
-            cart = await context.Carts.FirstOrDefaultAsync(x => x.UserId == cartIdentity.UserId, ct);
+            cart = await context.Carts.Include(x => x.Items).FirstOrDefaultAsync(x => x.UserId == cartIdentity.UserId, ct);
         }
         else
         {
-            cart = await context.Carts.FirstOrDefaultAsync(x => x.GuestId == cartIdentity.GuestId, ct);
+            cart = await context.Carts.Include(x => x.Items).FirstOrDefaultAsync(x => x.GuestId == cartIdentity.GuestId, ct);
         }
 
         if (cart is null)
