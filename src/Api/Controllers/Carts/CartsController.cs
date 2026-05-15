@@ -24,7 +24,7 @@ public sealed class CartsController(IMediator mediator, ICartIdentityService car
     {
         var result = await mediator.Send(new AddCartItemCommand(cartIdentity.GetCurrentIdentity(), request.ProductId, request.Quantity), ct);
 
-        return result.Match((response) => Ok(new { cartItemId = response }), Problem);
+        return result.Match((response) => Ok(new { Id = response }), Problem);
     }
 
     [HttpDelete("{cartItemId:required}")]

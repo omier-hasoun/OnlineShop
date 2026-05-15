@@ -13,21 +13,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FileSignatures" Version="7.1.0" />
+    <PackageReference Include="FileSignatures" Version="7.2.0" />
     <PackageReference Include="IdGen" Version="3.0.7" />
     <PackageReference Include="MaxMind.GeoIP2" Version="5.4.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.6">
+    <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
     <PackageReference Include="NetVips" Version="3.2.0" />
     <PackageReference Include="NetVips.Native.win-x64" Version="8.18.2" />
     <PackageReference Include="Shippo" Version="4.0.2" />
-    <PackageReference Include="Stripe.net" Version="51.0.0" />
+    <PackageReference Include="Stripe.net" Version="51.1.0" />
   </ItemGroup>
 
 </Project>

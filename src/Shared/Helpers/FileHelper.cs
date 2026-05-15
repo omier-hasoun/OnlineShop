@@ -14,6 +14,17 @@ public static class FileHelper
         return false;
     }
 
+    public static string GetExtensionFromMediaType(string mediaType)
+    {
+        if(TryGetExtesnionFromMediaType(mediaType, out var ext))
+        {
+            return ext;
+        }
+
+        throw new InvalidOperationException("Couldn't get file extension");
+
+    }
+
 private static readonly Dictionary<string, string> _extensions = new()
 {
     // JPEG

@@ -2,7 +2,6 @@
 
 using Domain.Carts;
 using Domain.Carts.CartItems;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace Application.Features.Public.Carts.Commands.AddCartItem;
 

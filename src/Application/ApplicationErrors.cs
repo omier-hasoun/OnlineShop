@@ -12,13 +12,17 @@ public static class ApplicationErrors
         }
 
         public static readonly Error MissingInput = Error.Validation("Application.Validation.MissingInput");
+
         public static readonly Error InvalidImageSize = Error.Validation("Application.Validation.InvalidImageSize");
+
         public static readonly Error InvalidImageFormat = Error.Validation("Application.Validation.InvalidImageFormat");
-        public static readonly Error InvalidImage= Error.Validation("Application.Validation.InvalidImage");
+
+        public static readonly Error InvalidImage = Error.Validation("Application.Validation.InvalidImage");
+
         public static readonly Error PageSizeTooBig = Error.Validation("Application.Validation.PageSizeTooBig");
-        public static readonly Error InvalidImageDimensions = Error.Validation("Application.Validation.InvalidImageDimensions");
 
         public static readonly Error ProductStatusInvalid = Error.Validation(GenerateErrorCode(nameof(ProductStatusInvalid)));
+
         public static readonly Error rename2 = Error.Validation(GenerateErrorCode(nameof(rename2)));
         public static readonly Error rename3 = Error.Validation(GenerateErrorCode(nameof(rename3)));
         public static readonly Error rename4 = Error.Validation(GenerateErrorCode(nameof(rename4)));
@@ -56,9 +60,13 @@ public static class ApplicationErrors
         }
 
         public static readonly Error ProductGroup = Error.NotFound(GenerateErrorCode(nameof(ProductGroup)));
+
         public static readonly Error Product = Error.NotFound(GenerateErrorCode(nameof(Product)));
+
         public static readonly Error Order = Error.NotFound(GenerateErrorCode(nameof(Order)));
+
         public static readonly Error OrderItem = Error.NotFound(GenerateErrorCode(nameof(OrderItem)));
+
         public static readonly Error ProductReview = Error.NotFound(GenerateErrorCode(nameof(ProductReview)));
 
         public static readonly Error User = Error.NotFound(GenerateErrorCode(nameof(User)));

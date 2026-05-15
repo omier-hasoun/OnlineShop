@@ -10,14 +10,16 @@ using Application.Features.Management.ProductGroups.Queries.GetProductsGroupById
 using Application.Features.Management.ProductGroups.Commands.PublishProduct;
 using Application.Features.Management.ProductGroups.Commands.UnpublishProduct;
 using Application.Features.Management.ProductGroups.Commands.ArchiveProductGroup;
+using Application.Features.Management.ProductGroups.Queries.GetProductById;
+using Application.Common.RequestModels;
 
 namespace Api.Controllers.Products;
 
-[Route("api/management/product-group/")]
+[Route("api/management/")]
 public sealed class ProductsManagementController(IMediator mediator) : ApiController
 {
-
-    [HttpPost]
+    #region commands
+    [HttpPost("product-group")]
     public async Task<IActionResult> CreateProductGroup([FromBody] CreateProductGroupCommand request, CancellationToken ct)
     {
 
@@ -27,15 +29,15 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
                 Url.Action(
                     nameof(GetProductGroupById),
                     "ProductsManagement",
-                    new { productGroupId = response }),
+                    new { Id = response }),
 
-                    new { productGroupId = response }),
+                    new { Id = response }),
 
                     Problem
         );
     }
 
-    [HttpPut("{productGroupId:required}")]
+    [HttpPut("product-group/{productGroupId:required}")]
     public async Task<IActionResult> UpdateProductGroup(long productGroupId, [FromBody] UpdateProductGroupRequest request, CancellationToken ct)
     {
         var command = new UpdateProductGroupCommand(
@@ -51,9 +53,7 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
 
         return result.Match((response) => NoContent(), Problem);
     }
-
-
-    [HttpPost("{productGroupId:long}/products")]
+    [HttpPost("product-group/{productGroupId:long}/products")]
     public async Task<IActionResult> CreateProduct(long productGroupId, [FromBody] CreateProductCommand request, CancellationToken ct)
     {
         var command = new AddProductCommand(
@@ -70,11 +70,11 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
 
         var result = await mediator.Send(command, ct);
 
-        return result.Match((response) => Created( Url.Action($"api/management/products/{productGroupId}/products/", new { productId = response }), response), Problem);
+        return result.Match((response) => Created(Url.Action($"api/management/products/{productGroupId}/products/", new { Id = response }), response), Problem);
     }
 
 
-    [HttpPost("{productGroupId:required}/publish")]
+    [HttpPost("product-group/{productGroupId:required}/publish")]
     public async Task<IActionResult> PublishProductGroup(long productGroupId, CancellationToken ct)
     {
 
@@ -82,7 +82,7 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
 
         return result.Match((response) => NoContent(), Problem);
     }
-    [HttpPost("{productGroupId:required}/unpublish")]
+    [HttpPost("product-group/{productGroupId:required}/unpublish")]
     public async Task<IActionResult> UnpublishProductGroup(long productGroupId, CancellationToken ct)
     {
 
@@ -91,7 +91,7 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
         return result.Match((response) => NoContent(), Problem);
     }
 
-    [HttpPost("{productGroupId:required}/archive")]
+    [HttpPost("product-group/{productGroupId:required}/archive")]
     public async Task<IActionResult> ArchiveProductGroup(long productGroupId, CancellationToken ct)
     {
 
@@ -101,7 +101,7 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
     }
 
 
-    [HttpPost("{productGroupId:required}/products/{productId:required}/publish")]
+    [HttpPost("product-group/{productGroupId:required}/products/{productId:required}/publish")]
     public async Task<IActionResult> PublishProduct(long productGroupId, long productId, CancellationToken ct)
     {
         var result = await mediator.Send(new PublishProductCommand(productGroupId, productId), ct);
@@ -109,7 +109,7 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
         return result.Match((response) => NoContent(), Problem);
     }
 
-    [HttpPost("{productGroupId:required}/products/{productId:required}/unpublish")]
+    [HttpPost("product-group/{productGroupId:required}/products/{productId:required}/unpublish")]
     public async Task<IActionResult> UnpublishProduct(long productGroupId, long productId, CancellationToken ct)
     {
         var result = await mediator.Send(new UnpublishProductCommand(productGroupId, productId), ct);
@@ -117,23 +117,32 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
         return result.Match((response) => NoContent(), Problem);
     }
 
-    //[HttpPost("{productGroupId:required}/products/{productId:required}/archive")]
-    //public async Task<IActionResult> ArchiveVariant(long productGroupId, long productId, CancellationToken ct)
-    //{
-    //    var result = await mediator.Send(new , ct);
-
-    //    return result.Match((response) => NoContent(), Problem);
-    //}
-
-    [HttpPut("{productGroupId:required}/products/{productId:required}/images")]
+    [HttpPut("product-group/{productGroupId:required}/products/{productId:required}/images")]
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> UpdateVariantImages(long productGroupId, long productId, [FromForm] UpdateProductImagesRequest request, CancellationToken ct)
     {
+        List<ProductImageUploadDto> imagesDto = new(request.Images.Count);
+
+        request.Images.ForEach(image => imagesDto.Add(new ProductImageUploadDto
+        {
+            SortOrder = image.SortOrder,
+            File = new FileUploadDto
+            {
+                ContentStream = image.File.OpenReadStream(),
+                ContentLength = image.File.Length,
+                MediaType = image.File.ContentType,
+                FileName = image.File.FileName,
+            }
+
+
+        }
+        ));
+
         var command = new UpdateProductImagesCommand
         {
-            Images = request.Images,
-            VariantId = productId,
-            ProductId = productGroupId
+            Images = imagesDto,
+            ProductId = productId,
+            ProductGroupId = productGroupId
         };
         var result = await mediator.Send(command, ct);
 
@@ -141,8 +150,12 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
 
     }
 
+    #endregion
 
-    [HttpGet()]
+
+    #region queries
+
+    [HttpGet("product-group/")]
     public async Task<IActionResult> ListProducts([FromQuery] ListProductsQuery request, CancellationToken ct)
     {
 
@@ -151,12 +164,32 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
         return result.Match((response) => Ok(new { Products = response }), Problem);
     }
 
-    [HttpGet("{productGroupId:required}")]
+    [HttpGet("product-group/{productGroupId}")]
     public async Task<IActionResult> GetProductGroupById(long productGroupId, CancellationToken ct)
     {
 
         var result = await mediator.Send(new GetProductsGroupByIdQuery(productGroupId), ct);
 
-        return result.Match((response) => Ok(new { ProductGroup = response }), Problem);
+        return result.Match((response) => Ok(new { response }), Problem);
     }
+
+    [HttpGet("products/{productId}")]
+    public async Task<IActionResult> GetProductById(long productId, CancellationToken ct)
+    {
+
+        var result = await mediator.Send(new GetProductByIdQuery(productId), ct);
+
+        return result.Match((response) => Ok(new { response }), Problem);
+    }
+
+    #endregion
 }
+
+
+//[HttpPost("{productGroupId:required}/products/{productId:required}/archive")]
+//public async Task<IActionResult> ArchiveVariant(long productGroupId, long productId, CancellationToken ct)
+//{
+//    var result = await mediator.Send(new , ct);
+
+//    return result.Match((response) => NoContent(), Problem);
+//}

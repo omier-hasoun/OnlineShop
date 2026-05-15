@@ -4,5 +4,5 @@ namespace Api.Requests;
 
 public sealed record UpdateProductImagesRequest
 {
-    public required List<ProductImageUpload> Images { get; init; } 
+    public required List<ProductImageUploadRequest> Images { get; init; } 
 }

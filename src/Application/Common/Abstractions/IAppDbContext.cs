@@ -58,5 +58,5 @@ public interface IAppDbContext
 
     DbSet<Shipment> Shipments {get; }
 
-    Task<bool> SaveAsync(CancellationToken ct = default);
+    Task SaveAsync(CancellationToken ct = default);
 }

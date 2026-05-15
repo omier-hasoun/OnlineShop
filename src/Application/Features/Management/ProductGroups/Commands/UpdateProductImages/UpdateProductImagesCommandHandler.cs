@@ -7,51 +7,63 @@ using Shared.Helpers;
 namespace Application.Features.Management.ProductGroups.Commands.UpdateProductImages;
 
 internal sealed class UpdateProductImagesCommandHandler
-(IAppDbContext context, IFileStorageService fileStore, IUniqueFileNameGenerator nameGen, IImageProcessingService imageProcessor, IFileSignetureValidator fileValidator)
+(IAppDbContext context, IImageStorageService fileStore, IUniqueFileNameGenerator nameGen, IImageProcessingService imageProcessor, IImageValidator fileValidator)
 : IRequestHandler<UpdateProductImagesCommand, Result<Updated>>
 {
-    public async Task<Result<Updated>> Handle(UpdateProductImagesCommand command, CancellationToken ct)
+    public async Task<Result<Updated>> Handle(UpdateProductImagesCommand request, CancellationToken ct)
     {
-        var areValid = AreValidImages(command.Images, out string? invalidFileName);
+        ProductsGroupId productGroupId = new(request.ProductGroupId);
 
-        if (!areValid)
-            return ApplicationErrors.Validation.InvalidImage.WithParameters(invalidFileName!);
+        ProductId productId = new(request.ProductId);
 
-
-        ProductsGroupId productGroupId = new(command.ProductId);
-        ProductId productId = new(command.VariantId);
-
-        List<ProductImage> productImages = new (command.Images.Count);
-        List<ImageProcessingTask> processImagesTasks = new (command.Images.Count);
-
-        var product = await context.ProductGroups.Include(x => x.Products).FirstOrDefaultAsync(product => product.Id == productGroupId, ct);
+        var product = await context.ProductGroups.Include(x => x.Products).FirstOrDefaultAsync(pg => pg.Id == productGroupId, ct);
 
         if (product is null)
             return ApplicationErrors.NotFound.Product;
 
-        foreach (var image in command.Images)
+        var Images = request.Images;
+
+        List<ProductImage> productImages = new(Images.Count);
+        List<ImageProcessingTask> processImagesTasks = new(Images.Count);
+        List<string>? invalidImages = new(Images.Count);
+
+        Images.ForEach(image =>
+        {
+            if (!IsValidImage(image.File))
+            {
+                invalidImages.Add(image.File.FileName);
+            }
+        });
+
+        if (invalidImages.Count > 0)
+            return ApplicationErrors.Validation.InvalidImage.WithParameters(invalidImages);
+
+        foreach (var image in Images)
         {
 
-            if (FileHelper.TryGetExtesnionFromMediaType(image.File.ContentType, out string ext) is false)
-            {
-                // this should not fail cause of the previous validation but just in case 
-                return ApplicationErrors.Validation.InvalidImage.WithParameters(image.File.FileName);
-            }
-
             var fileName = nameGen.Generate();
-            var fileNameWithExtension = fileName + ext;
+            var fileNameWithExtension = fileName + FileHelper.GetExtensionFromMediaType(image.File.MediaType);
 
-            if (await fileStore.SaveImageAsync(image.File, fileNameWithExtension, ct) is false)
+            if (await fileStore.SaveImageAsync(image.File.ContentStream, fileNameWithExtension, ct) is false)
             {
+                if(processImagesTasks.Count > 0)
+                {
+                    List<string> fileNamesWithExt = new(processImagesTasks.Count);
+
+                    processImagesTasks.ForEach(x => fileNamesWithExt.Add(x.FileName));
+
+                    fileStore.DeleteAllImages(fileNamesWithExt);
+                }
+
                 return ApplicationErrors.Unexpected.SavingImageFileFailed;
             }
 
             productImages.Add(ProductImage.From(fileName + ".webp", image.SortOrder).Value);// saving as .webp because the image will be converted to webp
 
             processImagesTasks.Add(new ImageProcessingTask(fileNameWithExtension));
+            
 
         }
-
         var result = product.UpdateProductImages(productId, productImages);
 
         if (result.Failed)
@@ -59,27 +71,25 @@ internal sealed class UpdateProductImagesCommandHandler
 
         await context.SaveAsync(ct);
 
-        await imageProcessor.Process(processImagesTasks);
+        await imageProcessor.StartProcessing(processImagesTasks);
 
         return Result.Updated;
     }
 
-    private bool AreValidImages(List<ProductImageUpload> Images, out string? fileName)
+    private bool IsValidImage(FileUploadDto image)
     {
-        fileName = null;
 
-        if ( Images is null || Images.Count ==  0)
-            return false;
-
-        foreach (var image in Images)
+        if 
+        (
+            !ApplicationRules.Uploads.AllowedImageMediaTypesList.Contains(image.MediaType) || 
+            !image.ContentStream.CanSeek ||
+            !fileValidator.Validate(image.ContentStream, ApplicationRules.Uploads.MinWidth, ApplicationRules.Uploads.MinHeight)
+        )
         {
-
-            if (!fileValidator.Validate(image.File))
-            {
-                fileName = image.File.FileName!;
-                return false;
-            }
+            return false;
         }
+        
+        image.ContentStream.Position = 0L;
         return true;
     }
 }

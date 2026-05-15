@@ -1,10 +1,9 @@
 
-using Api.Minimals;
 using Application.Common.Configurations;
 using Application.Entities;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
-
 
 namespace Api
 {
@@ -24,16 +23,22 @@ namespace Api
 
             builder.Services.Configure<IdentityOptions>(config.GetSection(nameof(IdentityOptions)));
 
-
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 20 * 1024 * 1024;//20 mb
+                options.MemoryBufferThreshold = 32 * 1024; // 32 KB
+            });
 
             builder.Services.AddApiServices(config, builder.Environment)
                             .AddApplicationServices(config)
                             .AddInfrastructureServices(config,  builder.Environment);
 
+
+
+
             GlobalSetups.Init();
 
             var app = builder.Build();
-
 
             if (app.Environment.IsDevelopment())
             {

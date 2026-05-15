@@ -1,4 +1,4 @@
-PUT https://localhost:7039/api/management/products/25774633353478144/variants/25775452740124672/images
+PUT https://localhost:7039/api/management/product-group/3/products/6/images
 Content-Type: multipart/form-data; boundary=MyBoundary
 
 --MyBoundary

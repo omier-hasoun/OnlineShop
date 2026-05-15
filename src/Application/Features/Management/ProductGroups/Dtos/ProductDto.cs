@@ -29,7 +29,7 @@ public sealed record ProductDto
         Specifications = specifications;
         Status = status.ToString();
         Images = new List<ProductImageDto>(images.Count);
-        images.ForEach(image => Images.Add(new(image));
+        images.ForEach(image => Images.Add(new(image)));
     }
 
     public long ProductId { get; }

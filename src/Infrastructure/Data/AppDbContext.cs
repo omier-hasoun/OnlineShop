@@ -58,9 +58,9 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     {
     }
 
-    public async Task<bool> SaveAsync(CancellationToken ct = default)
+    public async Task SaveAsync(CancellationToken ct = default)
     {
-        return await SaveChangesAsync(ct) > 0;
+        await SaveChangesAsync(ct);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

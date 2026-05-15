@@ -14,8 +14,8 @@ internal sealed class UpdateProductImagesCommandValidator : AbstractValidator<Up
                       .WithMessage("Images count cannot exceed 10");
 
         RuleForEach(x => x.Images).NotEmpty()
-                                  .Must(image => image.File.Length <= ApplicationRules.Uploads.MaxImageSizeForProducts)
-                                  .WithMessage($"A single image cannot cannot exceed 10 Mb");
+                                  .Must(image => image.File.ContentLength <= ApplicationRules.Uploads.MaxImageSizeForProducts)
+                                  .WithMessage($"A single image cannot cannot exceed {ApplicationRules.Uploads.MaxImageSizeForProducts} Mb");
     }
 
 

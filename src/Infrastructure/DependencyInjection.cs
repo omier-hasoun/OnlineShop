@@ -47,8 +47,8 @@ public static class DependencyInjection
 
     private static IServiceCollection AddCustomServices(this IServiceCollection services)
     {
-        services.AddSingleton<IFileSignetureValidator, FileValidator>();
-        services.AddSingleton<IFileStorageService, LocalFileStorage>();
+        services.AddSingleton<IImageValidator, FileValidator>();
+        services.AddSingleton<IImageStorageService, LocalImageStorageService>();
         services.AddHostedService<ImagesProcessorWorker>();
 
         services.AddSingleton(sp => {

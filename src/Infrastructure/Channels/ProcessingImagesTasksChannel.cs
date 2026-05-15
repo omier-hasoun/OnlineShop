@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 using System.Threading.Channels;
 using Application.Common.InternalModels;
 
@@ -19,7 +17,7 @@ internal sealed class ProcessingImagesTasksChannel : IImageProcessingService, II
         return _channel.Reader.ReadAllAsync(ct);
     }
 
-    public async ValueTask Process(List<ImageProcessingTask> processingImagesTasks)
+    public async ValueTask StartProcessing(List<ImageProcessingTask> processingImagesTasks)
     {
         processingImagesTasks.ForEach(async x => await _channel.Writer.WriteAsync(x, CancellationToken.None));
     }

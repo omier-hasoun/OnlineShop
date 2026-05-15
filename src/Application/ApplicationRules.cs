@@ -14,14 +14,16 @@ public static class ApplicationRules
             MediaTypeNames.Image.Gif,
             MediaTypeNames.Image.Png,
             MediaTypeNames.Image.Webp,
+            MediaTypeNames.Image.Avif,
+            MediaTypeNames.Image.Tiff,
 
         };
 
-        public static readonly string[] AllowedImageExtensionsList = { "jpg", "jpeg", "png", "webp", "gif", "bmb" };
+        public static readonly string[] AllowedImageExtensionsList = { "jpg", "jpeg", "png", "webp", "gif", "bmb", "avif", "Tiff" };
 
         public static readonly string AllowedImageExtensions = string.Join(", ", AllowedImageExtensionsList);
 
-        public const int MaxImageSizeForProducts = 10 * 1024 * 1024;//10 Mb
+        public const int MaxImageSizeForProducts = 15 * 1024 * 1024;//15 Mb
 
         public const short MinWidth = 800;
         public const short MinHeight = 800;
