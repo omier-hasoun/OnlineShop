@@ -28,7 +28,6 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="MediatR" Version="12.5.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.8" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
         <PackageReference Include="Scalar.AspNetCore" Version="2.14.14" />
