@@ -1,4 +1,6 @@
 
+using IdGen;
+
 namespace Infrastructure.Data.IdGenerators.Primitives;
 
 internal sealed class SnowflakeGenerator(IdGen.IIdGenerator<long> _gen): IPrimitiveTypeIdGenerator<long>

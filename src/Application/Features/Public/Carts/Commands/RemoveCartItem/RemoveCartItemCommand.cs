@@ -6,5 +6,5 @@ namespace Application.Features.Public.Carts.Commands.RemoveCartItem;
 
 public sealed record RemoveCartItemCommand(long CartItemId, CartIdentity CartIdentity) : IRequest<Result<Deleted>>
 {
-    public CartItemId ParsedCartItemId => new CartItemId(CartItemId);
+    internal CartItemId ParsedCartItemId => new(CartItemId);
 }

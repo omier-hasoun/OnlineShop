@@ -47,7 +47,7 @@ public static class DomainErrors
 
     public static readonly Error cartItemIdInvalid = Error.Validation($"{BaseErrorCode}.{nameof(cartItemIdInvalid)}");
 
-    public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+    public static readonly Error MissingInput = Error.Validation($"{BaseErrorCode}.{nameof(MissingInput)}");
 
     public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
 
@@ -147,7 +147,7 @@ public static class DomainErrors
 
         public static readonly Error PriceOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(PriceOutOfRange)}");
 
-        public static readonly Error imagesNamesInvalid = Error.Validation($"{BaseErrorCode}.{nameof(imagesNamesInvalid)}");
+        public static readonly Error ImagesNamesIsEmpty = Error.Validation($"{BaseErrorCode}.{nameof(ImagesNamesIsEmpty)}");
 
         public static readonly Error BarCodeRequired = Error.Validation($"{BaseErrorCode}.{nameof(BarCodeRequired)}");
 
@@ -171,9 +171,9 @@ public static class DomainErrors
 
         public static readonly Error ImagesNamesMustMatchProductImagesNames = Error.Validation($"{BaseErrorCode}.{nameof(ImagesNamesMustMatchProductImagesNames)}");
 
-        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error DiscountValueOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(DiscountValueOutOfRange)}");
 
-        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error DateMustBeInFuture = Error.Validation($"{BaseErrorCode}.{nameof(DateMustBeInFuture)}");
 
         public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
 

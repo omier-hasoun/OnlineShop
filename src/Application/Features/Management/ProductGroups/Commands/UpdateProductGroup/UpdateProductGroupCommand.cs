@@ -6,7 +6,7 @@ public sealed record UpdateProductGroupCommand(long ProductId, Guid? BrandId, lo
 
 public static class UpdateProductCommandExtensions
 {
-    public static bool HasChanges(this UpdateProductGroupCommand command)
+    internal static bool HasChanges(this UpdateProductGroupCommand command)
     {
         if (command.Attributes is null && command.IsSerialized is null && command.Title is null && command.BrandId is null && command.CategoryId is null
             && command.Description is null)

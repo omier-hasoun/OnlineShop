@@ -27,7 +27,7 @@ internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : 
                                                    id: x.Id,
                                                    price: x.Price,
                                                    discountPercentage : x.DiscountPercentage,
-                                                   priceBeforeDiscount:x.PriceBeforeDiscount,
+                                                   priceBeforeDiscount:x.PriceAfterDiscount,
                                                    images : x.Images.ToList(),
                                                    slug: x.Slug,
                                                    specifications: x.Specifications.ToDictionary()

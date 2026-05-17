@@ -31,7 +31,7 @@ public sealed record ProductImageDto
         return imagesDto;
     }
 
-    public static List<ProductImage> ToProductImages(List<ProductImageDto> imagesDto)
+    public static List<ProductImage> ToProductImages(IReadOnlyCollection<ProductImageDto> imagesDto)
     {
         List<ProductImage> images = new(imagesDto.Count);
 

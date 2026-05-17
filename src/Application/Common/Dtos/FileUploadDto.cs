@@ -9,4 +9,5 @@ public sealed record FileUploadDto
     public required string MediaType { get; init; }
     public required Stream ContentStream { get; init; }
 
+
 }

@@ -46,20 +46,20 @@ internal sealed class ImageValidator(IFileFormatInspector inspector) : IImageVal
         return Result.Success;
     }
 
-    public Result<Success> ValidateAll(List<FileUploadDto> files)
+    public Result<Success> ValidateAll(IReadOnlyCollection<FileUploadDto> files)
     {
         ArgumentNullException.ThrowIfNull(files);
 
         List<Error> errors = new(files.Count);
 
-        files.ForEach(file =>
-        {
+        foreach(var file in files)
+        { 
             var result = Validate(file);
 
             if (result.Failed)
                 errors.Add(result.TopError.WithParameters(file.OriginalFileName));
 
-        });
+        }
 
         return errors.Count == 0 ? Result.Success : errors;
     }

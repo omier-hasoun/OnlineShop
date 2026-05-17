@@ -49,7 +49,7 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
         builder.Property(x => x.Price)
                .IsRequired();
 
-        builder.Property(x => x.PriceBeforeDiscount)
+        builder.Property(x => x.PriceAfterDiscount)
                .IsRequired(false);
 
         builder.OwnsMany(x => x.Images, b =>

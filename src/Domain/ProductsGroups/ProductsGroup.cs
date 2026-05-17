@@ -188,14 +188,24 @@ public sealed class ProductsGroup : AggregateRoot<ProductGroupId>, IFullAudited
     }
 
 
-    public Result<Updated> AddProductImages(ProductId productId, List<string> imagesNames)
+    public Result<Updated> AddProductImages(ProductId productId, List<string> fileNames)
     {
         var product = _products.FirstOrDefault(x => x.Id == productId);
 
         if (product is null)
             return DomainErrors.ProductIdInvalid;
 
-        return product.AddImages(imagesNames);
+        return product.AddImages(fileNames);
+    }
+
+    public Result<Deleted> RemoveProductImages(ProductId productId, List<string> fileNames)
+    {
+        var product = _products.FirstOrDefault(x => x.Id == productId);
+
+        if (product is null)
+            return DomainErrors.ProductIdInvalid;
+
+        return product.RemoveImages(fileNames);
     }
 
     public Result<Success> UpdateProductImagesSortOrder(ProductId productId, IReadOnlyCollection<ProductImage> images)

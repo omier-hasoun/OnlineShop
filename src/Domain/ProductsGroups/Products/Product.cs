@@ -1,4 +1,5 @@
 using Domain.ProductsGroups.ValueObjects;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Domain.ProductsGroups.Products;
 
@@ -14,7 +15,7 @@ public sealed class Product : BaseEntity<ProductId>
     {
         ProductsGroupId = productsGroupId;
                 
-        PriceBeforeDiscount = priceBeforeDiscount;
+        PriceAfterDiscount = priceBeforeDiscount;
         DiscountPercentage = discountPercentage;
         DiscountExpiresOn = discountExpiresOn;
         Price = price;
@@ -66,7 +67,7 @@ public sealed class Product : BaseEntity<ProductId>
     public bool HasActiveDiscount =>
         DiscountPercentage is not null &&
         DiscountExpiresOn.HasValue &&
-        DateOnly.FromDateTime(DateTime.UtcNow) <= DiscountExpiresOn.Value;
+        ValHelper.IsDateInFuture(DiscountExpiresOn);
 
     public int Width { get; private set; }
     public int Height { get; private set; }
@@ -77,7 +78,7 @@ public sealed class Product : BaseEntity<ProductId>
 
     public DateOnly? DiscountExpiresOn { get; private set; }
 
-    public Money? PriceBeforeDiscount { get; private set; }
+    public Money? PriceAfterDiscount { get; private set; }
     public byte? DiscountPercentage { get; private set;}
 
     public ProductStatus Status { get; private set; }
@@ -96,20 +97,12 @@ public sealed class Product : BaseEntity<ProductId>
     private Dictionary<string, string> _specifications = [];
     public IReadOnlyDictionary<string, string> Specifications { get { return _specifications.AsReadOnly(); } private set { _specifications = value is null ?[] :value.ToDictionary(); } }
 
-    //private static decimal CalculateDiscountPrice(decimal originalPrice, byte discountPercentage = 0)
-    //{
-    //    if (discountPercentage == 0)
-    //        return originalPrice;
-    //    return originalPrice * (100 - discountPercentage) / 100;
-    //}
-
-
-    public Result<Updated> AddImages(List<string> imagesNames)
+    public Result<Updated> AddImages(List<string> fileNames)
     {
-        if (imagesNames is null || imagesNames.Count == 0)
-            return DomainErrors.Products.imagesNamesInvalid;
+        if (fileNames is null || fileNames.Count == 0)
+            return DomainErrors.MissingInput;
 
-        int totalImagesCount = imagesNames.Count + _images.Count;
+        int totalImagesCount = fileNames.Count + _images.Count;
 
         if (totalImagesCount > ProductRules.MaxNumberOfImages)
             return DomainErrors.Products.ImagesLimitExceeded.WithParameters(ProductRules.MaxNumberOfImages);
@@ -118,10 +111,40 @@ public sealed class Product : BaseEntity<ProductId>
 
         for (int i = 0; sortOrder <= totalImagesCount; i++)
         {
-            _images.Add(ProductImage.Create(imagesNames[i], sortOrder++));
+            _images.Add(ProductImage.Create(fileNames[i], sortOrder++));
         }
 
         return Result.Updated;
+    }
+
+    public Result<Deleted> RemoveImages(List<string> fileNames)
+    {
+        if (fileNames is null || fileNames.Count == 0)
+            return DomainErrors.MissingInput;
+
+        if (fileNames.Count > _images.Count)
+            return DomainErrors.Products.ImagesCountMustMatchProductImagesCount;
+
+        foreach (var name in fileNames)
+        {
+            if (!_images.Exists(x => x.FileName == name))
+            {
+                return DomainErrors.Products.InvalidImageFileName.WithParameters(name);
+            }
+            
+        }
+        foreach(var name in fileNames)
+        {
+            var image = _images.FirstOrDefault(x => x.FileName == name);
+
+            // happens if the list contains duplicate filenames which should not happen but if it happend we just skip it
+            if (image is null)
+                continue;
+
+            _images.Remove(image);
+        }
+        SortImages();
+        return Result.Deleted;
     }
 
 
@@ -144,7 +167,7 @@ public sealed class Product : BaseEntity<ProductId>
     }
 
 
-    private void EnsureImagesHaveSequentialSortOrder()
+    private void SortImages()
     {
         byte sortOrder = 1;
         List<ProductImage> sortedImages = new(_images.Count);
@@ -175,12 +198,27 @@ public sealed class Product : BaseEntity<ProductId>
         }
 
         Images = images;
-        EnsureImagesHaveSequentialSortOrder();
+        SortImages();
         return Result.Success;
     }
 
+    public Result<Success> ApplyDiscount(DateOnly discountExpiresOn, byte discountPercentage)
+    {
+        var valResult = ValidateDiscountPercentage(discountPercentage);
 
+        if (valResult.Failed)
+            return valResult;
 
+        var val2Result = ValidateDiscountExpiresOn(discountExpiresOn);
+
+        if (val2Result.Failed)
+            return val2Result;
+
+        PriceAfterDiscount = Money.From(Price.Value * (100 - discountPercentage) / 100).Value;
+        this.DiscountExpiresOn = discountExpiresOn;
+        this.DiscountPercentage = discountPercentage;
+        return Result.Success;
+    }
 
 
     #region validators
@@ -193,6 +231,24 @@ public sealed class Product : BaseEntity<ProductId>
         return Result.Success;
     }
 
+    private static Result<Success> ValidateDiscountPercentage(byte discountPercentage)
+    {
+        if (ValHelper.IsOutOfRange(discountPercentage, ProductRules.MinDiscountPercentageValue, ProductRules.MaxDiscountPercentageValue))
+        {
+            return DomainErrors.Products.DiscountValueOutOfRange;
+        }
+        return Result.Success;
+    }
+
+    private static Result<Success> ValidateDiscountExpiresOn(DateOnly discountExpiresOn)
+    {
+        if (!ValHelper.IsDateInFuture(discountExpiresOn))
+        {
+            return DomainErrors.Products.DateMustBeInFuture;
+        }
+
+        return Result.Success;
+    }
     private static Result<Success> Validate_Width_Height_Length(int width, int height, int length)
     {
         if
@@ -202,7 +258,7 @@ public sealed class Product : BaseEntity<ProductId>
             ValHelper.IsOutOfRange(length, ProductRules.Min_Height_Width_Length_cm, ProductRules.Max_Height_Width_Length_cm)
         )
         {
-            return DomainErrors.Products.imagesNamesInvalid;
+            return DomainErrors.Products.ImagesNamesIsEmpty;
         }
         return Result.Success;
     }

@@ -18,6 +18,16 @@ public static class ValHelper
         return str.Length >= min && str.Length <= max;
     }
 
+    public static bool IsDateInFuture(DateOnly? dateUtc)
+    {
+        if (!dateUtc.HasValue)
+        {
+            return false;
+        }
+
+        return DateOnly.FromDateTime(DateTime.UtcNow) < dateUtc;
+    }
+
     public static bool IsOutOfRange(decimal value, decimal min, decimal max)
     {
         return value < min || value > max;

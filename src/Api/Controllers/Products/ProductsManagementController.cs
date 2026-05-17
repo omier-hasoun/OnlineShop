@@ -11,6 +11,8 @@ using Application.Features.Management.ProductGroups.Commands.ArchiveProductGroup
 using Application.Features.Management.ProductGroups.Queries.GetProductById;
 using Application.Common.Dtos;
 using Application.Features.Management.ProductGroups.Commands.UpdateImagesSortOrder;
+using Api.Extensions;
+using Application.Features.Management.ProductGroups.Commands.RemoveImages;
 
 namespace Api.Controllers.Products;
 
@@ -146,11 +148,38 @@ public sealed class ProductsManagementController(IMediator mediator, IUniqueFile
         return result.Match((response) => NoContent(), Problem);
     }
 
-    [HttpPut("product-group/{productGroupId}/products/{productId}/images-sort-order")]
+    [HttpPut("product-group/{productGroupId}/products/{productId}/images")]
     public async Task<IActionResult> UpdateImagesSortOrder(long productGroupId, long productId, [FromBody] UpdateImagesSortOrderRequest request, CancellationToken ct)
     {
 
         var result = await mediator.Send(new UpdateImagesSortOrderCommand(productGroupId, productId, request.Images), ct);
+
+        return result.Match((response) => NoContent(), Problem);
+
+    }
+
+    [HttpPost("product-group/{productGroupId}/products/{productId}/images")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> AddImages(long productGroupId, long productId, [FromForm] IReadOnlyCollection<IFormFile> files, CancellationToken ct)
+    {
+        List<FileUploadDto> images = new(files.Count);
+
+        foreach (var file in files)
+        {
+            images.Add(file.ToDto(fileNameGen.GenerateWithExtension(".webp")));
+        }
+
+        var result = await mediator.Send(new AddImagesCommand(productGroupId, productId, images), ct);
+
+        return result.Match((response) => NoContent(), Problem);
+
+    }
+
+    [HttpDelete("product-group/{productGroupId}/products/{productId}/images")]
+    public async Task<IActionResult> RemoveImages(long productGroupId, long productId, [FromBody] List<string> fileNames, CancellationToken ct)
+    {
+
+        var result = await mediator.Send(new RemoveImagesCommand(productGroupId, productId, fileNames), ct);
 
         return result.Match((response) => NoContent(), Problem);
 

@@ -23,7 +23,7 @@ public sealed class AddProductCommandHandler(IAppDbContext context, IIdGenerator
         {
             validator.MinWidth = ApplicationRules.Uploads.MinWidth;
             validator.MinHeight = ApplicationRules.Uploads.MinHeight;
-            validator.MaxSize = ApplicationRules.Uploads.MinHeight;
+            validator.MaxSize = ApplicationRules.Uploads.MaxProductImageSize; ;
 
             var imagesValdationResult = validator.ValidateAll(request.Images);
 

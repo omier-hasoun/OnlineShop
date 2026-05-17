@@ -10,8 +10,28 @@ namespace Infrastructure.LocalServices.ImagesStore;
 
 internal sealed class ImagesStoreService(IImageJobWriter imageJobWriter, IWebHostEnvironment webEnv, IFileStorageService fileStore, IOptions<ProductImagePathOptions> options) : IImageStorageService
 {
-    private readonly string _directoryPath = Path.Combine(webEnv.WebRootPath, options.Value.Images_Original);
-    public async ValueTask<Result<Success>> SaveAllAsync(List<FileUploadDto> images, CancellationToken ct)
+    private readonly string _originalImagesDirPath = Path.Combine(webEnv.WebRootPath, options.Value.Images_Original);
+    private readonly string _150x150ImagesDirPath = Path.Combine(webEnv.WebRootPath, options.Value.Images_150x150);
+    private readonly string _500x375lImagesDirPath = Path.Combine(webEnv.WebRootPath, options.Value.Images_500x375);
+    private readonly string _1600x1700ImagesDirPath = Path.Combine(webEnv.WebRootPath, options.Value.Images_1600x1700);
+
+
+    public Result<Success> DeleteAll(List<string> fileNames)
+    {
+        List<string> filePaths = new(fileNames.Count * 3);//( * 3) because each file has 3 copies
+        fileNames.ForEach(fileName =>
+        {
+            filePaths.Add(Path.Combine(_150x150ImagesDirPath, fileName));
+            filePaths.Add(Path.Combine(_500x375lImagesDirPath, fileName));
+            filePaths.Add(Path.Combine(_1600x1700ImagesDirPath, fileName));
+
+        });
+
+        fileStore.DeleteAllFiles(filePaths);
+        return Result.Success;
+    }
+
+    public async ValueTask<Result<Success>> SaveAllAsync(IReadOnlyCollection<FileUploadDto> images, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(images);
 
@@ -20,7 +40,7 @@ internal sealed class ImagesStoreService(IImageJobWriter imageJobWriter, IWebHos
         foreach (var image in images)
         {
 
-            var filePath = Path.Combine(_directoryPath, image.InternalFileName);
+            var filePath = Path.Combine(_originalImagesDirPath, image.InternalFileName);
             imageProcessJobs.Add(new ImageProcessingJob(filePath));
 
             if (await fileStore.SaveAsync(image.ContentStream, filePath, ct) is false)

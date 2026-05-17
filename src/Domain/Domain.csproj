@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Folder Include="Brands\Services\" />
+    <Folder Include="Common\Services\" />
   </ItemGroup>
 
 </Project>

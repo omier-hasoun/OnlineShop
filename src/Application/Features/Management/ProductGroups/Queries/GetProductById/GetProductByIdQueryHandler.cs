@@ -15,7 +15,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
         return new ProductDto(
                 product.Id,
                 product.ProductsGroupId,
-                product.PriceBeforeDiscount,
+                product.PriceAfterDiscount,
                 product.Price,
                 product.DiscountPercentage,
                 product.DiscountExpiresOn,

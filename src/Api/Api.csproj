@@ -50,7 +50,6 @@
       <Folder Include="Controllers\Categories\" />
       <Folder Include="Controllers\Orders\" />
       <Folder Include="Controllers\Users\" />
-      <Folder Include="HTTP\" />
     </ItemGroup>
     
     <PropertyGroup>

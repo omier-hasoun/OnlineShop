@@ -1,4 +1,4 @@
 
 namespace Api.Requests;
 
-public sealed record UpdateImagesSortOrderRequest(List<ProductImageDto> Images);
+public sealed record UpdateImagesSortOrderRequest(IReadOnlyCollection<ProductImageDto> Images);

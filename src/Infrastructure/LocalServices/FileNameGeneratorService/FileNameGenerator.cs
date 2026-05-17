@@ -8,6 +8,11 @@ internal sealed class FileNameGenerator([FromKeyedServices("Snowflake")] IPrimit
         return idGen.Generate().ToString();
     }
 
+    public string GenerateWithExtension(string extension)
+    {
+        return idGen.Generate().ToString() + extension;
+    }
+
     public List<string> GenerateMany(int count)
     {
         List<string> fileNames = new(count);

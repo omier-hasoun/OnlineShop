@@ -14,6 +14,6 @@ public interface IImageValidator
     public int MaxSize { get; set; }
 
     public Result<Success> Validate(FileUploadDto file);
-    public Result<Success> ValidateAll(List<FileUploadDto> files);
+    public Result<Success> ValidateAll(IReadOnlyCollection<FileUploadDto> files);
 
 }

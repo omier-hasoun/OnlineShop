@@ -74,7 +74,7 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
                 dto = new ProductListItemDto(
                     x.product.Id,
                     x.product.Title,
-                    x.variant.PriceBeforeDiscount,
+                    x.variant.PriceAfterDiscount,
                     x.brand.Name,
                     x.product.AverageRating,
                     x.variant.Price,
