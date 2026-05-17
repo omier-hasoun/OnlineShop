@@ -3,7 +3,7 @@ using System.Text.Json;
 using Api.Common.JsonConverters;
 using Api.Services;
 using Infrastructure.LocalServices.BackgroundServices;
-using Infrastructure.LocalServices.HashingService;
+using Infrastructure.LocalServices.Hashing;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
 

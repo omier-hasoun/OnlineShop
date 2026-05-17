@@ -2,12 +2,12 @@ using Domain.ProductsGroups.ValueObjects;
 
 namespace Domain.ProductsGroups;
 
-public sealed class ProductsGroup : AggregateRoot<ProductsGroupId>, IFullAudited
+public sealed class ProductsGroup : AggregateRoot<ProductGroupId>, IFullAudited
 {
     private ProductsGroup()
     {
     }
-    private ProductsGroup(ProductsGroupId id, BrandId brandId, CategoryId categoryId, string title, string description, ProductAverageRating averageRating, ProductsGroupStatus status,
+    private ProductsGroup(ProductGroupId id, BrandId brandId, CategoryId categoryId, string title, string description, ProductAverageRating averageRating, ProductsGroupStatus status,
        bool isSerialized, Dictionary<string, string> attributes, DateTime createdAt, DateTime lastModifiedAt, Guid createdBy, Guid lastModifiedBy)
         : base(id)
     {
@@ -24,7 +24,7 @@ public sealed class ProductsGroup : AggregateRoot<ProductsGroupId>, IFullAudited
         CreatedBy = createdBy;
         LastModifiedBy = lastModifiedBy;
     }
-    public static Result<ProductsGroup> Create(ProductsGroupId id, BrandId brandId, CategoryId categoryId, string title, string description,
+    public static Result<ProductsGroup> Create(ProductGroupId id, BrandId brandId, CategoryId categoryId, string title, string description,
         bool isSerialized, Dictionary<string, string> attributes)
     {
         // Add domain validation logic here
@@ -163,7 +163,10 @@ public sealed class ProductsGroup : AggregateRoot<ProductsGroupId>, IFullAudited
         return Result.Updated;
     }
 
-
+    public bool ProductExists(ProductId productId)
+    {
+        return Products.FirstOrDefault(x => x.Id == productId) != default;
+    }
     public Result<Success> AddProduct(ProductId productId, Money price, int width, int height,
         int length, int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications)
     {
@@ -185,22 +188,27 @@ public sealed class ProductsGroup : AggregateRoot<ProductsGroupId>, IFullAudited
     }
 
 
-    public Result<Updated> UpdateProductImages(ProductId productId, List<ProductImage> newImages)
+    public Result<Updated> AddProductImages(ProductId productId, List<string> imagesNames)
     {
         var product = _products.FirstOrDefault(x => x.Id == productId);
 
         if (product is null)
             return DomainErrors.ProductIdInvalid;
 
-        var updateResult = product.UpdateImages(newImages);
-
-        if (updateResult.Failed)
-        {
-            return updateResult.Errors;
-        }
-       
-        return Result.Updated;
+        return product.AddImages(imagesNames);
     }
+
+    public Result<Success> UpdateProductImagesSortOrder(ProductId productId, IReadOnlyCollection<ProductImage> images)
+    {
+        var product = _products.FirstOrDefault(x => x.Id == productId);
+
+        if (product is null)
+            return DomainErrors.ProductIdInvalid;
+
+        return product.UpdateImagesSortOrder(images);
+    }
+
+
 
     public Result<Updated> PublishProduct(ProductId productId)
     {
@@ -281,6 +289,8 @@ public sealed class ProductsGroup : AggregateRoot<ProductsGroupId>, IFullAudited
 
         return Result.Updated;
     }
+
+
 
 
 

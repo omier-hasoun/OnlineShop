@@ -7,7 +7,7 @@ internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : 
 {
     public async Task<Result<ProductsGroupDto>> Handle(GetProductsGroupByIdQuery request, CancellationToken ct)
     {
-        ProductsGroupId productId = request.ProductId;
+        ProductGroupId productId = request.ProductId;
 
         var query = context.ProductGroups.AsNoTracking()
                                     .Where(x => x.Id == productId && x.Status == ProductsGroupStatus.Published)

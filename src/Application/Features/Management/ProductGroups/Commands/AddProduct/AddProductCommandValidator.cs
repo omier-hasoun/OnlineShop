@@ -1,4 +1,4 @@
-using Domain;
+using Domain.Common.ValueObjects;
 
 namespace Application.Features.Management.ProductGroups.Commands.AddProduct;
 
@@ -8,7 +8,7 @@ internal sealed class AddProductCommandValidator : AbstractValidator<AddProductC
     {
         RuleFor(x => x.ProductId).NotEmpty();
 
-        RuleFor(x => x.Price).Must(x => x > 0);
+        RuleFor(x => x.Price).Must(x => x > 0 && x <= Money.MaxValue);
 
         RuleFor(x => x.Height).Must(x => x > 0);
 
@@ -19,7 +19,8 @@ internal sealed class AddProductCommandValidator : AbstractValidator<AddProductC
         RuleFor(x => x.Width).Must(x => x > 0);
 
 
-        RuleFor(x => x.Specifications).Must(x => x.Count <= ProductRules.MaxNumberOfSpecifications);
+        RuleFor(x => x.Specifications).NotEmpty()
+                                      .Must(x => x.Count <= ProductRules.MaxNumberOfSpecifications);
 
         RuleForEach(x => x.Specifications).Must(x => x.Key.Length <= 50 && x.Value.Length <= 50 && !string.IsNullOrWhiteSpace(x.Key) && !string.IsNullOrWhiteSpace(x.Value) );
 

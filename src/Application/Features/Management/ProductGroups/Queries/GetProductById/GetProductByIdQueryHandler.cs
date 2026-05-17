@@ -14,6 +14,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
 
         return new ProductDto(
                 product.Id,
+                product.ProductsGroupId,
                 product.PriceBeforeDiscount,
                 product.Price,
                 product.DiscountPercentage,
@@ -26,6 +27,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
                 product.Sku,
                 product.Slug,
                 product.BarCode,
+                product.HasActiveDiscount,
                 product.Specifications.ToDictionary(),
                 [.. product.Images]
             );

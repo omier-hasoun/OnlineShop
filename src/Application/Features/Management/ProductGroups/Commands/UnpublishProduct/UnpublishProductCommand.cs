@@ -8,6 +8,6 @@ public sealed record UnpublishProductCommand(long ProductGroupId, long ProductId
 {
     internal ProductId ParsedProductId =>
     new(ProductId);
-    internal ProductsGroupId ParsedProductGroupId =>
+    internal ProductGroupId ParsedProductGroupId =>
         new(ProductGroupId);
 }

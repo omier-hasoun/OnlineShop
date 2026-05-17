@@ -1,6 +1,27 @@
 
 namespace Application;
 
+// for copy paste
+
+/* 
+ public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+
+ public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+
+ public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+
+ public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+
+ public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+
+ public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+
+ public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+
+ public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+
+ public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+*/
 public static class ApplicationErrors
 {
     public static class Validation
@@ -13,21 +34,27 @@ public static class ApplicationErrors
 
         public static readonly Error MissingInput = Error.Validation("Application.Validation.MissingInput");
 
-        public static readonly Error InvalidImageSize = Error.Validation("Application.Validation.InvalidImageSize");
-
-        public static readonly Error InvalidImageFormat = Error.Validation("Application.Validation.InvalidImageFormat");
-
-        public static readonly Error InvalidImage = Error.Validation("Application.Validation.InvalidImage");
-
         public static readonly Error PageSizeTooBig = Error.Validation("Application.Validation.PageSizeTooBig");
 
         public static readonly Error ProductStatusInvalid = Error.Validation(GenerateErrorCode(nameof(ProductStatusInvalid)));
 
-        public static readonly Error rename2 = Error.Validation(GenerateErrorCode(nameof(rename2)));
-        public static readonly Error rename3 = Error.Validation(GenerateErrorCode(nameof(rename3)));
-        public static readonly Error rename4 = Error.Validation(GenerateErrorCode(nameof(rename4)));
-        public static readonly Error rename5 = Error.Validation(GenerateErrorCode(nameof(rename5)));
-        public static readonly Error rename6 = Error.Validation(GenerateErrorCode(nameof(rename6)));
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+
+        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+
+        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+
+        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+
+        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+
+        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+
+        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+
+        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+
+        public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
 
 
     }
@@ -95,10 +122,25 @@ public static class ApplicationErrors
             return $"{BaseErrorCode}.{error}";
         }
 
-        public static readonly Error SavingImageFileFailed = Error.Unexpected(GenerateErrorCode(nameof(SavingImageFileFailed)));
+        public static readonly Error CouldntSaveImage = Error.Unexpected(GenerateErrorCode(nameof(CouldntSaveImage)));
         public static readonly Error UnableToAddThisItem = Error.Unexpected(GenerateErrorCode(nameof(UnableToAddThisItem)));
-        public static readonly Error rename2 = Error.Unexpected(GenerateErrorCode(nameof(rename2)));
-        public static readonly Error rename3 = Error.Unexpected(GenerateErrorCode(nameof(rename3)));
+        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+
+        public static readonly Error rename2 = Error.Unexpected($"{BaseErrorCode}.{nameof(rename2)}");
+
+        public static readonly Error rename3 = Error.Unexpected($"{BaseErrorCode}.{nameof(rename3)}");
+
+        public static readonly Error rename4 = Error.Unexpected($"{BaseErrorCode}.{nameof(rename4)}");
+
+        public static readonly Error rename5 = Error.Unexpected($"{BaseErrorCode}.{nameof(rename5)}");
+
+        public static readonly Error rename6 = Error.Unexpected($"{BaseErrorCode}.{nameof(rename6)}");
+
+        public static readonly Error rename7 = Error.Unexpected($"{BaseErrorCode}.{nameof(rename7)}");
+
+        public static readonly Error rename8 = Error.Unexpected($"{BaseErrorCode}.{nameof(rename8)}");
+
+        public static readonly Error rename9 = Error.Unexpected($"{BaseErrorCode}.{nameof(rename9)}");
 
     }
 }

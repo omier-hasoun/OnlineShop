@@ -3,7 +3,7 @@ using Domain.Categories;
 
 namespace Application.Features.Management.ProductGroups.Commands.CreateProductGroup;
 
-internal sealed class CreateProductGroupCommandHandler(IAppDbContext context, IIdGenerator<ProductsGroupId> idGen) : IRequestHandler<CreateProductGroupCommand, Result<long>>
+internal sealed class CreateProductGroupCommandHandler(IAppDbContext context, IIdGenerator<ProductGroupId> idGen) : IRequestHandler<CreateProductGroupCommand, Result<long>>
 {
     public async Task<Result<long>> Handle(CreateProductGroupCommand command, CancellationToken ct)
     {
@@ -13,7 +13,7 @@ internal sealed class CreateProductGroupCommandHandler(IAppDbContext context, II
 
         CategoryId categoryId = new(command.CategoryId);
 
-        ProductsGroupId productId = idGen.NewId();
+        ProductGroupId productId = idGen.NewId();
 
         var createProductResult = ProductsGroup.Create(
             productId,

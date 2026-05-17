@@ -18,3 +18,4 @@ global using Shared;
 global using Shared.Helpers;
 global using Microsoft.Extensions.DependencyInjection;
 global using Infrastructure.Common.Abstractions;
+global using Infrastructure;

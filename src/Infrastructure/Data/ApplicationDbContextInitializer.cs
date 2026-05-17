@@ -55,8 +55,8 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         context.Categories.Add(Category.Create(categoryId1, "Smart phones", null).Value);
         context.Categories.Add(Category.Create(categoryId2, "Books", null).Value);
 
-        var productGroupId1 = new ProductsGroupId(3);
-        var productGroupId2 = new ProductsGroupId(4);
+        var productGroupId1 = new ProductGroupId(3);
+        var productGroupId2 = new ProductGroupId(4);
         var productGroup1 = ProductsGroup.Create(productGroupId1, brandId1, categoryId1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }).Value;
         var productGroup2 = ProductsGroup.Create(productGroupId2, brandId2, categoryId2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }).Value;
 

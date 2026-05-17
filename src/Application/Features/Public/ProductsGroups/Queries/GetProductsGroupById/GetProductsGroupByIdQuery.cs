@@ -4,6 +4,6 @@ namespace Application.Features.Public.ProductsGroups.Queries.GetProductsGroupByI
 
 public sealed record GetProductsGroupByIdQuery(long productId) : IRequest<Result<ProductsGroupDto>>
 {
-    public ProductsGroupId ProductId { get; } = new (productId);
+    public ProductGroupId ProductId { get; } = new (productId);
 
 }

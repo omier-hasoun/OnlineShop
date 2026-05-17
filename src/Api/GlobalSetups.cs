@@ -6,7 +6,7 @@ public static class GlobalSetups
     {
         NetVips.Cache.MaxFiles = 0;
         NetVips.Cache.MaxMem = 0;
-        NetVips.NetVips.Concurrency = 2;
+        NetVips.NetVips.Concurrency = 1;
 
     }
 }

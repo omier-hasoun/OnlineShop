@@ -118,7 +118,7 @@ public static class DomainErrors
 
         public static readonly Error AverageRatingInvalid = Error.Validation($"{BaseErrorCode}.{nameof(AverageRatingInvalid)}");
 
-        public static readonly Error InvalidImageFilePath = Error.Validation($"{BaseErrorCode}.{nameof(InvalidImageFilePath)}");
+        public static readonly Error InvalidImageFileName = Error.Validation($"{BaseErrorCode}.{nameof(InvalidImageFileName)}");
 
         public static readonly Error TitleOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(TitleOutOfRange)}");
 
@@ -147,7 +147,7 @@ public static class DomainErrors
 
         public static readonly Error PriceOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(PriceOutOfRange)}");
 
-        public static readonly Error InvalidDimensions = Error.Validation($"{BaseErrorCode}.{nameof(InvalidDimensions)}");
+        public static readonly Error imagesNamesInvalid = Error.Validation($"{BaseErrorCode}.{nameof(imagesNamesInvalid)}");
 
         public static readonly Error BarCodeRequired = Error.Validation($"{BaseErrorCode}.{nameof(BarCodeRequired)}");
 
@@ -155,7 +155,7 @@ public static class DomainErrors
 
         public static readonly Error SlugLengthOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(SlugLengthOutOfRange)}");
 
-        public static readonly Error ImagesOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(ImagesOutOfRange)}");
+        public static readonly Error ImagesLimitExceeded = Error.Validation($"{BaseErrorCode}.{nameof(ImagesLimitExceeded)}");
 
         public static readonly Error SkuOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(SkuOutOfRange)}");
 
@@ -167,9 +167,9 @@ public static class DomainErrors
 
         public static readonly Error MaxAllowedSpecificationsNumberExceeded = Error.Validation($"{BaseErrorCode}.{nameof(MaxAllowedSpecificationsNumberExceeded)}");
 
-        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error ImagesCountMustMatchProductImagesCount = Error.Validation($"{BaseErrorCode}.{nameof(ImagesCountMustMatchProductImagesCount)}");
 
-        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error ImagesNamesMustMatchProductImagesNames = Error.Validation($"{BaseErrorCode}.{nameof(ImagesNamesMustMatchProductImagesNames)}");
 
         public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
 

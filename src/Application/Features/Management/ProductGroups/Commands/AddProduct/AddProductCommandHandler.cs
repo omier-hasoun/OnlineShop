@@ -3,36 +3,67 @@ using Domain.ProductsGroups.Products;
 
 namespace Application.Features.Management.ProductGroups.Commands.AddProduct;
 
-public sealed class AddProductCommandHandler( IAppDbContext context, IIdGenerator<ProductId> idGen) : IRequestHandler<AddProductCommand, Result<long>>
-
+public sealed class AddProductCommandHandler(IAppDbContext context, IIdGenerator<ProductId> idGen, IImageValidator validator, IImageStorageService imageStore) : IRequestHandler<AddProductCommand, Result<long>>
 {
-    public async Task<Result<long>> Handle(AddProductCommand command, CancellationToken ct)
+    public async Task<Result<long>> Handle(AddProductCommand request, CancellationToken ct)
     {
 
-        ProductsGroupId productGroupId = new(command.ProductId);
+        ProductGroupId productGroupId = new(request.ProductId);
 
-        var price = Money.From((decimal)command.Price).Value;
+        var price = Money.From((decimal)request.Price).Value;
 
-        var product = await context.ProductGroups.Include(x => x.Products).FirstOrDefaultAsync(x => x.Id == productGroupId, ct);
+        var productGroup = await context.ProductGroups.Include(x => x.Products).FirstOrDefaultAsync(x => x.Id == productGroupId, ct);
 
-        if (product is null)
+        if (productGroup is null)
         {
             return ApplicationErrors.NotFound.Product;
         }
 
+        if(request.Images != null)
+        {
+            validator.MinWidth = ApplicationRules.Uploads.MinWidth;
+            validator.MinHeight = ApplicationRules.Uploads.MinHeight;
+            validator.MaxSize = ApplicationRules.Uploads.MinHeight;
+
+            var imagesValdationResult = validator.ValidateAll(request.Images);
+
+            if (imagesValdationResult.Failed)
+                return imagesValdationResult.Errors;
+        }
+
         var productId = idGen.NewId();
 
-        var createVariantResult = product.AddProduct(productId, price,
-            command.Width, command.Height, command.Length, command.Weight,
-            command.Sku, command.Slug, command.BarCode, command.Specifications);
+        var addProductResult = productGroup.AddProduct(productId, price,
+            request.Width, request.Height, request.Length, request.Weight,
+            request.Sku, request.Slug, request.BarCode, request.Specifications);
 
-        if (createVariantResult.Failed)
+        if (addProductResult.Failed)
         {
-            return createVariantResult.Errors;
+            return addProductResult.Errors;
+        }
+
+        if (request.Images != null)
+        {
+            List<string> imageNames = new(request.Images.Count);
+
+            request.Images.ForEach(image =>
+            {
+                imageNames.Add(image.InternalFileName);
+            });
+
+            var addImagesResult = productGroup.AddProductImages(productId, imageNames);
+
+            if (addImagesResult.Failed)
+                return addImagesResult.Errors;
+
+
+            var result = await imageStore.SaveAllAsync(request.Images, ct);
+
+            if (result.Failed)
+                return result.Errors;
         }
 
         await context.SaveAsync(ct);
-
 
         return productId.Value;
     }

@@ -1,6 +1,5 @@
 
 using System.Threading.Channels;
-using Application.Common.InternalModels;
 using Application.Entities;
 using Domain.Carts;
 using Domain.Carts.CartItems;
@@ -8,9 +7,7 @@ using Domain.Orders;
 using Domain.ProductsGroups;
 using Domain.ProductsGroups.Products;
 using FileSignatures;
-using IdGen;
 using Infrastructure.Channels;
-using Infrastructure.Common.Abstractions;
 using Infrastructure.Common.Exceptions;
 using Infrastructure.Data.IdGenerators;
 using Infrastructure.Data.IdGenerators.Primitives;
@@ -18,12 +15,10 @@ using Infrastructure.Data.Interceptors;
 using Infrastructure.LocalServices.BackgroundServices;
 using Infrastructure.LocalServices.FileNameGeneratorService;
 using Infrastructure.LocalServices.FileStorageService;
-using Infrastructure.LocalServices.FileValidationService;
-using Infrastructure.LocalServices.HashingService;
+using Infrastructure.LocalServices.FileValidator;
+using Infrastructure.LocalServices.Hashing;
+using Infrastructure.LocalServices.ImagesStore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.EntityFrameworkCore.Diagnostics.Internal;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using App = Application.Common.Abstractions;
 
@@ -47,13 +42,13 @@ public static class DependencyInjection
 
     private static IServiceCollection AddCustomServices(this IServiceCollection services)
     {
-        services.AddSingleton<IImageValidator, FileValidator>();
-        services.AddSingleton<IImageStorageService, LocalImageStorageService>();
-        services.AddHostedService<ImagesProcessorWorker>();
+        services.AddTransient<IImageValidator, ImageValidator>();
+        services.AddSingleton<IFileStorageService, LocalFileStorageService>();
+        services.AddHostedService<ImageProcessorWorker>();
 
         services.AddSingleton(sp => {
 
-            return Channel.CreateBounded<ImageProcessingTask>(new BoundedChannelOptions(100)
+            return Channel.CreateBounded<ImageProcessingJob>(new BoundedChannelOptions(100)
             {
                 FullMode = BoundedChannelFullMode.Wait,
                 SingleWriter = false,
@@ -62,8 +57,10 @@ public static class DependencyInjection
             });
             
          });
-        services.AddSingleton<IImageProcessingService, ProcessingImagesTasksChannel>();
-        services.AddSingleton<IImageTaskReader, ProcessingImagesTasksChannel>();
+        services.AddSingleton<IImageStorageService, ImagesStoreService>();
+        services.AddSingleton<IImageJobReader, ImageProcessingJobsChannel>();
+        services.AddSingleton<IImageJobWriter, ImageProcessingJobsChannel>();
+
         services.AddSingleton<IUniqueFileNameGenerator, FileNameGenerator>();
 
 
@@ -72,10 +69,10 @@ public static class DependencyInjection
 
     private static IServiceCollection AddIdGeneratorsServices(this IServiceCollection services)
     {
-        services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<System.Guid>, GuidV7Generator>("GuidV7");
+        services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<Guid>, GuidV7Generator>("GuidV7");
         services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<long>, SnowflakeGenerator>("Snowflake");
 
-        services.AddSingleton<App.IIdGenerator<ProductsGroupId>, ProductGroupIdGenerator>();
+        services.AddSingleton<App.IIdGenerator<ProductGroupId>, ProductGroupIdGenerator>();
 
         services.AddSingleton<App.IIdGenerator<ProductId>, ProductIdGenerator>();
 
@@ -91,18 +88,22 @@ public static class DependencyInjection
     private static IServiceCollection AddIdGenServices(this IServiceCollection services, IConfiguration config)
     {
 
-        string strMachineId = config["MACHINE_ID"]! ?? throw new MachineIdWasNotProvidedException();
-        int machineId = int.Parse(strMachineId);
+        string strMachineId = config["MACHINE_ID"] ?? throw new MachineIdWasNotProvidedException();
+
+        if(!byte.TryParse(strMachineId, out var machineId))
+        {
+            throw new MachineIdWasNotProvidedException();
+        }
 
         services.AddSingleton<IdGen.IIdGenerator<long>, IdGen.IdGenerator>((p) =>
         {
-            var options = new IdGeneratorOptions()
+            var options = new IdGen.IdGeneratorOptions()
             {
-                TimeSource = new DefaultTimeSource(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc)),
-                IdStructure = new IdStructure(41, 11, 11),
-                SequenceOverflowStrategy = SequenceOverflowStrategy.SpinWait,
+                TimeSource = new IdGen.DefaultTimeSource(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc)),
+                IdStructure = new IdGen.IdStructure(41, 11, 11),
+                SequenceOverflowStrategy = IdGen.SequenceOverflowStrategy.SpinWait,
             };
-            return new IdGenerator(machineId, options);
+            return new IdGen.IdGenerator(machineId, options);
         });
 
 
@@ -133,7 +134,7 @@ public static class DependencyInjection
         .AddDefaultTokenProviders();
 
         services.AddTransient<IEmailSender<AppUser>, EmailSenderFaker>();
-        services.AddScoped<IPasswordHasher<AppUser>, UserPasswordHasher>();
+        services.AddScoped<IPasswordHasher<AppUser>, UserPasswordHashService>();
 
         return services;
     }

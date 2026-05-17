@@ -1,9 +1,7 @@
 
-using Api.Requests;
 using Application.Features.Management.ProductGroups.Commands.CreateProductGroup;
 using Application.Features.Management.ProductGroups.Commands.AddProduct;
-using Application.Features.Management.ProductGroups.Commands.UpdateProductImages;
-using MediatR;
+using Application.Features.Management.ProductGroups.Commands.AddImages;
 using Application.Features.Management.ProductGroups.Commands.UpdateProductGroup;
 using Application.Features.Management.ProductGroups.Queries.ListProducts;
 using Application.Features.Management.ProductGroups.Queries.GetProductsGroupById;
@@ -11,14 +9,16 @@ using Application.Features.Management.ProductGroups.Commands.PublishProduct;
 using Application.Features.Management.ProductGroups.Commands.UnpublishProduct;
 using Application.Features.Management.ProductGroups.Commands.ArchiveProductGroup;
 using Application.Features.Management.ProductGroups.Queries.GetProductById;
-using Application.Common.RequestModels;
+using Application.Common.Dtos;
+using Application.Features.Management.ProductGroups.Commands.UpdateImagesSortOrder;
 
 namespace Api.Controllers.Products;
 
 [Route("api/management/")]
-public sealed class ProductsManagementController(IMediator mediator) : ApiController
+public sealed class ProductsManagementController(IMediator mediator, IUniqueFileNameGenerator fileNameGen) : ApiController
 {
     #region commands
+
     [HttpPost("product-group")]
     public async Task<IActionResult> CreateProductGroup([FromBody] CreateProductGroupCommand request, CancellationToken ct)
     {
@@ -37,25 +37,46 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
         );
     }
 
-    [HttpPut("product-group/{productGroupId:required}")]
+    [HttpPatch("product-group/{productGroupId}")]
     public async Task<IActionResult> UpdateProductGroup(long productGroupId, [FromBody] UpdateProductGroupRequest request, CancellationToken ct)
     {
         var command = new UpdateProductGroupCommand(
             productGroupId,
-            request.New_Brand_Id,
-            request.New_Category_Id,
-            request.New_Description,
-            request.New_Description,
-            request.New_Is_Serialized,
-            request.New_Attributes);
+            request.NewBrandId,
+            request.NewCategoryId,
+            request.NewDescription,
+            request.NewDescription,
+            request.NewIsSerialized,
+            request.NewAttributes);
 
         var result = await mediator.Send(command, ct);
 
         return result.Match((response) => NoContent(), Problem);
     }
+
     [HttpPost("product-group/{productGroupId:long}/products")]
-    public async Task<IActionResult> CreateProduct(long productGroupId, [FromBody] CreateProductCommand request, CancellationToken ct)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> AddProduct(long productGroupId, [FromForm] AddProductRequest request, CancellationToken ct)
     {
+        List<FileUploadDto>? imagesDto = null;
+        if(request.Images != null && request.Images.Count > 0)
+        {
+            imagesDto = new(request.Images.Count);
+            request.Images.ForEach(image => imagesDto.Add(
+
+                new FileUploadDto
+                {
+                    InternalFileName = fileNameGen.Generate() + ".webp",
+                    ContentStream = image.OpenReadStream(),
+                    ContentLength = image.Length,
+                    MediaType = image.ContentType,
+                    OriginalFileName = image.FileName,
+                }
+            ));
+        }
+
+
+
         var command = new AddProductCommand(
             productGroupId,
             request.Price,
@@ -66,15 +87,23 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
             request.Sku,
             request.Slug,
             request.BarCode,
-            request.Specifications);
+            request.Specifications,
+            imagesDto);
 
         var result = await mediator.Send(command, ct);
 
-        return result.Match((response) => Created(Url.Action($"api/management/products/{productGroupId}/products/", new { Id = response }), response), Problem);
+        return result.Match( (response) =>
+        
+        Created(
+            Url.Action(nameof(GetProductById), "ProductsManagement", new { Id = response }),
+            new { Id = response }),
+                    
+            Problem
+        );
     }
 
 
-    [HttpPost("product-group/{productGroupId:required}/publish")]
+    [HttpPost("product-group/{productGroupId}/publish")]
     public async Task<IActionResult> PublishProductGroup(long productGroupId, CancellationToken ct)
     {
 
@@ -82,7 +111,7 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
 
         return result.Match((response) => NoContent(), Problem);
     }
-    [HttpPost("product-group/{productGroupId:required}/unpublish")]
+    [HttpPost("product-group/{productGroupId}/unpublish")]
     public async Task<IActionResult> UnpublishProductGroup(long productGroupId, CancellationToken ct)
     {
 
@@ -91,7 +120,7 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
         return result.Match((response) => NoContent(), Problem);
     }
 
-    [HttpPost("product-group/{productGroupId:required}/archive")]
+    [HttpPost("product-group/{productGroupId}/archive")]
     public async Task<IActionResult> ArchiveProductGroup(long productGroupId, CancellationToken ct)
     {
 
@@ -101,7 +130,7 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
     }
 
 
-    [HttpPost("product-group/{productGroupId:required}/products/{productId:required}/publish")]
+    [HttpPost("product-group/{productGroupId}/products/{productId}/publish")]
     public async Task<IActionResult> PublishProduct(long productGroupId, long productId, CancellationToken ct)
     {
         var result = await mediator.Send(new PublishProductCommand(productGroupId, productId), ct);
@@ -109,7 +138,7 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
         return result.Match((response) => NoContent(), Problem);
     }
 
-    [HttpPost("product-group/{productGroupId:required}/products/{productId:required}/unpublish")]
+    [HttpPost("product-group/{productGroupId}/products/{productId}/unpublish")]
     public async Task<IActionResult> UnpublishProduct(long productGroupId, long productId, CancellationToken ct)
     {
         var result = await mediator.Send(new UnpublishProductCommand(productGroupId, productId), ct);
@@ -117,34 +146,11 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
         return result.Match((response) => NoContent(), Problem);
     }
 
-    [HttpPut("product-group/{productGroupId:required}/products/{productId:required}/images")]
-    [Consumes("multipart/form-data")]
-    public async Task<IActionResult> UpdateVariantImages(long productGroupId, long productId, [FromForm] UpdateProductImagesRequest request, CancellationToken ct)
+    [HttpPut("product-group/{productGroupId}/products/{productId}/images-sort-order")]
+    public async Task<IActionResult> UpdateImagesSortOrder(long productGroupId, long productId, [FromBody] UpdateImagesSortOrderRequest request, CancellationToken ct)
     {
-        List<ProductImageUploadDto> imagesDto = new(request.Images.Count);
 
-        request.Images.ForEach(image => imagesDto.Add(new ProductImageUploadDto
-        {
-            SortOrder = image.SortOrder,
-            File = new FileUploadDto
-            {
-                ContentStream = image.File.OpenReadStream(),
-                ContentLength = image.File.Length,
-                MediaType = image.File.ContentType,
-                FileName = image.File.FileName,
-            }
-
-
-        }
-        ));
-
-        var command = new UpdateProductImagesCommand
-        {
-            Images = imagesDto,
-            ProductId = productId,
-            ProductGroupId = productGroupId
-        };
-        var result = await mediator.Send(command, ct);
+        var result = await mediator.Send(new UpdateImagesSortOrderCommand(productGroupId, productId, request.Images), ct);
 
         return result.Match((response) => NoContent(), Problem);
 
@@ -155,7 +161,7 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
 
     #region queries
 
-    [HttpGet("product-group/")]
+    [HttpGet("product-group")]
     public async Task<IActionResult> ListProducts([FromQuery] ListProductsQuery request, CancellationToken ct)
     {
 
@@ -186,7 +192,7 @@ public sealed class ProductsManagementController(IMediator mediator) : ApiContro
 }
 
 
-//[HttpPost("{productGroupId:required}/products/{productId:required}/archive")]
+//[HttpPost("{productGroupId}/products/{productId}/archive")]
 //public async Task<IActionResult> ArchiveVariant(long productGroupId, long productId, CancellationToken ct)
 //{
 //    var result = await mediator.Send(new , ct);

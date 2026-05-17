@@ -23,7 +23,7 @@ public static class ApplicationRules
 
         public static readonly string AllowedImageExtensions = string.Join(", ", AllowedImageExtensionsList);
 
-        public const int MaxImageSizeForProducts = 15 * 1024 * 1024;//15 Mb
+        public const int MaxProductImageSize = 15 * 1024 * 1024;//15 Mb
 
         public const short MinWidth = 800;
         public const short MinHeight = 800;

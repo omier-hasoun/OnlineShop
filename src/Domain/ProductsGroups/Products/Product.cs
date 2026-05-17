@@ -8,7 +8,7 @@ public sealed class Product : BaseEntity<ProductId>
     {
     }
 
-    private Product(ProductId id, ProductsGroupId productsGroupId, Money? priceBeforeDiscount, Money price, byte? discountPercentage, DateOnly? discountExpiresOn, ProductStatus status,
+    private Product(ProductId id, ProductGroupId productsGroupId, Money? priceBeforeDiscount, Money price, byte? discountPercentage, DateOnly? discountExpiresOn, ProductStatus status,
         int width, int height, int length, int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications, List<ProductImage> images)
         : base(id)
     {
@@ -31,8 +31,8 @@ public sealed class Product : BaseEntity<ProductId>
         _specifications = specifications;
     }
 
-    public static Result<Product> Create(ProductId id, ProductsGroupId productsGroupId, Money Price, int width, int height, int length,
-        int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications)
+    public static Result<Product> Create(ProductId id, ProductGroupId productsGroupId, Money Price, int width, int height, int length,
+        int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications, List<ProductImage>? images = null)
     {
         var validationResult = Result.ValidateAll(
                                 () => id.IsValid(),
@@ -54,14 +54,14 @@ public sealed class Product : BaseEntity<ProductId>
         Money? priceBeforeDisount = null;
         DateOnly? discountExpiresOn = null;
         ProductStatus status = ProductStatus.Draft;
-        List<ProductImage> images = [];
+        images  ??= [];
 
 
         return new Product(id, productsGroupId, priceBeforeDisount, Price, discountPercentage, discountExpiresOn, status,
             width, height, length, weight, sku, slug, barCode, specifications, images);
     }
 
-    public ProductsGroupId ProductsGroupId { get; private init; }
+    public ProductGroupId ProductsGroupId { get; private init; }
 
     public bool HasActiveDiscount =>
         DiscountPercentage is not null &&
@@ -104,15 +104,22 @@ public sealed class Product : BaseEntity<ProductId>
     //}
 
 
-    public Result<Updated> UpdateImages(List<ProductImage> newImages)
+    public Result<Updated> AddImages(List<string> imagesNames)
     {
-        var validaitonResult = ValidateImages(newImages);
+        if (imagesNames is null || imagesNames.Count == 0)
+            return DomainErrors.Products.imagesNamesInvalid;
 
-        if (validaitonResult.Failed)
-            return validaitonResult.Errors;
+        int totalImagesCount = imagesNames.Count + _images.Count;
 
-        _images = newImages;
-        EnsureImagesHaveSequentialSortOrder();
+        if (totalImagesCount > ProductRules.MaxNumberOfImages)
+            return DomainErrors.Products.ImagesLimitExceeded.WithParameters(ProductRules.MaxNumberOfImages);
+
+        byte sortOrder = (byte)(_images.Count + 1);
+
+        for (int i = 0; sortOrder <= totalImagesCount; i++)
+        {
+            _images.Add(ProductImage.Create(imagesNames[i], sortOrder++));
+        }
 
         return Result.Updated;
     }
@@ -140,20 +147,43 @@ public sealed class Product : BaseEntity<ProductId>
     private void EnsureImagesHaveSequentialSortOrder()
     {
         byte sortOrder = 1;
-        foreach (var image in Images.OrderBy(i => i.SortOrder))
+        List<ProductImage> sortedImages = new(_images.Count);
+
+        foreach (var image in _images.OrderBy(i => i.SortOrder))
         {
-            image.ChangeSortOrder(sortOrder++);
+            sortedImages.Add(image.ChangeSortOrder(sortOrder++));
         }
+        _images = sortedImages;
+        
     }
 
-    private static Result<Success> ValidateImages(List<ProductImage> newImages)
+    public Result<Success> UpdateImagesSortOrder(IReadOnlyCollection<ProductImage> images)
     {
-        if (newImages is null || ValHelper.IsOutOfRange(newImages.Count, ProductRules.MinNumberOfImages, ProductRules.MaxNumberOfImages))
+        if (images is null || images.Count != _images.Count)
         {
-            return DomainErrors.Products.ImagesOutOfRange;
+            return DomainErrors.Products.ImagesCountMustMatchProductImagesCount;
         }
+
+        foreach (var image in images)
+        {
+            // no need to check strictly here this is enough
+            if (!_images.Any(x => x.FileName == image.FileName))
+            {
+                return DomainErrors.Products.ImagesNamesMustMatchProductImagesNames;
+            }
+
+        }
+
+        Images = images;
+        EnsureImagesHaveSequentialSortOrder();
         return Result.Success;
     }
+
+
+
+
+
+    #region validators
     private static Result<Success> ValidatePrice(Money price)
     {
         if(ValHelper.IsOutOfRange(price.Value, ProductRules.MinPrice, ProductRules.MaxPrice))
@@ -172,7 +202,7 @@ public sealed class Product : BaseEntity<ProductId>
             ValHelper.IsOutOfRange(length, ProductRules.Min_Height_Width_Length_cm, ProductRules.Max_Height_Width_Length_cm)
         )
         {
-            return DomainErrors.Products.InvalidDimensions;
+            return DomainErrors.Products.imagesNamesInvalid;
         }
         return Result.Success;
     }
@@ -241,4 +271,5 @@ public sealed class Product : BaseEntity<ProductId>
 
         return Result.Success;
     }
+    #endregion
 }

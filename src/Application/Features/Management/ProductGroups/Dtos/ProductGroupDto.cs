@@ -17,7 +17,7 @@ public sealed record ProductGroupDto
     public List<ProductGroupListProductsDto> Products { get; init; } = null!;
 
 
-    public ProductGroupDto(ProductsGroupId id, string title, string description, Dictionary<string, string> attributes,
+    public ProductGroupDto(ProductGroupId id, string title, string description, Dictionary<string, string> attributes,
         BrandId brandId, string brandName, CategoryId categoryId, string categoryName, ProductAverageRating averageRating,
         List<ProductGroupListProductsDto> products)
     {

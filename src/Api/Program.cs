@@ -14,6 +14,10 @@ namespace Api
             var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
 
+            // specifies how much space can an image be allocated in memory that is processed by NetVips.
+            // so this env means : 5 megabytes if bigger then use temp files instead when processing an image
+            Environment.SetEnvironmentVariable("VIPS_DISC_THRESHOLD", "5m");
+
             if (!builder.Environment.IsDevelopment())
                 config.AddEnvironmentVariables();
             else 
@@ -32,7 +36,6 @@ namespace Api
             builder.Services.AddApiServices(config, builder.Environment)
                             .AddApplicationServices(config)
                             .AddInfrastructureServices(config,  builder.Environment);
-
 
 
 

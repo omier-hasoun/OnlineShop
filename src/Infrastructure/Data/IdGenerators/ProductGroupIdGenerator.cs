@@ -2,10 +2,10 @@ using Domain.ProductsGroups;
 using App = Application.Common.Abstractions;
 namespace Infrastructure.Data.IdGenerators;
 
-internal sealed class ProductGroupIdGenerator([FromKeyedServices("Snowflake")] IPrimitiveTypeIdGenerator<long> Generator) : App.IIdGenerator<ProductsGroupId>
+internal sealed class ProductGroupIdGenerator([FromKeyedServices("Snowflake")] IPrimitiveTypeIdGenerator<long> Generator) : App.IIdGenerator<ProductGroupId>
 {
-    public ProductsGroupId NewId()
+    public ProductGroupId NewId()
     {
-        return new ProductsGroupId(Generator.Generate());
+        return new ProductGroupId(Generator.Generate());
     }
 }

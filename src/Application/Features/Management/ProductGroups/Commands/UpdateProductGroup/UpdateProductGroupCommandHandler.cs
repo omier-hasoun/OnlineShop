@@ -8,7 +8,7 @@ internal sealed class UpdateProductGroupCommandHandler(IAppDbContext context) : 
     public async Task<Result<Updated>> Handle(UpdateProductGroupCommand command, CancellationToken ct)
     {
 
-        ProductsGroupId productId = new(command.ProductId);
+        ProductGroupId productId = new(command.ProductId);
 
         if (!command.HasChanges())
         {

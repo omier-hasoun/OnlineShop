@@ -5,10 +5,10 @@ namespace Application.Features.Management.ProductGroups.Queries.GetProductsGroup
 
 public sealed record GetProductsGroupByIdQuery : IRequest<Result<ProductGroupDto>>
 {
-    public ProductsGroupId ProductId { get; init; }
+    public ProductGroupId ProductId { get; init; }
     public GetProductsGroupByIdQuery(long productId)
     {
-        ProductId = new ProductsGroupId(productId);
+        ProductId = new ProductGroupId(productId);
     }
 
 }

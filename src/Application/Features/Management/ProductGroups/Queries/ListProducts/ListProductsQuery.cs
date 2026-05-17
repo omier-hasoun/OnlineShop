@@ -1,5 +1,5 @@
 
-using Application.Common.ResponseModels;
+using Application.Common.Dtos;
 using Application.Features.Management.ProductGroups.Dtos;
 
 namespace Application.Features.Management.ProductGroups.Queries.ListProducts;

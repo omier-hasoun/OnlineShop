@@ -1,5 +1,5 @@
 
-using Application.Common.InternalModels;
+using Application.Common.Dtos;
 using Domain.ProductsGroups.Products;
 
 namespace Application.Features.Public.Carts.Commands.AddCartItem;

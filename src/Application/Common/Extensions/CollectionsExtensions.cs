@@ -1,5 +1,5 @@
 
-using Application.Common.ResponseModels;
+using Application.Common.Dtos;
 
 namespace Application.Common.Extensions;
 

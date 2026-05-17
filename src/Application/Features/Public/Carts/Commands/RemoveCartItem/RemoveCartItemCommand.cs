@@ -1,5 +1,5 @@
 
-using Application.Common.InternalModels;
+using Application.Common.Dtos;
 using Domain.Carts.CartItems;
 
 namespace Application.Features.Public.Carts.Commands.RemoveCartItem;

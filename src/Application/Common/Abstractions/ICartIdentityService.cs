@@ -1,5 +1,5 @@
 
-using Application.Common.InternalModels;
+using Application.Common.Dtos;
 
 namespace Application.Common.Abstractions;
 

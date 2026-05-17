@@ -8,16 +8,11 @@ public sealed record ProductImage
 
     public string FileName { get; private init; } = null!;
 
-    public byte SortOrder { get; private set; }
+    public byte SortOrder { get; private init; }
 
 
-    public static Result<ProductImage> From(string fileName, byte sortOrder)
+    public static ProductImage Create(string fileName, byte sortOrder)
     {
-        if (string.IsNullOrEmpty(fileName))
-        {
-            return DomainErrors.Products.InvalidImageFilePath;
-        }
-
         return new ProductImage()
         {
             FileName = fileName,
@@ -25,8 +20,13 @@ public sealed record ProductImage
         };
     }
 
-    internal void ChangeSortOrder(byte sortOrder)
+    internal ProductImage ChangeSortOrder(byte sortOrder)
     {
-        SortOrder = sortOrder;
+        return new ProductImage
+        {
+            FileName = this.FileName,
+            SortOrder = sortOrder
+
+        };
     }
 }

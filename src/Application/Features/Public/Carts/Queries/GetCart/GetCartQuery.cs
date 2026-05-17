@@ -1,4 +1,4 @@
-using Application.Common.InternalModels;
+using Application.Common.Dtos;
 using Application.Features.Public.Carts.Dtos;
 using Domain.Common.ValueObjects;
 

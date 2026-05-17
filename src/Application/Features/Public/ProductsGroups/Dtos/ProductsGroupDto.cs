@@ -14,7 +14,7 @@ public sealed record ProductsGroupDto
 
     public List<ProductDto> Variants { get; init; } = null!;
 
-    public ProductsGroupDto(ProductsGroupId id, string title, string description, Dictionary<string, string> attributes, string brand, string category, ProductAverageRating averageRating,
+    public ProductsGroupDto(ProductGroupId id, string title, string description, Dictionary<string, string> attributes, string brand, string category, ProductAverageRating averageRating,
         List<ProductDto> variants)
     {
         Id = id.Value;

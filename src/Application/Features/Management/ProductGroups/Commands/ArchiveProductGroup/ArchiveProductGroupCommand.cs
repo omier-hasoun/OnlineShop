@@ -4,6 +4,6 @@ namespace Application.Features.Management.ProductGroups.Commands.ArchiveProductG
 public sealed record ArchiveProductGroupCommand(long ProductId) : IRequest<Result<Success>>
 {
 
-    internal ProductsGroupId ParsedProductId =>
+    internal ProductGroupId ParsedProductId =>
         new (ProductId);
 }

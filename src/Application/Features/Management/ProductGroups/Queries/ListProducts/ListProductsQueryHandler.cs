@@ -1,6 +1,6 @@
 
+using Application.Common.Dtos;
 using Application.Common.Extensions;
-using Application.Common.ResponseModels;
 using Application.Features.Management.ProductGroups.Dtos;
 using Domain.Brands;
 using Domain.Categories;

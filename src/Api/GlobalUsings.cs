@@ -11,3 +11,7 @@ global using Microsoft.AspNetCore.Authorization;
 global using Infrastructure.Data;
 global using Application.Common;
 global using Microsoft.AspNetCore.Identity;
+
+global using Api.Requests;
+global using MediatR;
+global using Application.Common.Dtos;

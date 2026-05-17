@@ -1,4 +1,4 @@
-using Application.Common.ResponseModels;
+using Application.Common.Dtos;
 using Domain.Common.ValueObjects;
 using Domain.ProductsGroups.Products;
 using Domain.ProductsGroups.ValueObjects;

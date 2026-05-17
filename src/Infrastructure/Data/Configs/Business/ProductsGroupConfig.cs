@@ -23,7 +23,7 @@ internal sealed class ProductsGroupConfig : BaseEntityConfig<ProductsGroup>
         builder.Property(x => x.Id)
                .HasConversion(
                    id => id.Value,
-                   value => new ProductsGroupId(value)
+                   value => new ProductGroupId(value)
                )
                .ValueGeneratedNever();
 

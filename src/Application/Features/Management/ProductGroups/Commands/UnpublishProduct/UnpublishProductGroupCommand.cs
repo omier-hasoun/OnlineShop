@@ -3,6 +3,6 @@ namespace Application.Features.Management.ProductGroups.Commands.UnpublishProduc
 
 public sealed record UnpublishProductGroupCommand(long ProductGroupId) : IRequest<Result<Success>>
 {
-    internal ProductsGroupId ParsedProductGroupId =>
+    internal ProductGroupId ParsedProductGroupId =>
     new(ProductGroupId);
 }
