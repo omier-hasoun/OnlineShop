@@ -13,6 +13,7 @@ using Application.Common.Dtos;
 using Application.Features.Management.ProductGroups.Commands.UpdateImagesSortOrder;
 using Api.Extensions;
 using Application.Features.Management.ProductGroups.Commands.RemoveImages;
+using Application.Features.Management.ProductGroups.Commands.ApplyDiscount;
 
 namespace Api.Controllers.Products;
 
@@ -131,6 +132,14 @@ public sealed class ProductsManagementController(IMediator mediator, IUniqueFile
         return result.Match((response) => NoContent(), Problem);
     }
 
+    [HttpPost("product-group/{productGroupId}/products/{productId}/apply-discount")]
+    public async Task<IActionResult> ApplyDiscount(long productGroupId, long productId, [FromBody] ApplyDiscountRequest request , CancellationToken ct)
+    {
+
+        var result = await mediator.Send(new ApplyDiscountCommand(productGroupId, productId, request.DiscountExpiresOn, request.DiscountPercentage), ct);
+
+        return result.Match((response) => NoContent(), Problem);
+    }
 
     [HttpPost("product-group/{productGroupId}/products/{productId}/publish")]
     public async Task<IActionResult> PublishProduct(long productGroupId, long productId, CancellationToken ct)

@@ -99,6 +99,9 @@ public sealed class Product : BaseEntity<ProductId>
 
     public Result<Updated> AddImages(List<string> fileNames)
     {
+        if (Status == ProductStatus.Archived)
+            return DomainErrors.Products.ThisProductIsArchivedAndCannotBeModified;
+
         if (fileNames is null || fileNames.Count == 0)
             return DomainErrors.MissingInput;
 
@@ -119,6 +122,9 @@ public sealed class Product : BaseEntity<ProductId>
 
     public Result<Deleted> RemoveImages(List<string> fileNames)
     {
+        if (Status == ProductStatus.Archived)
+            return DomainErrors.Products.ThisProductIsArchivedAndCannotBeModified;
+
         if (fileNames is null || fileNames.Count == 0)
             return DomainErrors.MissingInput;
 
@@ -176,6 +182,9 @@ public sealed class Product : BaseEntity<ProductId>
 
     public Result<Success> UpdateImagesSortOrder(IReadOnlyCollection<ProductImage> images)
     {
+        if (Status == ProductStatus.Archived)
+            return DomainErrors.Products.ThisProductIsArchivedAndCannotBeModified;
+
         if (images is null || images.Count != _images.Count)
         {
             return DomainErrors.Products.ImagesCountMustMatchProductImagesCount;

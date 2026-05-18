@@ -163,6 +163,16 @@ public sealed class ProductsGroup : AggregateRoot<ProductGroupId>, IFullAudited
         return Result.Updated;
     }
 
+    public Result<Success> ApplyDiscount(ProductId productId, DateOnly discountExpiresOn, byte discountPercentage)
+    {
+        var product = _products.FirstOrDefault(x => x.Id == productId);
+
+        if (product is null)
+            return DomainErrors.ProductIdInvalid;
+
+        return product.ApplyDiscount(discountExpiresOn, discountPercentage);
+    }
+
     public bool ProductExists(ProductId productId)
     {
         return Products.FirstOrDefault(x => x.Id == productId) != default;
