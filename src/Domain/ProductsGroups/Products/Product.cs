@@ -161,12 +161,6 @@ public sealed class Product : BaseEntity<ProductId>
         Status = ProductStatus.Archived;
     }
 
-    public Result<Success> ApplyDiscount()
-    {
-        throw new NotImplementedException();
-    }
-
-
     private void SortImages()
     {
         byte sortOrder = 1;
@@ -204,6 +198,14 @@ public sealed class Product : BaseEntity<ProductId>
 
     public Result<Success> ApplyDiscount(DateOnly discountExpiresOn, byte discountPercentage)
     {
+        if (Status == ProductStatus.Archived)
+            return DomainErrors.Products.ThisProductIsArchivedAndCannotBeModified;
+
+        if (Price.Value < ProductRules.MinPriceToApplyADiscount)
+        {
+            return DomainErrors.Products.ProductPriceNotApplicableForDiscount;
+        }
+
         var valResult = ValidateDiscountPercentage(discountPercentage);
 
         if (valResult.Failed)

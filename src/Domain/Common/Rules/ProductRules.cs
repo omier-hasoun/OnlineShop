@@ -6,6 +6,8 @@ public static class ProductRules
     public const byte MinPrice = 5;
     public const int MaxPrice = 500_000;
 
+    public const byte MinPriceToApplyADiscount = 10;
+
     public const byte MaxDiscountPercentageValue = 80;// max discount is 80 percent
     public const byte MinDiscountPercentageValue = 1;// 0 when no discount is applied
 

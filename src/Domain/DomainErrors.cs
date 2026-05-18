@@ -49,7 +49,7 @@ public static class DomainErrors
 
     public static readonly Error MissingInput = Error.Validation($"{BaseErrorCode}.{nameof(MissingInput)}");
 
-    public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+    public static readonly Error rename = Error.Validation($"{BaseErrorCode}.{nameof(rename)}");
 
     public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
 
@@ -175,9 +175,9 @@ public static class DomainErrors
 
         public static readonly Error DateMustBeInFuture = Error.Validation($"{BaseErrorCode}.{nameof(DateMustBeInFuture)}");
 
-        public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
+        public static readonly Error ProductPriceNotApplicableForDiscount = Error.Validation($"{BaseErrorCode}.{nameof(ProductPriceNotApplicableForDiscount)}");
 
-        public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
+        public static readonly Error ThisProductIsArchivedAndCannotBeModified = Error.Validation($"{BaseErrorCode}.{nameof(ThisProductIsArchivedAndCannotBeModified)}");
 
         public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
 
