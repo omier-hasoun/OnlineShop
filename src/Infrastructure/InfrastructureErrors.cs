@@ -1,7 +1,7 @@
 
 namespace Infrastructure;
 
-internal static class TechnicalErrors
+internal static class InfrastructureErrors
 {
     public static class Images
     {

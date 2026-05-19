@@ -1,6 +1,7 @@
 
 using Application.Common.Configurations;
 using Application.Entities;
+using Hangfire;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
@@ -43,6 +44,19 @@ namespace Api
 
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                ApplicationDbContextInitialiser initialiser = new(scope.ServiceProvider.GetRequiredService<ILogger<ApplicationDbContextInitialiser>>(),
+                    scope.ServiceProvider.GetRequiredService<AppDbContext>(),
+                    scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>(),
+                    scope.ServiceProvider.GetRequiredService<RoleManager<Role>>());
+
+                await initialiser.InitialiseAndSeedData();
+                IOptions<ProductImagePathOptions> options = scope.ServiceProvider.GetRequiredService<IOptions<ProductImagePathOptions>>();
+            }
+
+
+
             if (app.Environment.IsDevelopment())
             {
                 app.MapScalarApiReference();
@@ -56,33 +70,23 @@ namespace Api
             }
 
             app.UseHttpsRedirection();
-
+             
 
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+            app.MapHangfireDashboard();
 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseHangfireDashboard();
 
-
-
-            using (var scope = app.Services.CreateScope())
-            {
-                ApplicationDbContextInitialiser initialiser = new(scope.ServiceProvider.GetRequiredService<ILogger<ApplicationDbContextInitialiser>>(),
-                    scope.ServiceProvider.GetRequiredService<AppDbContext>(),
-                    scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>(),
-                    scope.ServiceProvider.GetRequiredService<RoleManager<Role>>());
-
-                await initialiser.InitialiseAndSeedData();
-                IOptions<ProductImagePathOptions> options = scope.ServiceProvider.GetRequiredService<IOptions<ProductImagePathOptions>>();
-            }
 
             app.Use(async (HttpContext context, RequestDelegate next) =>
             {
-                if(!Guid.TryParse(context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var _))
+                if (!Guid.TryParse(context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var _))
                 {
                     var guestId = context.Request.Cookies["guest_id"];
 
@@ -112,10 +116,22 @@ namespace Api
             app.MapGroup("/api/auth").
                 MapIdentityApi<AppUser>();
 
+            using (var scope = app.Services.CreateScope())
+            {
+
+                HangfireSayHi(scope.ServiceProvider.GetRequiredService<IBackgroundJobClient>());
+            }
+
+
             await app.RunAsync();
 
 
 
+        }
+
+        private static void HangfireSayHi(IBackgroundJobClient b)
+        {
+            b.Enqueue(() => Console.WriteLine("hello hangfire"));
         }
     }
 }

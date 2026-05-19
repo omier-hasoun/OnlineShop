@@ -10,7 +10,7 @@ public sealed class ProductStock : IEntity // i want to a composite id in this e
         ReservedQuantity = reservedQuantity;
     }
 
-    public static Result<ProductStock> Create(WarehouseId warehouseId, ProductId productId, int quantity)
+    public static ProductStock Create(WarehouseId warehouseId, ProductId productId, int quantity)
     {
 
         return new ProductStock(warehouseId, productId, quantity, 0);
@@ -21,8 +21,8 @@ public sealed class ProductStock : IEntity // i want to a composite id in this e
     public int Quantity { get; private set; }
     public int ReservedQuantity { get; private set; }
 
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-    private readonly List<IDomainEvent> _domainEvents = [];
+    public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    private readonly List<DomainEvent> _domainEvents = [];
 
     public Result<Success> ReserveItem(short quantity)
     {
@@ -70,7 +70,7 @@ public sealed class ProductStock : IEntity // i want to a composite id in this e
     }
 
 
-    public void AddDomainEvent(IDomainEvent domainEvent)
+    public void AddDomainEvent(DomainEvent domainEvent)
     {
         if (domainEvent is null)
             return;
@@ -78,7 +78,7 @@ public sealed class ProductStock : IEntity // i want to a composite id in this e
         _domainEvents.Add(domainEvent);
     }
 
-    public void RemoveDomainEvent(IDomainEvent domainEvent)
+    public void RemoveDomainEvent(DomainEvent domainEvent)
     {
         _domainEvents.Remove(domainEvent);
     }

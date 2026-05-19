@@ -83,8 +83,6 @@ internal sealed class AddressConfig : BaseEntityConfig<Address>
                            .IsRequired();
         });
 
-        //builder.UseTphMappingStrategy();
-
         builder.ToTable("Addresses");
 
     }

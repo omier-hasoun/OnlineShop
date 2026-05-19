@@ -1,3 +1,5 @@
 namespace Domain.Common.Abstractions;
 
-public interface IDomainEvent;
+public abstract record DomainEvent
+{
+}

@@ -1,0 +1,9 @@
+namespace Application.Common.Dtos;
+
+public sealed class DomainEventNotification<TDomainEvent>(TDomainEvent domainEvent) : INotification
+where TDomainEvent : DomainEvent
+{
+    public TDomainEvent DomainEvent { get; }
+        = domainEvent;
+}
+

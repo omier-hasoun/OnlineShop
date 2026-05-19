@@ -20,18 +20,18 @@ internal sealed class ImageValidator(IFileFormatInspector inspector) : IImageVal
         Stream fileStream = file.ContentStream;
 
         if (fileStream.CanSeek is false)
-            return TechnicalErrors.Images.InvalidImage;
+            return InfrastructureErrors.Images.InvalidImage;
 
         FileFormat? format = inspector.DetermineFileFormat(fileStream);
 
         fileStream.Position = 0L;
 
         if (format is null)
-            return TechnicalErrors.Images.InvalidImageFormat;
+            return InfrastructureErrors.Images.InvalidImageFormat;
 
         if (file.ContentLength > MaxSize)
         {
-            return TechnicalErrors.Images.InvalidImageSize;
+            return InfrastructureErrors.Images.InvalidImageSize;
         }
 
 
@@ -40,7 +40,7 @@ internal sealed class ImageValidator(IFileFormatInspector inspector) : IImageVal
         fileStream.Position = 0L;
 
         if (image.Width < MinWidth || image.Height < MinHeight)
-            return TechnicalErrors.Images.InvalidImageAspectRatio;
+            return InfrastructureErrors.Images.InvalidImageAspectRatio;
 
 
         return Result.Success;

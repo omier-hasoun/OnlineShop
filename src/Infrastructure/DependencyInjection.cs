@@ -6,18 +6,21 @@ using Domain.Carts.CartItems;
 using Domain.Orders;
 using Domain.ProductsGroups;
 using Domain.ProductsGroups.Products;
+using Domain.Warehouses;
 using FileSignatures;
+using Hangfire;
+using Infrastructure.BackgroundServices;
 using Infrastructure.Channels;
 using Infrastructure.Common.Exceptions;
 using Infrastructure.Data.IdGenerators;
 using Infrastructure.Data.IdGenerators.Primitives;
 using Infrastructure.Data.Interceptors;
-using Infrastructure.LocalServices.BackgroundServices;
 using Infrastructure.LocalServices.FileNameGeneratorService;
 using Infrastructure.LocalServices.FileStorageService;
 using Infrastructure.LocalServices.FileValidator;
 using Infrastructure.LocalServices.Hashing;
 using Infrastructure.LocalServices.ImagesStore;
+using Infrastructure.LocalServices.Messaging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using App = Application.Common.Abstractions;
@@ -33,7 +36,8 @@ public static class DependencyInjection
                 .AddEfCoreServices(config, enviroment)
                 .AddIdGenServices(config)
                 .AddIdGeneratorsServices()
-                .AddIdentityServices(config, env: enviroment)
+                .AddIdentityServices(config, enviroment)
+                .AddHangfireServices(config, enviroment)
                 .AddFileSignaturesServices();
                 
 
@@ -62,7 +66,7 @@ public static class DependencyInjection
         services.AddSingleton<IImageJobWriter, ImageProcessingJobsChannel>();
 
         services.AddSingleton<IUniqueFileNameGenerator, FileNameGenerator>();
-
+        services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
         return services;
     }
@@ -79,9 +83,11 @@ public static class DependencyInjection
         services.AddSingleton<App.IIdGenerator<OrderId>, OrderIdGenerator>();
         services.AddSingleton<App.IIdGenerator<CartId>, CartIdGenerator>();
         services.AddSingleton<App.IIdGenerator<CartItemId>, CartItemIdGenerator>();
+        services.AddSingleton<App.IIdGenerator<WarehouseId>, WarehouseIdGenerator>();
 
 
 
+        
         return services;
     }
 
@@ -124,9 +130,6 @@ public static class DependencyInjection
     private static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config, IWebHostEnvironment env)
     {
 
-
-
-
         services.AddIdentityCore<AppUser>((options) => GetIdentityOptions(options, config))
         .AddRoles<Role>()
         .AddEntityFrameworkStores<AppDbContext>()
@@ -147,7 +150,19 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddEfCoreServices(this IServiceCollection services, IConfiguration config, IWebHostEnvironment environment)
+    private static IServiceCollection AddHangfireServices(this IServiceCollection services, IConfiguration config, IWebHostEnvironment environment)
+    {
+        services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(GetDbConnectionString(config, environment)));
+
+        services.AddHangfireServer();
+        return services;
+    }
+
+    private static string GetDbConnectionString(IConfiguration config, IWebHostEnvironment environment)
     {
         string? connString;
 
@@ -161,19 +176,27 @@ public static class DependencyInjection
         {
             throw new ConnectionStringWasNotProvidedException();
         }
+        return connString;
+    }
 
 
+    private static IServiceCollection AddEfCoreServices(this IServiceCollection services, IConfiguration config, IWebHostEnvironment environment)
+    {
         services.AddDbContext<AppDbContext>((sp, options) =>
         {
-            options.UseSqlServer(connString).AddInterceptors(
+            options.UseSqlServer(GetDbConnectionString(config, environment)).AddInterceptors(
             sp.GetRequiredService<SoftDeleteEntitySaveChangesInterceptor>(),
-            sp.GetRequiredService<AuditedEntitySaveChangesInterceptor>());
+            sp.GetRequiredService<AuditedEntitySaveChangesInterceptor>(),
+            sp.GetRequiredService<PublishDomainEventsInterceptor>()
+            );
         });
 
         services.AddScoped<IAppDbContext, AppDbContext>();
 
         //interceptors
         services.AddScoped<AuditedEntitySaveChangesInterceptor>();
+        services.AddScoped<PublishDomainEventsInterceptor>();
+
         services.AddScoped<SoftDeleteEntitySaveChangesInterceptor>();
 
         return services;

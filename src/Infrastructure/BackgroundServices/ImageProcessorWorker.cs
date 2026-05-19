@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using NetVips;
 using static NetVips.Enums;
 
-namespace Infrastructure.LocalServices.BackgroundServices;
+namespace Infrastructure.BackgroundServices;
 
 internal sealed class ImageProcessorWorker : BackgroundService
 {

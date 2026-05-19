@@ -1,6 +1,5 @@
 
 using Domain.Brands;
-using Domain.Common.Entities.Addresses;
 using Domain.Common.Rules;
 
 namespace Infrastructure.Data.Configs.Business;

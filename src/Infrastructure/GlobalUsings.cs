@@ -13,7 +13,7 @@ global using System.Security.Claims;
 global using Shared.Results;
 global using Microsoft.AspNetCore.Authentication;
 global using Application.Common;
-global using Infrastructure.Data.Configs.Abstractions;
+global using Infrastructure.Data.Configs.Base;
 global using Shared;
 global using Shared.Helpers;
 global using Microsoft.Extensions.DependencyInjection;

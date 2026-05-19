@@ -9,7 +9,6 @@ using Application.Features.Management.ProductGroups.Commands.PublishProduct;
 using Application.Features.Management.ProductGroups.Commands.UnpublishProduct;
 using Application.Features.Management.ProductGroups.Commands.ArchiveProductGroup;
 using Application.Features.Management.ProductGroups.Queries.GetProductById;
-using Application.Common.Dtos;
 using Application.Features.Management.ProductGroups.Commands.UpdateImagesSortOrder;
 using Api.Extensions;
 using Application.Features.Management.ProductGroups.Commands.RemoveImages;

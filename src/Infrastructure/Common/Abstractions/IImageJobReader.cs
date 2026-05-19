@@ -1,4 +1,3 @@
-
 using Infrastructure.Channels;
 
 namespace Infrastructure.Common.Abstractions;

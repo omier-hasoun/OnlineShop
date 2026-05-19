@@ -4,10 +4,10 @@ namespace Domain.Common.Abstractions;
 public abstract class BaseEntity<TId> : IEntity where TId : struct, IEquatable<TId>
 {
     public TId Id { get; init; }
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
 
-    private readonly List<IDomainEvent> _domainEvents = [];
+    private readonly List<DomainEvent> _domainEvents = [];
 
     protected BaseEntity(TId Id)
     {
@@ -17,7 +17,7 @@ public abstract class BaseEntity<TId> : IEntity where TId : struct, IEquatable<T
     {
 
     }
-    public void AddDomainEvent(IDomainEvent domainEvent)
+    public void AddDomainEvent(DomainEvent domainEvent)
     {
         if (domainEvent is null)
             return;
@@ -25,7 +25,7 @@ public abstract class BaseEntity<TId> : IEntity where TId : struct, IEquatable<T
         _domainEvents.Add(domainEvent);
     }
 
-    public void RemoveDomainEvent(IDomainEvent domainEvent)
+    public void RemoveDomainEvent(DomainEvent domainEvent)
     {
         _domainEvents.Remove(domainEvent);
     }

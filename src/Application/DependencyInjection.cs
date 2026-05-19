@@ -18,6 +18,7 @@ public static class DependencyInjection
     {
         // for simple dependency injection Transient/Singleton/Scoped
         services.AddMediatR((m) => { m.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly); });
+
         return services;
     }
 

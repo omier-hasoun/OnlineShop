@@ -1,5 +1,4 @@
 using Domain;
-using Domain.Carts.CartItems;
 using Domain.Common.Entities.Addresses;
 using Domain.ShippingAddresses;
 
@@ -7,8 +6,16 @@ namespace Application.Entities;
 
 public sealed class AppUser : IdentityUser<Guid>, IEntity, ISoftDelete, IHasCreationTime, IHasModificationTime
 {
-    private List<IDomainEvent> _domainEvents = [];
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    public AppUser()
+    {
+        if(Id == default)
+        {
+            Id = Guid.CreateVersion7();
+        }
+    }
+
+    private List<DomainEvent> _domainEvents = [];
+    public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     public IReadOnlyCollection<UserClaim> Claims { get; private set; } = [];
     public IReadOnlyCollection<UserToken> Tokens { get; private set; } = [];
@@ -22,14 +29,7 @@ public sealed class AppUser : IdentityUser<Guid>, IEntity, ISoftDelete, IHasCrea
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
 
-    public AppUser()
-    {
-        if(Id == default)
-        {
-            Id = Guid.CreateVersion7();
-        }
-    }
-    public void AddDomainEvent(IDomainEvent domainEvent)
+    public void AddDomainEvent(DomainEvent domainEvent)
     {
         if (domainEvent is null)
             return;
@@ -37,7 +37,7 @@ public sealed class AppUser : IdentityUser<Guid>, IEntity, ISoftDelete, IHasCrea
         _domainEvents.Add(domainEvent);
     }
 
-    public void RemoveDomainEvent(IDomainEvent domainEvent)
+    public void RemoveDomainEvent(DomainEvent domainEvent)
     {
         _domainEvents.Remove(domainEvent);
     }

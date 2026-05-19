@@ -19,7 +19,6 @@ using Infrastructure.Common.EfCore.ValueConverters;
 using Infrastructure.Common.EfCore.ValueComparers;
 using Domain.ProductsStock;
 using Domain.Common.ValueObjects;
-using Domain.ProductsGroups.ValueObjects;
 using Domain.ShippingAddresses;
 using Application.Entities;
 using Domain.Carts.CartItems;
@@ -86,6 +85,8 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     {
         builder.Properties<Money>()
                .HaveConversion<MoneyConverter>();
+        
+        builder.IgnoreAny<DomainEvent>();
     }
 
     private static void ApplySoftDeleteQueryFilterOnAllMembersOfISoftDelete(ModelBuilder builder)

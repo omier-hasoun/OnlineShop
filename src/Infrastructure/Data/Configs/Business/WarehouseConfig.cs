@@ -22,14 +22,10 @@ internal sealed class WarehouseConfig : BaseEntityConfig<Warehouse>
                .HasColumnType("NVARCHAR(50)")
                .IsRequired();
 
-        builder.Property(x => x.CountryCode)
-               .HasColumnType("CHAR(2)")
-               .IsRequired();
-
-        builder.HasOne<Address>()
+        builder.HasOne(x => x.Address)
                .WithOne()
                .HasForeignKey<Warehouse>(x => x.AddressId)
-               .OnDelete(DeleteBehavior.NoAction)
+               .OnDelete(DeleteBehavior.Cascade)
                .IsRequired();
 
         builder.ToTable("Warehouses");
