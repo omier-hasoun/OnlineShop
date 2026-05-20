@@ -17,11 +17,13 @@ internal sealed class ProductStockConfig : BaseEntityConfig<ProductStock>
         builder.HasOne<Product>()
                .WithMany()
                .HasForeignKey(x => x.ProductId)
+               .OnDelete(DeleteBehavior.Cascade)
                .IsRequired();
 
         builder.HasOne<Warehouse>()
                .WithMany()
                .HasForeignKey(x => x.WarehouseId)
+               .OnDelete(DeleteBehavior.Cascade)
                .IsRequired();
 
         builder.HasIndex(x => x.WarehouseId)
