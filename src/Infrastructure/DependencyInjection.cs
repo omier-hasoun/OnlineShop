@@ -3,6 +3,7 @@ using System.Threading.Channels;
 using Application.Entities;
 using Domain.Carts;
 using Domain.Carts.CartItems;
+using Domain.Common.Entities.Addresses;
 using Domain.Orders;
 using Domain.ProductsGroups;
 using Domain.ProductsGroups.Products;
@@ -84,10 +85,12 @@ public static class DependencyInjection
         services.AddSingleton<App.IIdGenerator<CartId>, CartIdGenerator>();
         services.AddSingleton<App.IIdGenerator<CartItemId>, CartItemIdGenerator>();
         services.AddSingleton<App.IIdGenerator<WarehouseId>, WarehouseIdGenerator>();
+        services.AddSingleton<App.IIdGenerator<AddressId>, AddressIdGenerator>();
 
 
 
-        
+
+
         return services;
     }
 

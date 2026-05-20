@@ -30,6 +30,14 @@ public class Address : BaseEntity<AddressId>
         GeoLocation? geoLocation, string? notes)
     {
 
+        var validationResult = Result.ValidateAll(
+                                () => id.IsValid()
+
+                               );
+
+        if (validationResult.Failed)
+            return validationResult.Errors;
+
 
         return new Address(id, fullName, phoneNumber, countryCode, houseNo, city, postalCode, addressLine1, addressLine2, stateProvince, geoLocation, notes);
     }
