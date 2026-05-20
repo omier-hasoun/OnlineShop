@@ -8,7 +8,6 @@ using Domain.Common.ValueObjects;
 using Domain.Currencies;
 using Domain.ProductsGroups;
 using Domain.ProductsGroups.Products;
-using Domain.ProductsGroups.ValueObjects;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Data;
@@ -20,7 +19,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         try
         {
             //await context.Database.MigrateAsync();
-
+            
             await SeedData();
         }
         catch (Exception ex)

@@ -24,9 +24,6 @@
     <Folder Include="Features\Management\Categories\Commands\" />
     <Folder Include="Features\Management\Categories\Dtos\" />
     <Folder Include="Features\Management\Categories\Queries\" />
-    <Folder Include="Features\Management\Warehouses\Dtos\" />
-    <Folder Include="Features\Management\Warehouses\Queries\GetWarehouseById\" />
-    <Folder Include="Features\Management\Warehouses\Queries\ListWarehouses\" />
     <Folder Include="Features\Public\Orders\Commands\" />
     <Folder Include="Features\Public\Orders\Dtos\" />
     <Folder Include="Features\Public\Orders\Queries\" />
