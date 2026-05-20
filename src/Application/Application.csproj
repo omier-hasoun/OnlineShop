@@ -24,10 +24,11 @@
     <Folder Include="Features\Management\Categories\Commands\" />
     <Folder Include="Features\Management\Categories\Dtos\" />
     <Folder Include="Features\Management\Categories\Queries\" />
+    <Folder Include="Features\Public\Categories\Dtos\" />
+    <Folder Include="Features\Public\Categories\Queries\ListCategories\" />
     <Folder Include="Features\Public\Orders\Commands\" />
     <Folder Include="Features\Public\Orders\Dtos\" />
     <Folder Include="Features\Public\Orders\Queries\" />
-    <Folder Include="Features\Public\ProductsGroups\Commands\" />
   </ItemGroup>
 
 

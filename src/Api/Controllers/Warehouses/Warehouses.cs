@@ -7,7 +7,7 @@ using Domain.Warehouses;
 
 namespace Api.Controllers.Warehouses;
 
-[Route("warehouses")]
+[Route("api/warehouses")]
 public sealed class Warehouses(IMediator mediator) : ApiController
 {
     [HttpPost]
@@ -38,7 +38,7 @@ public sealed class Warehouses(IMediator mediator) : ApiController
     }
 
     [HttpGet("{warehouseId}")]
-    public async Task<IActionResult> ListWarehouse(long warehouseId, CancellationToken ct)
+    public async Task<IActionResult> GetWarehouseById(long warehouseId, CancellationToken ct)
     {
 
         var result = await mediator.Send(new GetWarehouseByIdQuery(warehouseId), ct);

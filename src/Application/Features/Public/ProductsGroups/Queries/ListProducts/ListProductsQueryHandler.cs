@@ -37,11 +37,12 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
         }
 
         var queryWithBrands = cheapestProductQuery.Join(
-            context.Brands,
-            pv => pv.product.BrandId, 
-            brand => brand.Id,
-            (pv, brand) => new { pv.product, pv.variant, brand }
-        ).Where(x => x.brand.IsActive);
+                context.Brands,
+                pv => pv.product.BrandId, 
+                brand => brand.Id,
+                (pv, brand) => new { pv.product, pv.variant, brand }
+            )
+            .Where(x => x.brand.IsActive);
 
 
 
@@ -78,7 +79,7 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
                     x.brand.Name,
                     x.product.AverageRating,
                     x.variant.Price,
-                    x.variant.Images.OrderBy(img => img.SortOrder).FirstOrDefault()!,
+                    x.variant.Images.OrderBy(img => img.SortOrder).FirstOrDefault(),
                     x.variant.DiscountPercentage
                     ),
 
