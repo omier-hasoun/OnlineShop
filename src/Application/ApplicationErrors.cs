@@ -98,7 +98,7 @@ public static class ApplicationErrors
 
         public static readonly Error User = Error.NotFound(GenerateErrorCode(nameof(User)));
         public static readonly Error Cart = Error.NotFound(GenerateErrorCode(nameof(Cart)));
-        public static readonly Error rename3 = Error.NotFound(GenerateErrorCode(nameof(rename3)));
+        public static readonly Error Warehouse = Error.NotFound(GenerateErrorCode(nameof(Warehouse)));
 
     }
 

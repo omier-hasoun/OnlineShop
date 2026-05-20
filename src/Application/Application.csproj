@@ -24,7 +24,6 @@
     <Folder Include="Features\Management\Categories\Commands\" />
     <Folder Include="Features\Management\Categories\Dtos\" />
     <Folder Include="Features\Management\Categories\Queries\" />
-    <Folder Include="Features\Management\Warehouses\Commands\DeleteWarehouse\" />
     <Folder Include="Features\Management\Warehouses\Dtos\" />
     <Folder Include="Features\Management\Warehouses\Queries\GetWarehouseById\" />
     <Folder Include="Features\Management\Warehouses\Queries\ListWarehouses\" />
