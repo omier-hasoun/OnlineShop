@@ -18,7 +18,7 @@ namespace Infrastructure.Data.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false),
                     FullName = table.Column<string>(type: "NVARCHAR(100)", maxLength: 100, nullable: false),
                     PhoneNumber = table.Column<string>(type: "VARCHAR(25)", maxLength: 25, nullable: false),
-                    CountryCode = table.Column<string>(type: "NVARCHAR(2)", fixedLength: true, maxLength: 2, nullable: false),
+                    CountryCode = table.Column<string>(type: "CHAR(2)", nullable: false),
                     City = table.Column<string>(type: "NVARCHAR(200)", maxLength: 200, nullable: false),
                     PostalCode = table.Column<string>(type: "NVARCHAR(15)", maxLength: 15, nullable: false),
                     AddressLine1 = table.Column<string>(type: "NVARCHAR(255)", maxLength: 255, nullable: false),
@@ -84,6 +84,34 @@ namespace Infrastructure.Data.Migrations
                         column: x => x.ParentCategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Countries",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Code = table.Column<string>(type: "CHAR(2)", nullable: false),
+                    Name = table.Column<string>(type: "VARCHAR(255)", nullable: false),
+                    PhoneCode = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Countries", x => x.Id)
+                        .Annotation("SqlServer:Clustered", true);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Currencies",
+                columns: table => new
+                {
+                    Code = table.Column<string>(type: "CHAR(3)", nullable: false),
+                    Name = table.Column<string>(type: "NVARCHAR(255)", nullable: false),
+                    Symbol = table.Column<string>(type: "NVARCHAR(15)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Currencies", x => x.Code);
                 });
 
             migrationBuilder.CreateTable(
@@ -203,8 +231,7 @@ namespace Infrastructure.Data.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false),
                     AddressId = table.Column<long>(type: "bigint", nullable: false),
-                    Name = table.Column<string>(type: "NVARCHAR(50)", nullable: false),
-                    CountryCode = table.Column<string>(type: "CHAR(2)", nullable: false)
+                    Name = table.Column<string>(type: "NVARCHAR(50)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -214,7 +241,8 @@ namespace Infrastructure.Data.Migrations
                         name: "FK_Warehouses_Addresses_AddressId",
                         column: x => x.AddressId,
                         principalTable: "Addresses",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -504,12 +532,13 @@ namespace Infrastructure.Data.Migrations
                     Length = table.Column<int>(type: "int", nullable: false),
                     Weight = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    PriceBeforeDiscount = table.Column<decimal>(type: "decimal(18,4)", nullable: true),
+                    DiscountExpiresOn = table.Column<DateOnly>(type: "date", nullable: true),
+                    PriceAfterDiscount = table.Column<decimal>(type: "decimal(18,4)", nullable: true),
                     DiscountPercentage = table.Column<byte>(type: "TINYINT", nullable: true),
                     Status = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     Sku = table.Column<string>(type: "VARCHAR(50)", maxLength: 50, nullable: false),
                     Slug = table.Column<string>(type: "VARCHAR(80)", nullable: false),
-                    Barcode = table.Column<string>(type: "VARCHAR(100)", nullable: false),
+                    BarCode = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     Specifications = table.Column<string>(type: "NVARCHAR(MAX)", nullable: true),
                     Images = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -848,6 +877,12 @@ namespace Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "CartItems");
+
+            migrationBuilder.DropTable(
+                name: "Countries");
+
+            migrationBuilder.DropTable(
+                name: "Currencies");
 
             migrationBuilder.DropTable(
                 name: "OrderPayments");

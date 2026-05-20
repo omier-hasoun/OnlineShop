@@ -23,6 +23,9 @@ using Domain.ShippingAddresses;
 using Application.Entities;
 using Domain.Carts.CartItems;
 using Domain.Carts;
+using Domain.Countries;
+using Domain.Currencies;
+using Domain.Countries.StateProvinces;
 
 
 namespace Infrastructure.Data;
@@ -52,6 +55,12 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     public DbSet<ShippingAddress> ShippingAddresses => Set<ShippingAddress>();
     public DbSet<ReturnItemRequestReview> ReturnItemRequestReviews => Set<ReturnItemRequestReview>();
     public DbSet<UserPaymentMethodLog> UserPaymentMethodLogs => Set<UserPaymentMethodLog>();
+
+    public DbSet<Country> Countries => Set<Country>();
+
+    public DbSet<Currency> Currencies => Set<Currency>();
+
+    public DbSet<StateProvince> StateProvinces => Set<StateProvince>();
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {

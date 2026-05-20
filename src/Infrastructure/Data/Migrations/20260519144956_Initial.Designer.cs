@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260514213428_DiscountExpiresOnFieldAddedToProduct")]
-    partial class DiscountExpiresOnFieldAddedToProduct
+    [Migration("20260519144956_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.6")
+                .HasAnnotation("ProductVersion", "10.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -351,9 +351,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("CountryCode")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("NVARCHAR")
-                        .IsFixedLength();
+                        .HasColumnType("CHAR(2)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -388,6 +386,51 @@ namespace Infrastructure.Data.Migrations
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.ToTable("Addresses", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Countries.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("CHAR(2)")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(255)")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("PhoneCode")
+                        .HasColumnType("int")
+                        .HasColumnOrder(4);
+
+                    b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
+                    b.ToTable("Countries", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Currencies.Currency", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("CHAR(3)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<string>("Symbol")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(15)");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("Currencies", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Orders.Order", b =>
@@ -624,7 +667,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("PriceBeforeDiscount")
+                    b.Property<decimal?>("PriceAfterDiscount")
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<long>("ProductsGroupId")
@@ -952,10 +995,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<long>("AddressId")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("CountryCode")
-                        .IsRequired()
-                        .HasColumnType("CHAR(2)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1356,11 +1395,13 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Warehouses.Warehouse", b =>
                 {
-                    b.HasOne("Domain.Common.Entities.Addresses.Address", null)
+                    b.HasOne("Domain.Common.Entities.Addresses.Address", "Address")
                         .WithOne()
                         .HasForeignKey("Domain.Warehouses.Warehouse", "AddressId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>

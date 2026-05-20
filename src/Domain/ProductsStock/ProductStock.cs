@@ -1,6 +1,6 @@
 namespace Domain.ProductsStock;
 
-public sealed class ProductStock : IEntity // i want to a composite id in this entity, i cant do that if i inherit BaseEntity 
+public sealed class ProductStock : IAggregateRoot // i want to a composite id in this entity, i cant do that if i inherit BaseEntity 
 {
     private ProductStock(WarehouseId warehouseId, ProductId productId, int quantity, int reservedQuantity)
     {

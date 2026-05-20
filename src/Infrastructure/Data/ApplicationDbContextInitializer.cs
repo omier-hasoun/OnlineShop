@@ -5,6 +5,7 @@ using Domain.Carts;
 using Domain.Carts.CartItems;
 using Domain.Categories;
 using Domain.Common.ValueObjects;
+using Domain.Currencies;
 using Domain.ProductsGroups;
 using Domain.ProductsGroups.Products;
 using Domain.ProductsGroups.ValueObjects;
@@ -42,6 +43,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         };
         await userManager.CreateAsync(user1, "1234");
 
+        await SeedCurrencies();
 
         var brandId1 = new BrandId(Guid.Parse("019dd6b8-96d0-734b-97ca-02b8094e7f00"));
         var brandId2 = new BrandId(Guid.Parse("019dd6b8-96d0-7904-8a7a-d1e750789a04"));
@@ -95,4 +97,56 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+    private async Task SeedCurrencies()
+    {
+        context.Currencies.Add(new Currency
+        {
+            Code = "USD",
+            Name = "Dollars",
+            Symbol = "$"
+
+        });
+        context.Currencies.Add(new Currency
+        {
+            Code = "EUR",
+            Name = "Euro",
+            Symbol = "€"
+
+        });
+
+        context.Currencies.Add(new Currency
+        {
+            Code = "KR",
+            Name = "Swedish krona",
+            Symbol = "kr"
+
+        });
+
+        context.Currencies.Add(new Currency
+        {
+            Code = "GBP",
+            Name = "Pounds",
+            Symbol = "£"
+
+        });
+
+        context.Currencies.Add(new Currency
+        {
+            Code = "SYP",
+            Name = "Pounds",
+            Symbol = "£"
+
+        });
+    }
 }

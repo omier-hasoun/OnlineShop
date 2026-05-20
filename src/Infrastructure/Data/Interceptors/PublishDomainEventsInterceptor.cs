@@ -13,7 +13,7 @@ internal sealed class PublishDomainEventsInterceptor(IDomainEventDispatcher doma
     {
         if (eventData.Context is not null)
         {
-            _emittedEvents = eventData.Context.ChangeTracker.Entries<IEntity>()
+            _emittedEvents = eventData.Context.ChangeTracker.Entries<IAggregateRoot>()
                 .Select(entry => entry.Entity)
                 .SelectMany(entity =>
                 {

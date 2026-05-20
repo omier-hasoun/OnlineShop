@@ -16,6 +16,9 @@ using Domain.ShippingAddresses;
 using Application.Entities;
 using Domain.Carts.CartItems;
 using Domain.Carts;
+using Domain.Countries;
+using Domain.Currencies;
+using Domain.Countries.StateProvinces;
 
 namespace Application.Common.Abstractions;
 
@@ -37,6 +40,11 @@ public interface IAppDbContext
 
     DbSet<Warehouse> Warehouses { get; }
     DbSet<ProductStock> ProductStocks { get; }
+
+    DbSet<Country> Countries { get; }
+    DbSet<Currency> Currencies { get; }
+    DbSet<StateProvince> StateProvinces { get; }
+
 
     DbSet<OrderPayment> OrderPayments { get; }
 

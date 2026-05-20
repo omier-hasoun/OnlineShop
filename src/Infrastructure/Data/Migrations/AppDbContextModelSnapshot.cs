@@ -348,9 +348,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("CountryCode")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("NVARCHAR")
-                        .IsFixedLength();
+                        .HasColumnType("CHAR(2)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -385,6 +383,79 @@ namespace Infrastructure.Data.Migrations
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.ToTable("Addresses", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Countries.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("CHAR(2)")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("CurrencyCode")
+                        .HasColumnType("CHAR(3)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(255)")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("PhoneCode")
+                        .HasColumnType("int")
+                        .HasColumnOrder(4);
+
+                    b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
+                    b.HasIndex("CurrencyCode");
+
+                    b.ToTable("Countries", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Countries.StateProvinces.StateProvince", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<int>("CountryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
+                    b.HasIndex("CountryId");
+
+                    b.ToTable("StateProvinces", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Currencies.Currency", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("CHAR(3)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<string>("Symbol")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(15)");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("Currencies", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Orders.Order", b =>
@@ -1051,6 +1122,22 @@ namespace Infrastructure.Data.Migrations
                         });
 
                     b.Navigation("GeoLocation");
+                });
+
+            modelBuilder.Entity("Domain.Countries.Country", b =>
+                {
+                    b.HasOne("Domain.Currencies.Currency", null)
+                        .WithMany()
+                        .HasForeignKey("CurrencyCode");
+                });
+
+            modelBuilder.Entity("Domain.Countries.StateProvinces.StateProvince", b =>
+                {
+                    b.HasOne("Domain.Countries.Country", null)
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Orders.Order", b =>

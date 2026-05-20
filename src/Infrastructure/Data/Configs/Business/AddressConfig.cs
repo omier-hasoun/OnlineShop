@@ -1,6 +1,7 @@
 
 using Domain.Common.Entities.Addresses;
 using Domain.Common.Rules;
+using Domain.Countries;
 
 
 namespace Infrastructure.Data.Configs.Business;
@@ -41,12 +42,6 @@ internal sealed class AddressConfig : BaseEntityConfig<Address>
                .HasMaxLength(AddressRules.MaxPostalCodeLength)
                .IsRequired();
 
-        builder.Property(x => x.CountryCode)
-               .HasColumnType("NVARCHAR")
-               .HasMaxLength(AddressRules.MaxCountryCodeLength)
-               .IsFixedLength()
-               .IsRequired();
-
         builder.Property(x => x.FullName)
                .HasColumnType("NVARCHAR")
                .HasMaxLength(AddressRules.MaxFullNameLength)
@@ -72,6 +67,11 @@ internal sealed class AddressConfig : BaseEntityConfig<Address>
                .HasMaxLength(AddressRules.MaxStateProvinceLength)
                .IsRequired(false);
 
+        builder.Property(x => x.CountryCode)
+               .HasColumnType("CHAR(2)")
+               .IsRequired();
+
+
         builder.OwnsOne(x => x.GeoLocation, locationBuilder =>
         {
             locationBuilder.Property(l => l.Latitude)
@@ -82,6 +82,8 @@ internal sealed class AddressConfig : BaseEntityConfig<Address>
                            .HasColumnType("DECIMAL(9,6)")
                            .IsRequired();
         });
+
+
 
         builder.ToTable("Addresses");
 

@@ -4,7 +4,7 @@ using Domain.ShippingAddresses;
 
 namespace Application.Entities;
 
-public sealed class AppUser : IdentityUser<Guid>, IEntity, ISoftDelete, IHasCreationTime, IHasModificationTime
+public sealed class AppUser : IdentityUser<Guid>, IAggregateRoot, ISoftDelete, IHasCreationTime, IHasModificationTime
 {
     public AppUser()
     {
