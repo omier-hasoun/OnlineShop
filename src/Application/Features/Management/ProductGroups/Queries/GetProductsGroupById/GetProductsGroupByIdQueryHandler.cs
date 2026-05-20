@@ -11,7 +11,6 @@ internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : 
         var productId = query.ProductId;
 
         var getProductQuery = context.ProductGroups.AsNoTracking()
-                                              .Include(x => x.Products)
                                               .Where(p => p.Id == productId)
                                               .Join(
                                                     context.Brands, p => p.BrandId, b => b.Id,
