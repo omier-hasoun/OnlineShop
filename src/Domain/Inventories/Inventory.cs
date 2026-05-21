@@ -1,8 +1,8 @@
-namespace Domain.ProductsStock;
+namespace Domain.Inventories;
 
-public sealed class ProductStock : IAggregateRoot // i want to a composite id in this entity, i cant do that if i inherit BaseEntity 
+public sealed class Inventory : IAggregateRoot // i want to a composite id in this entity, i cant do that if i inherit BaseEntity 
 {
-    private ProductStock(WarehouseId warehouseId, ProductId productId, int quantity, int reservedQuantity)
+    private Inventory(WarehouseId warehouseId, ProductId productId, int quantity, int reservedQuantity)
     {
         WarehouseId = warehouseId;
         ProductId = productId;
@@ -10,10 +10,10 @@ public sealed class ProductStock : IAggregateRoot // i want to a composite id in
         ReservedQuantity = reservedQuantity;
     }
 
-    public static ProductStock Create(WarehouseId warehouseId, ProductId productId, int quantity)
+    public static Inventory Create(WarehouseId warehouseId, ProductId productId, int quantity)
     {
 
-        return new ProductStock(warehouseId, productId, quantity, 0);
+        return new Inventory(warehouseId, productId, quantity, 0);
     }
 
     public WarehouseId WarehouseId { get; private init; }

@@ -1,13 +1,13 @@
 
 using Domain.ProductsGroups.Products;
-using Domain.ProductsStock;
+using Domain.Inventories;
 using Domain.Warehouses;
 
 namespace Infrastructure.Data.Configs.Business;
 
-internal sealed class ProductStockConfig : BaseEntityConfig<ProductStock>
+internal sealed class InventoryConfig : BaseEntityConfig<Inventory>
 {
-    public override void Configure(EntityTypeBuilder<ProductStock> builder)
+    public override void Configure(EntityTypeBuilder<Inventory> builder)
     {
         base.Configure(builder);
 
@@ -27,11 +27,11 @@ internal sealed class ProductStockConfig : BaseEntityConfig<ProductStock>
                .IsRequired();
 
         builder.HasIndex(x => x.WarehouseId)
-               .HasDatabaseName("IX_ProductsStock_WarehouseId");
+               .HasDatabaseName("IX_Inventories_WarehouseId");
 
-        builder.ToTable("ProductsStock", x =>
+        builder.ToTable("Inventories", x =>
             {
-                x.HasCheckConstraint("CK_ProductsStock_ReservedQuantity", "[ReservedQuantity] <= [Quantity]");
+                x.HasCheckConstraint("CK_Inventories_ReservedQuantity", "[ReservedQuantity] <= [Quantity]");
             }
         );
 

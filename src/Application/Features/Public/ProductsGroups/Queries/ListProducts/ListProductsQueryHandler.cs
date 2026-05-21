@@ -1,8 +1,6 @@
 using Application.Common.Dtos;
 using Application.Common.Extensions;
 using Application.Features.Public.ProductsGroups.Dtos;
-using Domain.Brands;
-using Domain.Categories;
 using Domain.Common.ValueObjects;
 using Domain.ProductsGroups.Products;
 

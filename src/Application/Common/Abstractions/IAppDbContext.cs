@@ -6,7 +6,7 @@ using Domain.Orders.Shipments;
 using Domain.PaymentProviders;
 using Domain.ProductReviews;
 using Domain.ProductsGroups.Products;
-using Domain.ProductsStock;
+using Domain.Inventories;
 using Domain.ReturnItemRequestsReviews;
 using Domain.ReturnItemRequests;
 using Domain.Transactions;
@@ -39,7 +39,7 @@ public interface IAppDbContext
     DbSet<AppSettings> AppSettings { get; }
 
     DbSet<Warehouse> Warehouses { get; }
-    DbSet<ProductStock> ProductStocks { get; }
+    DbSet<Inventory> ProductStocks { get; }
 
     DbSet<Country> Countries { get; }
     DbSet<Currency> Currencies { get; }

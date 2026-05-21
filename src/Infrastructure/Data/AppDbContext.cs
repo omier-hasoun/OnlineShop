@@ -17,7 +17,7 @@ using Domain.ReturnItemRequestsReviews;
 using Domain.UsersPaymentMethodsLogs;
 using Infrastructure.Common.EfCore.ValueConverters;
 using Infrastructure.Common.EfCore.ValueComparers;
-using Domain.ProductsStock;
+using Domain.Inventories;
 using Domain.Common.ValueObjects;
 using Domain.ShippingAddresses;
 using Application.Entities;
@@ -48,7 +48,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     public DbSet<OrderPayment> OrderPayments => Set<OrderPayment>();
     public DbSet<PaymentProvider> PaymentProviders => Set<PaymentProvider>();
     public DbSet<Category> Categories => Set<Category>();
-    public DbSet<ProductStock> ProductStocks => Set<ProductStock>();
+    public DbSet<Inventory> ProductStocks => Set<Inventory>();
     public DbSet<ReturnItemRequest> ReturnRequests => Set<ReturnItemRequest>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<Address> Addresses => Set<Address>();
