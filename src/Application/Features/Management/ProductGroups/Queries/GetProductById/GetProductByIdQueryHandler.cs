@@ -7,7 +7,10 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
 {
     public async Task<Result<ProductDto>> Handle(GetProductByIdQuery request, CancellationToken ct)
     {
-        var product = await context.Products.FindAsync(request.ParsedProductId);
+        var product = await context.Products.AsNoTracking()
+                                            .Include(x => x.StockPerWarehouse)
+                                            .ThenInclude(x => x.Warehouse)
+                                            .FirstOrDefaultAsync(x => x.Id == request.ParsedProductId, ct);
 
         if (product is null)
             return ApplicationErrors.NotFound.Product;
@@ -29,7 +32,9 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
                 product.BarCode,
                 product.HasActiveDiscount,
                 product.Specifications.ToDictionary(),
-                [.. product.Images]
+                [.. product.Images],
+                product.StockPerWarehouse.Select(x => new ProductInventoryDto(
+                                                    x.WarehouseId, x.Warehouse.Name, x.Quantity)).ToList()
             );
     }
 }

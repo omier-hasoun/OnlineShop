@@ -32,6 +32,7 @@ internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : 
                                                                             p.Id, p.Price, p.HasActiveDiscount, p.DiscountPercentage,
                                                                             p.PriceAfterDiscount, p.DiscountExpiresOn, p.Status, p.Images.FirstOrDefault(),
                                                                             p.StockPerWarehouse.Select(x => new ProductInventoryDto(x.WarehouseId,x.Warehouse.Name, x.Quantity))
+                                                                                               .Take(3)
                                                                                                .ToList()
                                                                        ))
                                                                         .ToList())

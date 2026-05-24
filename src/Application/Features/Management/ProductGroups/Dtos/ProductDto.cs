@@ -1,5 +1,4 @@
 
-using System.Net.NetworkInformation;
 using Application.Common.Dtos;
 using Domain.Common.ValueObjects;
 using Domain.ProductGroups.Products;
@@ -11,8 +10,10 @@ public sealed record ProductDto
 {
 
 
-    public ProductDto(ProductId productId, ProductGroupId productGroupId, Money? priceBeforeDiscount, Money price, byte? discountPercentage, DateOnly? discountExpiresOn, ProductState status,
-        int width, int height, int length, int weight, string sku, string slug, string barCode, bool hasActiveDiscount, Dictionary<string, string> specifications, List<ProductImage> images)
+    public ProductDto(ProductId productId, ProductGroupId productGroupId, Money? priceBeforeDiscount,
+        Money price, byte? discountPercentage, DateOnly? discountExpiresOn, ProductState status,
+        int width, int height, int length, int weight, string sku, string slug, string barCode, bool hasActiveDiscount,
+        Dictionary<string, string> specifications, List<ProductImage> images, List<ProductInventoryDto> stockPerWarehouse)
     {
         ProductId = productId.Value;
         Price = (double)price.Value;
@@ -29,7 +30,9 @@ public sealed record ProductDto
         BarCode = barCode;
         HasActiveDiscount = hasActiveDiscount;
         Specifications = specifications;
+        StockPerWarehouse = stockPerWarehouse;
         Status = status.ToString();
+
         Images = new List<ProductImageDto>(images.Count);
         images.ForEach(image => Images.Add(new(image)));
     }
@@ -53,5 +56,7 @@ public sealed record ProductDto
 
     public Dictionary<string, string> Specifications { get; }
 
-    public List<ProductImageDto> Images { get; set; }
+    public List<ProductImageDto> Images { get; init; }
+    public List<ProductInventoryDto> StockPerWarehouse { get; init; }
+
 }
