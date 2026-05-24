@@ -1,3 +1,4 @@
+using Application.Common.Dtos;
 using Domain.Brands;
 using Domain.Categories;
 using Domain.ProductGroups.ValueObjects;
@@ -13,13 +14,15 @@ public sealed record ProductGroupDto
     public float AverageRating { get; init; }
     public ProductCategoryDto Category { get; init; } = null!;
     public ProductBrandDto Brand { get; init; }
-    public Dictionary<string, string> Attributes { get; init; } = null!;
-    public List<ProductGroupListProductsDto> Products { get; init; } = null!;
+    public IReadOnlyDictionary<string, string> Attributes { get; init; } = null!;
+    public IReadOnlyCollection<ProductListItemDto> Products { get; init; } = null!;
+    public AuditedUserDto LastModifiedInfo { get; init; } = null!;
 
 
-    public ProductGroupDto(ProductGroupId id, string title, string description, Dictionary<string, string> attributes,
+    public ProductGroupDto(ProductGroupId id, string title, string description, IReadOnlyDictionary<string, string> attributes,
         BrandId brandId, string brandName, CategoryId categoryId, string categoryName, ProductAverageRating averageRating,
-        List<ProductGroupListProductsDto> products)
+        DateTime lastModifiedAt, Guid lastModifiedBy, string lastModifiedByUserName,
+        IReadOnlyCollection<ProductListItemDto> products)
     {
         Id = id.ToString();
         Title = title;
@@ -27,8 +30,11 @@ public sealed record ProductGroupDto
         Attributes = attributes;
         Brand = new(brandId, brandName);
         Category = new ProductCategoryDto(categoryId, categoryName);
+
         Products = products;
         AverageRating = averageRating.Value;
+        LastModifiedInfo = new(lastModifiedBy, lastModifiedByUserName, lastModifiedAt);
+
 
     }
 }

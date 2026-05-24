@@ -15,12 +15,12 @@ internal sealed class InventoryConfig : BaseEntityConfig<Inventory>
                .IsClustered();
 
         builder.HasOne<Product>()
-               .WithMany()
+               .WithMany(x => x.StockPerWarehouse)
                .HasForeignKey(x => x.ProductId)
                .OnDelete(DeleteBehavior.Cascade)
                .IsRequired();
 
-        builder.HasOne<Warehouse>()
+        builder.HasOne(x => x.Warehouse)
                .WithMany()
                .HasForeignKey(x => x.WarehouseId)
                .OnDelete(DeleteBehavior.Cascade)

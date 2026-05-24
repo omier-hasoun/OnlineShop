@@ -1,4 +1,6 @@
 
+using Domain.Inventories;
+
 namespace Domain.ProductGroups.Products;
 
 public sealed class Product : BaseEntity<ProductId>
@@ -86,6 +88,8 @@ public sealed class Product : BaseEntity<ProductId>
     public string Slug { get; private set; } = null!;
 
     public string BarCode { get; private init; } = null!;
+
+    public List<Inventory> StockPerWarehouse { get; private set; }
 
     private bool CanTransitionTo(ProductState newStatus)
     {

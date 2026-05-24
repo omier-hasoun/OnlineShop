@@ -213,7 +213,7 @@ public sealed class ProductsManagementController(IMediator mediator, IUniqueFile
 
         var result = await mediator.Send(new GetProductsGroupByIdQuery(productGroupId), ct);
 
-        return result.Match((response) => Ok(new { response }), Problem);
+        return result.Match((response) => Ok(response), Problem);
     }
 
     [HttpGet("products/{productId}")]
@@ -222,7 +222,7 @@ public sealed class ProductsManagementController(IMediator mediator, IUniqueFile
 
         var result = await mediator.Send(new GetProductByIdQuery(productId), ct);
 
-        return result.Match((response) => Ok(new { response }), Problem);
+        return result.Match((response) => Ok(response), Problem);
     }
 
     #endregion

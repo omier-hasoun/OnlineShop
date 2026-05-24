@@ -4,10 +4,13 @@ using Domain.Brands;
 using Domain.Carts;
 using Domain.Carts.CartItems;
 using Domain.Categories;
+using Domain.Common.Entities.Addresses;
 using Domain.Common.ValueObjects;
 using Domain.Currencies;
+using Domain.Inventories;
 using Domain.ProductGroups;
 using Domain.ProductGroups.Products;
+using Domain.Warehouses;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Data;
@@ -72,9 +75,27 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         productGroup2.AddProduct(productId3, Money.From(160).Value, 10, 10, 10, 2, "ommei30273", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
         productGroup2.AddProduct(productId4, Money.From(150).Value, 10, 10, 10, 2, "ommei30272", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "gold" } });
 
-
         context.ProductGroups.Add(productGroup1);
         context.ProductGroups.Add(productGroup2);
+
+        var addressId = new AddressId(201);
+        var address = Address.Create(addressId, "Omier Hason", "01789 386 4983", "DE", "41", "Essen", "45355", "Marktstr. 41", null, null, null, "best appartment").Value;
+        context.Addresses.Add(address);
+
+        var warehouseId = new WarehouseId(20);
+        var warehouse = Warehouse.Create(warehouseId, addressId, "Omier's Warehouse GmbH").Value;
+        context.Warehouses.Add(warehouse);
+
+        var inventory1 = Inventory.Create(warehouseId, productId1, 43).Value;
+        var inventory2 = Inventory.Create(warehouseId, productId2, 2).Value;
+        var inventory3 = Inventory.Create(warehouseId, productId3, 540).Value;
+        var inventory4 = Inventory.Create(warehouseId, productId4, 10).Value;
+
+
+        context.Inventories.Add(inventory1);
+        context.Inventories.Add(inventory2);
+        context.Inventories.Add(inventory3);
+        context.Inventories.Add(inventory4);
 
         var cart1 = Cart.CreateForGuest(new CartId(20), new GuestAccountId(Guid.Parse("019e0f1a-7b38-79e5-8912-9a9f83a4a549"))).Value;
         var cart2 = Cart.CreateForUser(new CartId(21), Guid.Parse("10000000-0000-0000-0000-000000000001")).Value;

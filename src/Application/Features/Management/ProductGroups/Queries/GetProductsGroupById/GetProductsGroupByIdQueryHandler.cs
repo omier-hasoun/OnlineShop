@@ -8,37 +8,42 @@ internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : 
 {
     public async Task<Result<ProductGroupDto>> Handle(GetProductsGroupByIdQuery query, CancellationToken ct)
     {
-        var productId = query.ProductId;
-
         var getProductQuery = context.ProductGroups.AsNoTracking()
-                                              .Where(p => p.Id == productId)
+                                              .AsSingleQuery()
+                                              .Where(g => g.Id == query.ProductGroupId)
                                               .Join(
-                                                    context.Brands, p => p.BrandId, b => b.Id,
-                                                    (p, b) => new { p, b }
+                                                    context.Brands, g => g.BrandId, b => b.Id,
+                                                    (g, b) => new { g, b }
                                               )
                                               .Join(
-                                                    context.Categories, x => x.p.CategoryId, c => c.Id,
-                                                    (pb, c) => new { pb, c }
+                                                    context.Categories, x => x.g.CategoryId, c => c.Id,
+                                                    (gb, c) => new { gb.g, gb.b, c }
+                                              )
+                                              .Join(
+                                                    context.Users, x => x.g.LastModifiedBy, u => u.Id,
+                                                    (gbc, u) => new { gbc.g, gbc.b, gbc.c, u }
                                               )
                                               .Select(
-                                                  x => new ProductGroupDto(x.pb.p.Id, x.pb.p.Title, x.pb.p.Description, x.pb.p.Attributes.ToDictionary()
-                                                  , x.pb.p.BrandId, x.pb.b.Name, x.c.Id, x.c.Name, x.pb.p.AverageRating,
+                                                  gbc => new ProductGroupDto(gbc.g.Id, gbc.g.Title, gbc.g.Description, gbc.g.Attributes,
+                                                            gbc.g.BrandId, gbc.b.Name, gbc.c.Id, gbc.c.Name, gbc.g.AverageRating, gbc.g.LastModifiedAt,
+                                                            gbc.g.LastModifiedBy, gbc.u.UserName!,
 
-                                                  x.pb.p.Products.Select(v => new ProductGroupListProductsDto(
-                                                                            v.Id, v.Price, v.HasActiveDiscount, v.DiscountPercentage,
-                                                                            v.PriceAfterDiscount, v.DiscountExpiresOn, v.Status, v.Images.FirstOrDefault()))
-                                              
-                                                  .ToList())
-
+                                                  gbc.g.Products.Select(p => new ProductListItemDto(
+                                                                            p.Id, p.Price, p.HasActiveDiscount, p.DiscountPercentage,
+                                                                            p.PriceAfterDiscount, p.DiscountExpiresOn, p.Status, p.Images.FirstOrDefault(),
+                                                                            p.StockPerWarehouse.Select(x => new ProductInventoryDto(x.WarehouseId,x.Warehouse.Name, x.Quantity))
+                                                                                               .ToList()
+                                                                       ))
+                                                                        .ToList())
                                               );
 
 
-        var productGroup = await getProductQuery.FirstOrDefaultAsync(ct);
+        var groupDto = await getProductQuery.FirstOrDefaultAsync(ct);
 
-        if (productGroup is null)
+        if (groupDto is null)
             return ApplicationErrors.NotFound.ProductGroup;
 
 
-        return productGroup;
+        return groupDto;
     }
 }

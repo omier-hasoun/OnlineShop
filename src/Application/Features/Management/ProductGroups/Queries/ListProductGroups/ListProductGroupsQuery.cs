@@ -4,7 +4,7 @@ using Application.Features.Management.ProductGroups.Dtos;
 
 namespace Application.Features.Management.ProductGroups.Queries.ListProductGroups;
 
-public sealed record ListProductGroupsQuery : IRequest<Result<PaginatedList<ProductGroupListItem>>>
+public sealed record ListProductGroupsQuery : IRequest<Result<PaginatedList<ProductGroupListItemDto>>>
 {
     public required int Page { get; init; }
     public required int Size { get; init; }

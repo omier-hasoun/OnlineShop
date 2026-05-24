@@ -29,6 +29,8 @@ public sealed class Inventory : IAggregateRoot // i want to a composite id in th
     public int Quantity { get; private set; }
     public int ReservedQuantity { get; private set; }
 
+    public Warehouse Warehouse { get; private set; }
+
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
     private readonly List<IDomainEvent> _domainEvents = [];
 
