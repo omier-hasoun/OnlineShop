@@ -49,7 +49,7 @@ public static class DomainErrors
 
     public static readonly Error MissingInput = Error.Validation($"{BaseErrorCode}.{nameof(MissingInput)}");
 
-    public static readonly Error rename = Error.Validation($"{BaseErrorCode}.{nameof(rename)}");
+    public static readonly Error Locked = Error.Validation($"{BaseErrorCode}.{nameof(Locked)}");
 
     public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
 
@@ -128,11 +128,11 @@ public static class DomainErrors
 
         public static readonly Error ConnotPublishArchivedProduct = Error.Validation($"{BaseErrorCode}.{nameof(ConnotPublishArchivedProduct)}");
 
-        public static readonly Error AlreadyUnpublished = Error.Validation($"{BaseErrorCode}.{nameof(AlreadyUnpublished)}");
+        public static readonly Error rename100 = Error.Validation($"{BaseErrorCode}.{nameof(rename100)}");
 
         public static readonly Error UpdateNotAllowedOnArchivedProducts = Error.Validation($"{BaseErrorCode}.{nameof(UpdateNotAllowedOnArchivedProducts)}");
 
-        public static readonly Error AtLeastOneVariant = Error.Validation($"{BaseErrorCode}.{nameof(AtLeastOneVariant)}");
+        public static readonly Error CannotPublishWithoutAnyProduct = Error.Validation($"{BaseErrorCode}.{nameof(CannotPublishWithoutAnyProduct)}");
 
         public static readonly Error CannotChangeBrandAfterPublish = Error.Validation($"{BaseErrorCode}.{nameof(CannotChangeBrandAfterPublish)}");
 
@@ -177,7 +177,7 @@ public static class DomainErrors
 
         public static readonly Error ProductPriceNotApplicableForDiscount = Error.Validation($"{BaseErrorCode}.{nameof(ProductPriceNotApplicableForDiscount)}");
 
-        public static readonly Error ThisProductIsArchivedAndCannotBeModified = Error.Validation($"{BaseErrorCode}.{nameof(ThisProductIsArchivedAndCannotBeModified)}");
+        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
 
         public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
 
@@ -553,13 +553,13 @@ public static class DomainErrors
 
     }
 
-    public static class ProductsStock
+    public static class Inventories
     {
         public const string BaseErrorCode = "DomainErrors.ProductsStock";
         
         public static readonly Error ProductStockIdInvalid = Error.Validation($"{BaseErrorCode}.ProductStockIdInvalid");
 
-        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error QuantityOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(QuantityOutOfRange)}");
 
         public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
 

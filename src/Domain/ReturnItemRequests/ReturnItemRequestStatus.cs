@@ -3,7 +3,7 @@ namespace Domain.ReturnItemRequests;
 public enum ReturnItemRequestStatus
 {
     // Initial State
-    PendingArrival,      // Replaces WaitingForProductArrival
+    PendingArrival = 1,      // Replaces WaitingForProductArrival
 
     // Logistics
     Received,            // Replaces ProductArrived

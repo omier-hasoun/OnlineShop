@@ -1,6 +1,6 @@
 namespace Domain.Inventories;
 
-public sealed class Inventory : IAggregateRoot // i want to a composite id in this entity, i cant do that if i inherit BaseEntity 
+public sealed class Inventory : IAggregateRoot // i want to a composite id in this entity, i cant do that if i inherit AggregateRoot
 {
     private Inventory(WarehouseId warehouseId, ProductId productId, int quantity, int reservedQuantity)
     {
@@ -10,8 +10,16 @@ public sealed class Inventory : IAggregateRoot // i want to a composite id in th
         ReservedQuantity = reservedQuantity;
     }
 
-    public static Inventory Create(WarehouseId warehouseId, ProductId productId, int quantity)
+    public static Result<Inventory> Create(WarehouseId warehouseId, ProductId productId, int quantity)
     {
+        var validationResult = Result.ValidateAll(
+                                () => warehouseId.IsValid(),
+                                () => productId.IsValid(),
+                                () => ValidateQuantity(quantity)
+                               );
+
+        if (validationResult.Failed)
+            return validationResult.Errors;
 
         return new Inventory(warehouseId, productId, quantity, 0);
     }
@@ -21,8 +29,8 @@ public sealed class Inventory : IAggregateRoot // i want to a composite id in th
     public int Quantity { get; private set; }
     public int ReservedQuantity { get; private set; }
 
-    public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-    private readonly List<DomainEvent> _domainEvents = [];
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    private readonly List<IDomainEvent> _domainEvents = [];
 
     public Result<Success> ReserveItem(short quantity)
     {
@@ -70,7 +78,7 @@ public sealed class Inventory : IAggregateRoot // i want to a composite id in th
     }
 
 
-    public void AddDomainEvent(DomainEvent domainEvent)
+    public void RaiseDomainEvent(IDomainEvent domainEvent)
     {
         if (domainEvent is null)
             return;
@@ -78,14 +86,18 @@ public sealed class Inventory : IAggregateRoot // i want to a composite id in th
         _domainEvents.Add(domainEvent);
     }
 
-    public void RemoveDomainEvent(DomainEvent domainEvent)
-    {
-        _domainEvents.Remove(domainEvent);
-    }
-
     public void ClearDomainEvents()
     {
         _domainEvents.Clear();
+    }
+
+
+    private static Result<Success> ValidateQuantity(int quantity)
+    {
+        if (quantity <= 0 || quantity > 100000)
+            return DomainErrors.Inventories.QuantityOutOfRange;
+
+        return Result.Success; 
     }
 
 }

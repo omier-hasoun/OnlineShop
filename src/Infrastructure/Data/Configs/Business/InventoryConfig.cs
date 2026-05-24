@@ -1,5 +1,5 @@
 
-using Domain.ProductsGroups.Products;
+using Domain.ProductGroups.Products;
 using Domain.Inventories;
 using Domain.Warehouses;
 

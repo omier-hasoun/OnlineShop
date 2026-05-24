@@ -7,7 +7,7 @@ internal sealed class DomainEventDispatcher(IPublisher publisher)
 : IDomainEventDispatcher
 {
     public async Task DispatchAsync(
-    IReadOnlyCollection<DomainEvent> domainEvents,
+    IReadOnlyCollection<IDomainEvent> domainEvents,
     CancellationToken ct = default)
     {
 
@@ -20,7 +20,7 @@ internal sealed class DomainEventDispatcher(IPublisher publisher)
         }
 
     }
-    private static INotification CreateNotification(DomainEvent domainEvent)
+    private static INotification CreateNotification(IDomainEvent domainEvent)
     {
 
         var notificationType = typeof(DomainEventNotification<>)

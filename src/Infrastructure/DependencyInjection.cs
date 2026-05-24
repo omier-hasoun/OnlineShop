@@ -5,11 +5,10 @@ using Domain.Carts;
 using Domain.Carts.CartItems;
 using Domain.Common.Entities.Addresses;
 using Domain.Orders;
-using Domain.ProductsGroups;
-using Domain.ProductsGroups.Products;
+using Domain.ProductGroups;
+using Domain.ProductGroups.Products;
 using Domain.Warehouses;
 using FileSignatures;
-using Hangfire;
 using Infrastructure.BackgroundServices;
 using Infrastructure.Channels;
 using Infrastructure.Common.Exceptions;
@@ -38,10 +37,7 @@ public static class DependencyInjection
                 .AddIdGenServices(config)
                 .AddIdGeneratorsServices()
                 .AddIdentityServices(config, enviroment)
-                .AddHangfireServices(config, enviroment)
                 .AddFileSignaturesServices();
-                
-
         return services;
     }
 
@@ -152,19 +148,6 @@ public static class DependencyInjection
         });
         return services;
     }
-
-    private static IServiceCollection AddHangfireServices(this IServiceCollection services, IConfiguration config, IWebHostEnvironment environment)
-    {
-        services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(GetDbConnectionString(config, environment)));
-
-        services.AddHangfireServer();
-        return services;
-    }
-
     private static string GetDbConnectionString(IConfiguration config, IWebHostEnvironment environment)
     {
         string? connString;
@@ -190,7 +173,7 @@ public static class DependencyInjection
             options.UseSqlServer(GetDbConnectionString(config, environment)).AddInterceptors(
             sp.GetRequiredService<SoftDeleteEntitySaveChangesInterceptor>(),
             sp.GetRequiredService<AuditedEntitySaveChangesInterceptor>(),
-            sp.GetRequiredService<PublishDomainEventsInterceptor>()
+            sp.GetRequiredService<EventsPublisherSaveChangesInterceptor>()
             );
         });
 
@@ -198,7 +181,7 @@ public static class DependencyInjection
 
         //interceptors
         services.AddScoped<AuditedEntitySaveChangesInterceptor>();
-        services.AddScoped<PublishDomainEventsInterceptor>();
+        services.AddScoped<EventsPublisherSaveChangesInterceptor>();
 
         services.AddScoped<SoftDeleteEntitySaveChangesInterceptor>();
 

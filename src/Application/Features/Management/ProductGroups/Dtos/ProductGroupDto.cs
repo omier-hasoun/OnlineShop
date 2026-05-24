@@ -1,6 +1,6 @@
 using Domain.Brands;
 using Domain.Categories;
-using Domain.ProductsGroups.ValueObjects;
+using Domain.ProductGroups.ValueObjects;
 
 namespace Application.Features.Management.ProductGroups.Dtos;
 

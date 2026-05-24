@@ -3,7 +3,7 @@ using Application.Features.Management.ProductGroups.Commands.CreateProductGroup;
 using Application.Features.Management.ProductGroups.Commands.AddProduct;
 using Application.Features.Management.ProductGroups.Commands.AddImages;
 using Application.Features.Management.ProductGroups.Commands.UpdateProductGroup;
-using Application.Features.Management.ProductGroups.Queries.ListProducts;
+using Application.Features.Management.ProductGroups.Queries.ListProductGroups;
 using Application.Features.Management.ProductGroups.Queries.GetProductsGroupById;
 using Application.Features.Management.ProductGroups.Commands.PublishProduct;
 using Application.Features.Management.ProductGroups.Commands.UnpublishProduct;
@@ -90,7 +90,8 @@ public sealed class ProductsManagementController(IMediator mediator, IUniqueFile
             request.Slug,
             request.BarCode,
             request.Specifications,
-            imagesDto);
+            imagesDto,
+            request.StockPerWarehouse);
 
         var result = await mediator.Send(command, ct);
 
@@ -199,12 +200,11 @@ public sealed class ProductsManagementController(IMediator mediator, IUniqueFile
     #region queries
 
     [HttpGet("product-group")]
-    public async Task<IActionResult> ListProducts([FromQuery] ListProductsQuery request, CancellationToken ct)
+    public async Task<IActionResult> ListProducts([FromQuery] ListProductGroupsQuery request, CancellationToken ct)
     {
-
         var result = await mediator.Send(request, ct);
 
-        return result.Match((response) => Ok(new { Products = response }), Problem);
+        return result.Match((response) => Ok(response), Problem);
     }
 
     [HttpGet("product-group/{productGroupId}")]

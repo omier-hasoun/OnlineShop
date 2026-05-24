@@ -5,15 +5,15 @@ internal class DeleteWarehouseCommandHandler(IAppDbContext context) : IRequestHa
 {
     public async Task<Result<Deleted>> Handle(DeleteWarehouseCommand request, CancellationToken ct)
     {
-        var warehouse = await context.Warehouses.Include(x => x.Address).FirstOrDefaultAsync(x => x.Id == request.ParsedWarehouseId, ct);
+        var warehouse = await context.Warehouses.FirstOrDefaultAsync(x => x.Id == request.ParsedWarehouseId);
 
         if (warehouse is null)
             return ApplicationErrors.NotFound.Warehouse;
 
-        context.Addresses.Remove(warehouse.Address); // this will delete warehouse too (cascade delete)
+        if (ct.IsCancellationRequested)
+            return ApplicationErrors.OperationWasCanceled;
 
-        await context.SaveAsync(ct);
-
-        return Result.Deleted;
+        return await context.Addresses.Where(x => x.Id == warehouse.AddressId).ExecuteDeleteAsync(ct) > 0 ?
+        Result.Deleted : ApplicationErrors.DeleteOperationFailed;
     }
 }

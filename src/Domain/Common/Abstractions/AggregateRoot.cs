@@ -4,10 +4,10 @@ namespace Domain.Common.Abstractions;
 public abstract class AggregateRoot<TId> : BaseEntity<TId>, IAggregateRoot
 where TId : struct, IEquatable<TId>
 {
-    public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
 
-    private readonly List<DomainEvent> _domainEvents = [];
+    private readonly List<IDomainEvent> _domainEvents = [];
 
     protected AggregateRoot(TId Id) : base(Id)
     {
@@ -17,7 +17,7 @@ where TId : struct, IEquatable<TId>
         
     }
 
-    public void AddDomainEvent(DomainEvent domainEvent)
+    public void RaiseDomainEvent(IDomainEvent domainEvent)
     {
         if (domainEvent is null)
             return;
@@ -25,13 +25,9 @@ where TId : struct, IEquatable<TId>
         _domainEvents.Add(domainEvent);
     }
 
-    public void RemoveDomainEvent(DomainEvent domainEvent)
-    {
-        _domainEvents.Remove(domainEvent);
-    }
-
     public void ClearDomainEvents()
     {
         _domainEvents.Clear();
     }
+
 }

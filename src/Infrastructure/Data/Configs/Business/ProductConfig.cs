@@ -1,8 +1,8 @@
 
 using Domain.Common.Rules;
-using Domain.ProductsGroups;
-using Domain.ProductsGroups.Products;
-using Domain.ProductsGroups.ValueObjects;
+using Domain.ProductGroups;
+using Domain.ProductGroups.Products;
+using Domain.ProductGroups.ValueObjects;
 using Infrastructure.Common.EfCore.ValueComparers;
 using Infrastructure.Common.EfCore.ValueConverters;
 
@@ -42,8 +42,7 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
                .IsRequired(false);
 
         builder.Property(x => x.Status)
-               .HasColumnType("VARCHAR(50)")
-               .HasConversion<string>()
+               .HasConversion<int>()
                .IsRequired();
 
         builder.Property(x => x.Price)
@@ -64,7 +63,7 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
                .HasConversion<JsonConverter<Dictionary<string, string>>>(new JsonDictionaryValueComparer())
                .IsRequired(false);
 
-        builder.HasOne<ProductsGroup>()
+        builder.HasOne<ProductGroup>()
                .WithMany(x => x.Products)
                .HasForeignKey(x => x.ProductsGroupId)
                .IsRequired();

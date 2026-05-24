@@ -6,8 +6,8 @@ using Domain.Carts.CartItems;
 using Domain.Categories;
 using Domain.Common.ValueObjects;
 using Domain.Currencies;
-using Domain.ProductsGroups;
-using Domain.ProductsGroups.Products;
+using Domain.ProductGroups;
+using Domain.ProductGroups.Products;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Data;
@@ -58,8 +58,8 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
 
         var productGroupId1 = new ProductGroupId(3);
         var productGroupId2 = new ProductGroupId(4);
-        var productGroup1 = ProductsGroup.Create(productGroupId1, brandId1, categoryId1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }).Value;
-        var productGroup2 = ProductsGroup.Create(productGroupId2, brandId2, categoryId2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }).Value;
+        var productGroup1 = ProductGroup.Create(productGroupId1, brandId1, categoryId1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }).Value;
+        var productGroup2 = ProductGroup.Create(productGroupId2, brandId2, categoryId2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }).Value;
 
 
         var productId1 = new ProductId(5);

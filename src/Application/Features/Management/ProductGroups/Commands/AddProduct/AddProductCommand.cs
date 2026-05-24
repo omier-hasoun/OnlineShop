@@ -1,11 +1,12 @@
 
 using Application.Common.Dtos;
+using Application.Features.Management.ProductGroups.Dtos;
 
 namespace Application.Features.Management.ProductGroups.Commands.AddProduct;
 
 public sealed record AddProductCommand 
 (
-long ProductId,
+long ProductGroupId,
 
 double Price,
 
@@ -20,7 +21,8 @@ string BarCode,
 
 Dictionary<string, string> Specifications,
 
-List<FileUploadDto>? Images
+List<FileUploadDto>? Images,
 
+List<ProductStockDto>? StockPerWarehouse
 ) : IRequest<Result<long>>;
 

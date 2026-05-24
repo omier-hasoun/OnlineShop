@@ -1,16 +1,16 @@
-using app = Shared.Results;
+using App = Shared.Results;
 namespace Api.Extensions;
 
 public static class ProblemExtensions
 {
-    public static IResult ToProblem(this List<app.Error> errors)
+    public static IResult ToProblem(this List<App.Error> errors)
     {
         if (errors.Count == 0)
         {
             return Results.Problem();
         }
 
-        if (errors.All(error => error.Type == app.ErrorType.Validation))
+        if (errors.All(error => error.Type == App.ErrorType.Validation))
         {
             return ValidationProblem(errors);
         }
@@ -18,21 +18,21 @@ public static class ProblemExtensions
         return Problem(errors[0]);
     }
 
-    private static IResult Problem(app.Error error)
+    private static IResult Problem(App.Error error)
     {
         var statusCode = error.Type switch
         {
-            app.ErrorType.Conflict => StatusCodes.Status409Conflict,
-            app.ErrorType.Validation => StatusCodes.Status400BadRequest,
-            app.ErrorType.NotFound => StatusCodes.Status404NotFound,
-            app.ErrorType.Unauthorized => StatusCodes.Status403Forbidden,
+            App.ErrorType.Conflict => StatusCodes.Status409Conflict,
+            App.ErrorType.Validation => StatusCodes.Status400BadRequest,
+            App.ErrorType.NotFound => StatusCodes.Status404NotFound,
+            App.ErrorType.Unauthorized => StatusCodes.Status403Forbidden,
             _ => StatusCodes.Status500InternalServerError,
         };
 
         return Results.Problem(statusCode: statusCode, title: error.Description);
     }
 
-    private static IResult ValidationProblem(List<app.Error> errors)
+    private static IResult ValidationProblem(List<App.Error> errors)
     {
         var errorsDict = errors.ToDictionary(e => e.Code, e => new[] { e.Description });
 

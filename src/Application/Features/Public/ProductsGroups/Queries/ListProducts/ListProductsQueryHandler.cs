@@ -2,7 +2,7 @@ using Application.Common.Dtos;
 using Application.Common.Extensions;
 using Application.Features.Public.ProductsGroups.Dtos;
 using Domain.Common.ValueObjects;
-using Domain.ProductsGroups.Products;
+using Domain.ProductGroups.Products;
 
 namespace Application.Features.Public.ProductsGroups.Queries.ListProducts;
 
@@ -14,12 +14,12 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
         {
             return ApplicationErrors.Validation.PageSizeTooBig;
         }
-
+        throw new NotImplementedException();
         var cheapestProductQuery = context.ProductGroups.AsNoTracking()
-            .Where(product => product.Status == ProductsGroupStatus.Published)
+            .Where(product => product.Status == ProductGroupState.Published)
             .SelectMany(
                 product => context.Products
-                    .Where(variant => variant.ProductsGroupId == product.Id && variant.Status == ProductStatus.Published)
+                    .Where(variant => variant.ProductsGroupId == product.Id && variant.Status == ProductState.Published)
                     .OrderBy(v => v.Price)
                     .Take(1),
                 (product, variant) => new { product, variant }
@@ -85,13 +85,13 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
             }
             );
 
-        var result = await finalQuery.ToListAsync(ct);
+        //var result = await finalQuery.ToListAsync(ct);
 
-        int resultTotalCount = result.Select(x => x.TotalCount).FirstOrDefault();
+        //int resultTotalCount = result.Select(x => x.TotalCount).FirstOrDefault();
 
-        var productsPage = result.Select(x => x.dto).ToList().ToPaginatedList(request.Page, resultTotalCount);
+        //var productsPage = result.Select(x => x.dto).ToList().ToPaginatedList(request.Page,request.Size, resultTotalCount);
 
-        return productsPage;
+        //return productsPage;
 
     }
 

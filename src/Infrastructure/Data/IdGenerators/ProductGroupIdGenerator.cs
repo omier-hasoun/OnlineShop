@@ -1,4 +1,4 @@
-using Domain.ProductsGroups;
+using Domain.ProductGroups;
 using App = Application.Common.Abstractions;
 namespace Infrastructure.Data.IdGenerators;
 

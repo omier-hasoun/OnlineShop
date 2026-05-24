@@ -1,9 +1,9 @@
 
 using Domain.Orders;
-using Domain.ProductsGroups;
+using Domain.ProductGroups;
 using Domain.Orders.OrderPayments;
 using Domain.Orders.OrderItems;
-using Domain.ProductsGroups.Products;
+using Domain.ProductGroups.Products;
 using Domain.Brands;
 using Domain.Warehouses;
 using Domain.PaymentProviders;
@@ -16,7 +16,6 @@ using Domain.Transactions;
 using Domain.ReturnItemRequestsReviews;
 using Domain.UsersPaymentMethodsLogs;
 using Infrastructure.Common.EfCore.ValueConverters;
-using Infrastructure.Common.EfCore.ValueComparers;
 using Domain.Inventories;
 using Domain.Common.ValueObjects;
 using Domain.ShippingAddresses;
@@ -39,7 +38,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     public DbSet<Shipment> Shipments => Set<Shipment>();
     public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
     public DbSet<Product> Products => Set<Product>();
-    public DbSet<ProductsGroup> ProductGroups => Set<ProductsGroup>();
+    public DbSet<ProductGroup> ProductGroups => Set<ProductGroup>();
 
     public DbSet<Cart> Carts => Set<Cart>();
     public DbSet<Brand> Brands => Set<Brand>();
@@ -48,7 +47,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     public DbSet<OrderPayment> OrderPayments => Set<OrderPayment>();
     public DbSet<PaymentProvider> PaymentProviders => Set<PaymentProvider>();
     public DbSet<Category> Categories => Set<Category>();
-    public DbSet<Inventory> ProductStocks => Set<Inventory>();
+    public DbSet<Inventory> Inventories => Set<Inventory>();
     public DbSet<ReturnItemRequest> ReturnRequests => Set<ReturnItemRequest>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<Address> Addresses => Set<Address>();
@@ -95,7 +94,8 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
         builder.Properties<Money>()
                .HaveConversion<MoneyConverter>();
         
-        builder.IgnoreAny<DomainEvent>();
+        builder.IgnoreAny<IDomainEvent>();
+
     }
 
     private static void ApplySoftDeleteQueryFilterOnAllMembersOfISoftDelete(ModelBuilder builder)

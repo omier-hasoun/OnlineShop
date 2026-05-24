@@ -7,14 +7,14 @@ internal sealed class PublishProductGroupCommandHandler(IAppDbContext context) :
     {
         var productsGroupId = command.ParsedProductsGroupId;
 
-        var productsGroup = await context.ProductGroups.Include(x => x.Products).FirstOrDefaultAsync(x => x.Id == productsGroupId, ct);
+        var productGroup = await context.ProductGroups.Include(x => x.Products).FirstOrDefaultAsync(x => x.Id == productsGroupId, ct);
 
-        if (productsGroup is null)
+        if (productGroup is null)
         {
             return ApplicationErrors.NotFound.ProductGroup;
         }
 
-        var res = productsGroup.PublishGroup();
+        var res = productGroup.PublishGroup();
 
         if (res.Failed)
             return res.Errors;

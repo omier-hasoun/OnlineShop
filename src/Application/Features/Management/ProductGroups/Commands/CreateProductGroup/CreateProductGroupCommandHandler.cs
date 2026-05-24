@@ -15,7 +15,7 @@ internal sealed class CreateProductGroupCommandHandler(IAppDbContext context, II
 
         ProductGroupId productId = idGen.NewId();
 
-        var createProductResult = ProductsGroup.Create(
+        var createProductResult = ProductGroup.Create(
             productId,
             brandId,
             categoryId,

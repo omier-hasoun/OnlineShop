@@ -1,7 +1,6 @@
 
 using Application.Common.Configurations;
 using Application.Entities;
-using Hangfire;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
@@ -37,10 +36,10 @@ namespace Api
             builder.Services.AddApiServices(config, builder.Environment)
                             .AddApplicationServices(config)
                             .AddInfrastructureServices(config,  builder.Environment);
-
-
-
             GlobalSetups.Init();
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
 
             var app = builder.Build();
 
@@ -75,13 +74,11 @@ namespace Api
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-            app.MapHangfireDashboard();
 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseHangfireDashboard();
 
 
             app.Use(async (HttpContext context, RequestDelegate next) =>
@@ -116,22 +113,7 @@ namespace Api
             app.MapGroup("/api/auth").
                 MapIdentityApi<AppUser>();
 
-            using (var scope = app.Services.CreateScope())
-            {
-
-                HangfireSayHi(scope.ServiceProvider.GetRequiredService<IBackgroundJobClient>());
-            }
-
-
             await app.RunAsync();
-
-
-
-        }
-
-        private static void HangfireSayHi(IBackgroundJobClient b)
-        {
-            b.Enqueue(() => Console.WriteLine("hello hangfire"));
         }
     }
 }

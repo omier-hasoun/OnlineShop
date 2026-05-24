@@ -2,8 +2,8 @@
 using System.Net.NetworkInformation;
 using Application.Common.Dtos;
 using Domain.Common.ValueObjects;
-using Domain.ProductsGroups.Products;
-using Domain.ProductsGroups.ValueObjects;
+using Domain.ProductGroups.Products;
+using Domain.ProductGroups.ValueObjects;
 
 namespace Application.Features.Management.ProductGroups.Dtos;
 
@@ -11,7 +11,7 @@ public sealed record ProductDto
 {
 
 
-    public ProductDto(ProductId productId, ProductGroupId productGroupId, Money? priceBeforeDiscount, Money price, byte? discountPercentage, DateOnly? discountExpiresOn, ProductStatus status,
+    public ProductDto(ProductId productId, ProductGroupId productGroupId, Money? priceBeforeDiscount, Money price, byte? discountPercentage, DateOnly? discountExpiresOn, ProductState status,
         int width, int height, int length, int weight, string sku, string slug, string barCode, bool hasActiveDiscount, Dictionary<string, string> specifications, List<ProductImage> images)
     {
         ProductId = productId.Value;

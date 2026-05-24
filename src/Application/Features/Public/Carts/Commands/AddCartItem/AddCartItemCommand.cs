@@ -1,6 +1,6 @@
 
 using Application.Common.Dtos;
-using Domain.ProductsGroups.Products;
+using Domain.ProductGroups.Products;
 
 namespace Application.Features.Public.Carts.Commands.AddCartItem;
 

@@ -1,6 +1,6 @@
 
 using Application.Features.Management.ProductGroups.Dtos;
-using Domain.ProductsGroups.Products;
+using Domain.ProductGroups.Products;
 
 namespace Application.Features.Management.ProductGroups.Queries.GetProductById;
 

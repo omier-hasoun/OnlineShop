@@ -1,5 +1,5 @@
 using Domain.Common.ValueObjects;
-using Domain.ProductsGroups.ValueObjects;
+using Domain.ProductGroups.ValueObjects;
 
 namespace Application.Features.Public.ProductsGroups.Dtos;
 /// <summary>

@@ -1,7 +1,7 @@
 
 using Domain.Common.ValueObjects;
-using Domain.ProductsGroups.Products;
-using Domain.ProductsGroups.ValueObjects;
+using Domain.ProductGroups.Products;
+using Domain.ProductGroups.ValueObjects;
 
 namespace Application.Features.Public.Carts.Dtos;
 

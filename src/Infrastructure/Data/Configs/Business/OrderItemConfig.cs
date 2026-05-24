@@ -2,7 +2,7 @@
 
 using Domain.Orders;
 using Domain.Orders.OrderItems;
-using Domain.ProductsGroups.Products;
+using Domain.ProductGroups.Products;
 using Infrastructure.Common.EfCore.ValueComparers;
 using Infrastructure.Common.EfCore.ValueConverters;
 
@@ -29,8 +29,7 @@ internal sealed class OrderItemConfig : BaseEntityConfig<OrderItem>
                .IsRequired();
 
         builder.Property(x => x.Status)
-               .HasColumnType("VARCHAR(50)")
-               .HasConversion<string>()
+               .HasConversion<int>()
                .IsRequired();
 
         builder.Property("_serialNumbers")

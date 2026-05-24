@@ -36,7 +36,9 @@ public static class DependencyInjection
         {
             options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.JsonSerializerOptions.Converters.Add(new LongAsStringJsonConverter());
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
+
         return services;
     }
 

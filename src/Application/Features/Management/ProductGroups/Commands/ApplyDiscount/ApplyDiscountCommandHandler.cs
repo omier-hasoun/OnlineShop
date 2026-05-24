@@ -1,5 +1,5 @@
 
-using Domain.ProductsGroups.Products;
+using Domain.ProductGroups.Products;
 
 namespace Application.Features.Management.ProductGroups.Commands.ApplyDiscount;
 

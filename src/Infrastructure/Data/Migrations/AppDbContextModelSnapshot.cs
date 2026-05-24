@@ -525,9 +525,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<short>("Quantity")
                         .HasColumnType("smallint");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18,4)");
@@ -652,6 +651,143 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("PaymentProviders", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.ProductGroups.ProductGroup", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("BrandId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("NVARCHAR");
+
+                    b.Property<bool>("IsSerialized")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NormalizedTitle")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("NVARCHAR");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("NVARCHAR");
+
+                    b.Property<string>("_attributes")
+                        .HasColumnType("NVARCHAR(MAX)")
+                        .HasColumnName("Attributes");
+
+                    b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
+                    b.HasIndex("BrandId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("LastModifiedBy");
+
+                    b.HasIndex("NormalizedTitle")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Product_NormalizedTitle_Published")
+                        .HasFilter("[Status] = 2");
+
+                    b.ToTable("ProductGroups", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_ProductGroups_AverageRating", "[AverageRating] between 0 and 5");
+                        });
+                });
+
+            modelBuilder.Entity("Domain.ProductGroups.Products.Product", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("BarCode")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<DateOnly?>("DiscountExpiresOn")
+                        .HasColumnType("date");
+
+                    b.Property<byte?>("DiscountPercentage")
+                        .HasColumnType("TINYINT");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Length")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal?>("PriceAfterDiscount")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<long>("ProductsGroupId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Sku")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("VARCHAR");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(80)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Weight")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("int");
+
+                    b.Property<string>("_specifications")
+                        .HasColumnType("NVARCHAR(MAX)")
+                        .HasColumnName("Specifications");
+
+                    b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
+                    b.HasIndex("ProductsGroupId");
+
+                    b.ToTable("Products", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Product_DiscountPercentage", "[DiscountPercentage] between 1 and 80");
+
+                            t.HasCheckConstraint("CK_Product_Price", "[Price] between 5 and 500000");
+                        });
+                });
+
             modelBuilder.Entity("Domain.ProductReviews.ProductReview", b =>
                 {
                     b.Property<long>("Id")
@@ -695,139 +831,6 @@ namespace Infrastructure.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.ProductsGroups.Products.Product", b =>
-                {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("BarCode")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
-
-                    b.Property<DateOnly?>("DiscountExpiresOn")
-                        .HasColumnType("date");
-
-                    b.Property<byte?>("DiscountPercentage")
-                        .HasColumnType("TINYINT");
-
-                    b.Property<int>("Height")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Length")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal?>("PriceAfterDiscount")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<long>("ProductsGroupId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Sku")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("VARCHAR");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(80)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
-
-                    b.Property<int>("Weight")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Width")
-                        .HasColumnType("int");
-
-                    b.Property<string>("_specifications")
-                        .HasColumnType("NVARCHAR(MAX)")
-                        .HasColumnName("Specifications");
-
-                    b.HasKey("Id");
-
-                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
-
-                    b.HasIndex("ProductsGroupId");
-
-                    b.ToTable("Products", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_Product_DiscountPercentage", "[DiscountPercentage] between 1 and 80");
-
-                            t.HasCheckConstraint("CK_Product_Price", "[Price] between 5 and 500000");
-                        });
-                });
-
-            modelBuilder.Entity("Domain.ProductsGroups.ProductsGroup", b =>
-                {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid>("BrandId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("CategoryId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("NVARCHAR");
-
-                    b.Property<bool>("IsSerialized")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("LastModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("NVARCHAR");
-
-                    b.Property<string>("_attributes")
-                        .HasColumnType("NVARCHAR(MAX)")
-                        .HasColumnName("Attributes");
-
-                    b.HasKey("Id");
-
-                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
-
-                    b.HasIndex("BrandId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("CreatedBy");
-
-                    b.HasIndex("LastModifiedBy");
-
-                    b.HasIndex("Title")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Product_Title");
-
-                    b.ToTable("ProductsGroups", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_Product_AverageRating", "[AverageRating] between 0 and 5");
-                        });
-                });
-
             modelBuilder.Entity("Domain.ReturnItemRequests.ReturnItemRequest", b =>
                 {
                     b.Property<Guid>("Id")
@@ -843,9 +846,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<long>("OrderItemId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("ReasonType")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
+                    b.Property<int>("ReasonType")
+                        .HasColumnType("int");
 
                     b.Property<short>("ReturnedQuantity")
                         .HasColumnType("smallint");
@@ -856,9 +858,8 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1086,7 +1087,7 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.ProductsGroups.Products.Product", null)
+                    b.HasOne("Domain.ProductGroups.Products.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1142,7 +1143,7 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Inventories.Inventory", b =>
                 {
-                    b.HasOne("Domain.ProductsGroups.Products.Product", null)
+                    b.HasOne("Domain.ProductGroups.Products.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1172,7 +1173,7 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.ProductsGroups.Products.Product", null)
+                    b.HasOne("Domain.ProductGroups.Products.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1266,30 +1267,62 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.ProductReviews.ProductReview", b =>
+            modelBuilder.Entity("Domain.ProductGroups.ProductGroup", b =>
                 {
-                    b.HasOne("Domain.ProductsGroups.ProductsGroup", null)
+                    b.HasOne("Domain.Brands.Brand", null)
                         .WithMany()
-                        .HasForeignKey("ProductsGroupId")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Categories.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Application.Entities.AppUser", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Application.Entities.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("LastModifiedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.ProductGroups.ValueObjects.ProductAverageRating", "AverageRating", b1 =>
+                        {
+                            b1.Property<long>("ProductGroupId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<double>("Value")
+                                .HasColumnType("FLOAT")
+                                .HasColumnName("AverageRating");
+
+                            b1.HasKey("ProductGroupId");
+
+                            b1.ToTable("ProductGroups");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductGroupId");
+                        });
+
+                    b.Navigation("AverageRating")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.ProductsGroups.Products.Product", b =>
+            modelBuilder.Entity("Domain.ProductGroups.Products.Product", b =>
                 {
-                    b.HasOne("Domain.ProductsGroups.ProductsGroup", null)
+                    b.HasOne("Domain.ProductGroups.ProductGroup", null)
                         .WithMany("Products")
                         .HasForeignKey("ProductsGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Domain.ProductsGroups.ValueObjects.ProductImage", "Images", b1 =>
+                    b.OwnsMany("Domain.ProductGroups.ValueObjects.ProductImage", "Images", b1 =>
                         {
                             b1.Property<long>("ProductId");
 
@@ -1316,50 +1349,18 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Images");
                 });
 
-            modelBuilder.Entity("Domain.ProductsGroups.ProductsGroup", b =>
+            modelBuilder.Entity("Domain.ProductReviews.ProductReview", b =>
                 {
-                    b.HasOne("Domain.Brands.Brand", null)
+                    b.HasOne("Domain.ProductGroups.ProductGroup", null)
                         .WithMany()
-                        .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Categories.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("ProductsGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Application.Entities.AppUser", null)
                         .WithMany()
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Application.Entities.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("LastModifiedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.OwnsOne("Domain.ProductsGroups.ValueObjects.ProductAverageRating", "AverageRating", b1 =>
-                        {
-                            b1.Property<long>("ProductsGroupId")
-                                .HasColumnType("bigint");
-
-                            b1.Property<double>("Value")
-                                .HasColumnType("FLOAT")
-                                .HasColumnName("AverageRating");
-
-                            b1.HasKey("ProductsGroupId");
-
-                            b1.ToTable("ProductsGroups");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ProductsGroupId");
-                        });
-
-                    b.Navigation("AverageRating")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -1483,7 +1484,7 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Shipments");
                 });
 
-            modelBuilder.Entity("Domain.ProductsGroups.ProductsGroup", b =>
+            modelBuilder.Entity("Domain.ProductGroups.ProductGroup", b =>
                 {
                     b.Navigation("Products");
                 });

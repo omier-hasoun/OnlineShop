@@ -1,0 +1,2 @@
+
+namespace Infrastructure.Common.Abstractions;

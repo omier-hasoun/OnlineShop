@@ -24,6 +24,13 @@ namespace Application;
 */
 public static class ApplicationErrors
 {
+    public static readonly Error OperationWasCanceled = Error.Validation($"{nameof(ApplicationErrors)}.{nameof(OperationWasCanceled)}");
+
+    public static readonly Error DeleteOperationFailed = Error.Validation($"{nameof(ApplicationErrors)}.{nameof(DeleteOperationFailed)}");
+
+    public static readonly Error rename3 = Error.Validation($"{nameof(ApplicationErrors)}.{nameof(rename3)}");
+
+    public static readonly Error rename4 = Error.Validation($"{nameof(ApplicationErrors)}.{nameof(rename4)}");
     public static class Validation
     {
         public const string BaseErrorCode = $"ApplicationErrors.Validation";

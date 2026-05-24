@@ -1,5 +1,8 @@
+using Application.Common.Dtos;
+using Application.Features.Management.ProductGroups.Dtos;
 using Domain.Common.ValueObjects;
-using Domain.ProductsGroups.Products;
+using Domain.Inventories;
+using Domain.ProductGroups.Products;
 
 namespace Application.Features.Management.ProductGroups.Commands.AddProduct;
 
@@ -8,27 +11,15 @@ public sealed class AddProductCommandHandler(IAppDbContext context, IIdGenerator
     public async Task<Result<long>> Handle(AddProductCommand request, CancellationToken ct)
     {
 
-        ProductGroupId productGroupId = new(request.ProductId);
+        ProductGroupId productGroupId = new(request.ProductGroupId);
 
         var price = Money.From((decimal)request.Price).Value;
 
-        var productGroup = await context.ProductGroups.Include(x => x.Products).FirstOrDefaultAsync(x => x.Id == productGroupId, ct);
+        var productGroup = await context.ProductGroups.FirstOrDefaultAsync(x => x.Id == productGroupId, ct);
 
         if (productGroup is null)
         {
             return ApplicationErrors.NotFound.Product;
-        }
-
-        if(request.Images != null)
-        {
-            validator.MinWidth = ApplicationRules.Uploads.MinWidth;
-            validator.MinHeight = ApplicationRules.Uploads.MinHeight;
-            validator.MaxSize = ApplicationRules.Uploads.MaxProductImageSize; ;
-
-            var imagesValdationResult = validator.ValidateAll(request.Images);
-
-            if (imagesValdationResult.Failed)
-                return imagesValdationResult.Errors;
         }
 
         var productId = idGen.NewId();
@@ -41,23 +32,15 @@ public sealed class AddProductCommandHandler(IAppDbContext context, IIdGenerator
         {
             return addProductResult.Errors;
         }
-
-        if (request.Images != null)
+        
+        if (request.Images != null && request.Images.Count != 0)
         {
-            List<string> imageNames = new(request.Images.Count);
+            await AddImages(productGroup, productId, request.Images, ct);
+        }
 
-            request.Images.ForEach(image =>
-            {
-                imageNames.Add(image.InternalFileName);
-            });
-
-            var addImagesResult = productGroup.AddProductImages(productId, imageNames);
-
-            if (addImagesResult.Failed)
-                return addImagesResult.Errors;
-
-
-            var result = await imageStore.SaveAllAsync(request.Images, ct);
+        if (request.StockPerWarehouse != null && request.StockPerWarehouse.Count != 0)
+        {
+            var result = CreateProductInventories(request.StockPerWarehouse, productId);
 
             if (result.Failed)
                 return result.Errors;
@@ -66,6 +49,61 @@ public sealed class AddProductCommandHandler(IAppDbContext context, IIdGenerator
         await context.SaveAsync(ct);
 
         return productId.Value;
+    }
+
+
+
+    private Result<Success> CreateProductInventories(List<ProductStockDto> StockPerWarehouse, ProductId productId)
+    {
+
+        List<Inventory> inventories = new(StockPerWarehouse.Count);
+
+        foreach (var stock in StockPerWarehouse)
+        {
+            var result = Inventory.Create(stock.ParsedWarehouseId, productId, stock.StockQuantity);
+
+            if (result.Failed)
+                return result.Errors;
+
+            inventories.Add(result.Value);
+        }
+
+        context.Inventories.AddRange(inventories);
+
+        return Result.Success;
+
+    }
+
+    private async Task<Result<Success>> AddImages(ProductGroup productGroup, ProductId productId, List<FileUploadDto> images, CancellationToken ct)
+    {
+        validator.MinWidth = ApplicationRules.Uploads.MinWidth;
+        validator.MinHeight = ApplicationRules.Uploads.MinHeight;
+        validator.MaxSize = ApplicationRules.Uploads.MaxProductImageSize; ;
+
+        var imagesValdationResult = validator.ValidateAll(images);
+
+        if (imagesValdationResult.Failed)
+            return imagesValdationResult.Errors;
+
+        List<string> imageNames = new(images.Count);
+
+        images.ForEach(image =>
+        {
+            imageNames.Add(image.InternalFileName);
+        });
+
+        var addImagesResult = productGroup.AddProductImages(productId, imageNames);
+
+        if (addImagesResult.Failed)
+            return addImagesResult.Errors;
+
+
+        var result = await imageStore.SaveAllAsync(images, ct);
+
+        if (result.Failed)
+            return result.Errors;
+
+        return Result.Success;
     }
 
 

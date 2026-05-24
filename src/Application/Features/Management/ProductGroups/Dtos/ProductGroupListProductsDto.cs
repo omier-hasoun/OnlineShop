@@ -1,7 +1,7 @@
 
 using Domain.Common.ValueObjects;
-using Domain.ProductsGroups.Products;
-using Domain.ProductsGroups.ValueObjects;
+using Domain.ProductGroups.Products;
+using Domain.ProductGroups.ValueObjects;
 
 namespace Application.Features.Management.ProductGroups.Dtos;
 
@@ -20,7 +20,7 @@ public sealed record ProductGroupListProductsDto
     public bool HasActiveDiscount { get; init; }
 
 
-    public ProductGroupListProductsDto(ProductId id, Money price, bool hasActiveDiscount, byte? discountPercentage, Money? priceBeforeDiscount, DateOnly? discountExpiresOn, ProductStatus status, ProductImage? image)
+    public ProductGroupListProductsDto(ProductId id, Money price, bool hasActiveDiscount, byte? discountPercentage, Money? priceBeforeDiscount, DateOnly? discountExpiresOn, ProductState status, ProductImage? image)
     {
         Id = id.Value;
 

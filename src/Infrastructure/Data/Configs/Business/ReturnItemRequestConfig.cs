@@ -26,13 +26,15 @@ internal sealed class ReturnItemRequestConfig : BaseEntityConfig<ReturnItemReque
                .IsRequired(false);
 
         builder.Property(x => x.Type)
-               .HasConversion<string>()
-               .HasColumnType("VARCHAR(50)")
+               .HasConversion<int>()
                .IsRequired();
 
         builder.Property(x => x.ReasonType)
-               .HasColumnType("VARCHAR(50)")
-               .HasConversion<string>()
+               .HasConversion<int>()
+               .IsRequired();
+
+        builder.Property(x => x.Status)
+               .HasConversion<int>()
                .IsRequired();
 
         builder.Property(x => x.ShippingFees)

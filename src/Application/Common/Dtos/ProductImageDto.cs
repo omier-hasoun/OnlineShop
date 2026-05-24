@@ -1,4 +1,4 @@
-using Domain.ProductsGroups.ValueObjects;
+using Domain.ProductGroups.ValueObjects;
 
 namespace Application.Common.Dtos;
 

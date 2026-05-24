@@ -14,8 +14,6 @@ public sealed class AppUser : IdentityUser<Guid>, IAggregateRoot, ISoftDelete, I
         }
     }
 
-    private List<DomainEvent> _domainEvents = [];
-    public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     public IReadOnlyCollection<UserClaim> Claims { get; private set; } = [];
     public IReadOnlyCollection<UserToken> Tokens { get; private set; } = [];
@@ -29,23 +27,8 @@ public sealed class AppUser : IdentityUser<Guid>, IAggregateRoot, ISoftDelete, I
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
 
-    public void AddDomainEvent(DomainEvent domainEvent)
-    {
-        if (domainEvent is null)
-            return;
 
-        _domainEvents.Add(domainEvent);
-    }
 
-    public void RemoveDomainEvent(DomainEvent domainEvent)
-    {
-        _domainEvents.Remove(domainEvent);
-    }
-
-    public void ClearDomainEvents()
-    {
-        _domainEvents.Clear();
-    }
 
     public Result<Success> AddShippingAddress(ShippingAddressId shippingAddressId, AddressId addressId, bool isDefault)
     {
@@ -107,5 +90,29 @@ public sealed class AppUser : IdentityUser<Guid>, IAggregateRoot, ISoftDelete, I
         _addresses.ForEach(address => address.UnsetDefault());
     }
 
+
+
+
+
+
+    #region events
+
+    private List<IDomainEvent> _domainEvents = [];
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+
+
+    public void RaiseDomainEvent(IDomainEvent domainEvent)
+    {
+        if (domainEvent is null)
+            return;
+
+        _domainEvents.Add(domainEvent);
+    }
+
+    public void ClearDomainEvents()
+    {
+        _domainEvents.Clear();
+    }
+    #endregion
 }
 

@@ -6,7 +6,7 @@ internal sealed class AddProductCommandValidator : AbstractValidator<AddProductC
 {
     public AddProductCommandValidator()
     {
-        RuleFor(x => x.ProductId).NotEmpty();
+        RuleFor(x => x.ProductGroupId).NotEmpty();
 
         RuleFor(x => x.Price).Must(x => x > 0 && x <= Money.MaxValue);
 

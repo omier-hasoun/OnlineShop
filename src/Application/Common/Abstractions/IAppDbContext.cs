@@ -5,7 +5,7 @@ using Domain.Orders.OrderItems;
 using Domain.Orders.Shipments;
 using Domain.PaymentProviders;
 using Domain.ProductReviews;
-using Domain.ProductsGroups.Products;
+using Domain.ProductGroups.Products;
 using Domain.Inventories;
 using Domain.ReturnItemRequestsReviews;
 using Domain.ReturnItemRequests;
@@ -31,7 +31,7 @@ public interface IAppDbContext
     DbSet<OrderItem> OrderItems {get; }
 
     DbSet<ProductReview> ProductReviews {get; }
-    DbSet<ProductsGroup> ProductGroups {get; }
+    DbSet<ProductGroup> ProductGroups {get; }
     DbSet<Product> Products { get; }
 
     DbSet<Brand> Brands { get; }
@@ -39,7 +39,7 @@ public interface IAppDbContext
     DbSet<AppSettings> AppSettings { get; }
 
     DbSet<Warehouse> Warehouses { get; }
-    DbSet<Inventory> ProductStocks { get; }
+    DbSet<Inventory> Inventories { get; }
 
     DbSet<Country> Countries { get; }
     DbSet<Currency> Currencies { get; }
