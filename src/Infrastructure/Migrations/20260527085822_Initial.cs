@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Infrastructure.Data.Migrations
+namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -294,56 +294,6 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductGroups",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false),
-                    CategoryId = table.Column<long>(type: "bigint", nullable: false),
-                    BrandId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "NVARCHAR(60)", maxLength: 60, nullable: false),
-                    NormalizedTitle = table.Column<string>(type: "NVARCHAR(60)", maxLength: 60, nullable: false),
-                    Description = table.Column<string>(type: "NVARCHAR(300)", maxLength: 300, nullable: false),
-                    AverageRating = table.Column<double>(type: "FLOAT", nullable: false),
-                    IsSerialized = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Attributes = table.Column<string>(type: "NVARCHAR(MAX)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProductGroups", x => x.Id)
-                        .Annotation("SqlServer:Clustered", true);
-                    table.CheckConstraint("CK_ProductGroups_AverageRating", "[AverageRating] between 0 and 5");
-                    table.ForeignKey(
-                        name: "FK_ProductGroups_Brands_BrandId",
-                        column: x => x.BrandId,
-                        principalTable: "Brands",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProductGroups_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProductGroups_Users_CreatedBy",
-                        column: x => x.CreatedBy,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProductGroups_Users_LastModifiedBy",
-                        column: x => x.LastModifiedBy,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ShippingAddresses",
                 columns: table => new
                 {
@@ -517,73 +467,6 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductReviews",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false),
-                    ProductsGroupId = table.Column<long>(type: "bigint", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Rating = table.Column<byte>(type: "TINYINT", nullable: false),
-                    Comment = table.Column<string>(type: "NVARCHAR(150)", maxLength: 150, nullable: true),
-                    Title = table.Column<string>(type: "NVARCHAR(50)", maxLength: 50, nullable: false),
-                    LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProductReviews", x => x.Id)
-                        .Annotation("SqlServer:Clustered", true);
-                    table.CheckConstraint("CK_ProductReview_Rating", "[Rating] between 1 and 5");
-                    table.ForeignKey(
-                        name: "FK_ProductReviews_ProductGroups_ProductsGroupId",
-                        column: x => x.ProductsGroupId,
-                        principalTable: "ProductGroups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProductReviews_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Products",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false),
-                    ProductsGroupId = table.Column<long>(type: "bigint", nullable: false),
-                    Width = table.Column<int>(type: "int", nullable: false),
-                    Height = table.Column<int>(type: "int", nullable: false),
-                    Length = table.Column<int>(type: "int", nullable: false),
-                    Weight = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    DiscountExpiresOn = table.Column<DateOnly>(type: "date", nullable: true),
-                    PriceAfterDiscount = table.Column<decimal>(type: "decimal(18,4)", nullable: true),
-                    DiscountPercentage = table.Column<byte>(type: "TINYINT", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Sku = table.Column<string>(type: "VARCHAR(50)", maxLength: 50, nullable: false),
-                    Slug = table.Column<string>(type: "VARCHAR(80)", nullable: false),
-                    BarCode = table.Column<string>(type: "VARCHAR(50)", nullable: false),
-                    Specifications = table.Column<string>(type: "NVARCHAR(MAX)", nullable: true),
-                    Images = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Products", x => x.Id)
-                        .Annotation("SqlServer:Clustered", true);
-                    table.CheckConstraint("CK_Product_DiscountPercentage", "[DiscountPercentage] between 1 and 80");
-                    table.CheckConstraint("CK_Product_Price", "[Price] between 5 and 500000");
-                    table.ForeignKey(
-                        name: "FK_Products_ProductGroups_ProductsGroupId",
-                        column: x => x.ProductsGroupId,
-                        principalTable: "ProductGroups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CartItems",
                 columns: table => new
                 {
@@ -603,12 +486,6 @@ namespace Infrastructure.Data.Migrations
                         principalTable: "Carts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CartItems_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -617,20 +494,12 @@ namespace Infrastructure.Data.Migrations
                 {
                     WarehouseId = table.Column<long>(type: "bigint", nullable: false),
                     ProductId = table.Column<long>(type: "bigint", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    ReservedQuantity = table.Column<int>(type: "int", nullable: false)
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Inventories", x => new { x.ProductId, x.WarehouseId })
                         .Annotation("SqlServer:Clustered", true);
-                    table.CheckConstraint("CK_Inventories_ReservedQuantity", "[ReservedQuantity] <= [Quantity]");
-                    table.ForeignKey(
-                        name: "FK_Inventories_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Inventories_Warehouses_WarehouseId",
                         column: x => x.WarehouseId,
@@ -660,12 +529,6 @@ namespace Infrastructure.Data.Migrations
                         name: "FK_OrderItems_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_OrderItems_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -734,6 +597,127 @@ namespace Infrastructure.Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ProductGroups",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false),
+                    CategoryId = table.Column<long>(type: "bigint", nullable: false),
+                    BrandId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FeaturedProductId = table.Column<long>(type: "bigint", nullable: true),
+                    CategoryName = table.Column<string>(type: "VARCHAR(100)", nullable: false),
+                    BrandName = table.Column<string>(type: "VARCHAR(100)", nullable: false),
+                    Title = table.Column<string>(type: "NVARCHAR(60)", maxLength: 60, nullable: false),
+                    NormalizedTitle = table.Column<string>(type: "NVARCHAR(60)", maxLength: 60, nullable: false),
+                    Description = table.Column<string>(type: "NVARCHAR(300)", maxLength: 300, nullable: false),
+                    AverageRating = table.Column<decimal>(type: "DECIMAL(9,4)", nullable: false),
+                    IsSerialized = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Attributes = table.Column<string>(type: "NVARCHAR(MAX)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductGroups", x => x.Id)
+                        .Annotation("SqlServer:Clustered", true);
+                    table.CheckConstraint("CK_ProductGroups_AverageRating", "[AverageRating] between 0 and 5");
+                    table.ForeignKey(
+                        name: "FK_ProductGroups_Brands_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brands",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductGroups_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductGroups_Users_CreatedBy",
+                        column: x => x.CreatedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProductGroups_Users_LastModifiedBy",
+                        column: x => x.LastModifiedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductReviews",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false),
+                    ProductsGroupId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Rating = table.Column<byte>(type: "TINYINT", nullable: false),
+                    Comment = table.Column<string>(type: "NVARCHAR(150)", maxLength: 150, nullable: true),
+                    Title = table.Column<string>(type: "NVARCHAR(50)", maxLength: 50, nullable: false),
+                    LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductReviews", x => x.Id)
+                        .Annotation("SqlServer:Clustered", true);
+                    table.CheckConstraint("CK_ProductReview_Rating", "[Rating] between 1 and 5");
+                    table.ForeignKey(
+                        name: "FK_ProductReviews_ProductGroups_ProductsGroupId",
+                        column: x => x.ProductsGroupId,
+                        principalTable: "ProductGroups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductReviews_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false),
+                    ProductGroupId = table.Column<long>(type: "bigint", nullable: false),
+                    HasActiveDiscount = table.Column<bool>(type: "bit", nullable: false),
+                    Width = table.Column<int>(type: "int", nullable: false),
+                    Height = table.Column<int>(type: "int", nullable: false),
+                    Length = table.Column<int>(type: "int", nullable: false),
+                    Weight = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    DiscountExpiresOn = table.Column<DateOnly>(type: "date", nullable: true),
+                    PriceAfterDiscount = table.Column<decimal>(type: "decimal(18,4)", nullable: true),
+                    DiscountPercentage = table.Column<byte>(type: "TINYINT", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Sku = table.Column<string>(type: "VARCHAR(50)", maxLength: 50, nullable: false),
+                    Slug = table.Column<string>(type: "VARCHAR(80)", nullable: false),
+                    BarCode = table.Column<string>(type: "VARCHAR(50)", nullable: false),
+                    Specifications = table.Column<string>(type: "NVARCHAR(MAX)", nullable: true),
+                    Images = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id)
+                        .Annotation("SqlServer:Clustered", true);
+                    table.CheckConstraint("CK_Product_DiscountPercentage", "[DiscountPercentage] between 1 and 80");
+                    table.CheckConstraint("CK_Product_Price", "[Price] between 5 and 500000");
+                    table.ForeignKey(
+                        name: "FK_Products_ProductGroups_ProductGroupId",
+                        column: x => x.ProductGroupId,
+                        principalTable: "ProductGroups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_CartItems_CartId",
                 table: "CartItems",
@@ -767,6 +751,12 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_Countries_CurrencyCode",
                 table: "Countries",
                 column: "CurrencyCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventories_ProductId_Quantity",
+                table: "Inventories",
+                column: "ProductId")
+                .Annotation("SqlServer:Include", new[] { "Quantity" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Inventories_WarehouseId",
@@ -819,11 +809,18 @@ namespace Infrastructure.Data.Migrations
                 column: "LastModifiedBy");
 
             migrationBuilder.CreateIndex(
-                name: "UX_Product_NormalizedTitle_Published",
+                name: "IX_ProductGroups_Search",
                 table: "ProductGroups",
-                column: "NormalizedTitle",
+                columns: new[] { "Status", "NormalizedTitle" },
+                filter: "[FeaturedProductId] IS NOT NULL")
+                .Annotation("SqlServer:Include", new[] { "Id", "FeaturedProductId", "Title", "BrandName" });
+
+            migrationBuilder.CreateIndex(
+                name: "UX_ProductGroup_FeaturedProductId",
+                table: "ProductGroups",
+                column: "FeaturedProductId",
                 unique: true,
-                filter: "[Status] = 2");
+                filter: "[FeaturedProductId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductReviews_ProductsGroupId",
@@ -836,9 +833,9 @@ namespace Infrastructure.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_ProductsGroupId",
+                name: "IX_Products_ProductGroupId",
                 table: "Products",
-                column: "ProductsGroupId");
+                column: "ProductGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReturnItemRequests_OrderItemId",
@@ -905,11 +902,46 @@ namespace Infrastructure.Data.Migrations
                 table: "Warehouses",
                 column: "AddressId",
                 unique: true);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_CartItems_Products_ProductId",
+                table: "CartItems",
+                column: "ProductId",
+                principalTable: "Products",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Inventories_Products_ProductId",
+                table: "Inventories",
+                column: "ProductId",
+                principalTable: "Products",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_OrderItems_Products_ProductId",
+                table: "OrderItems",
+                column: "ProductId",
+                principalTable: "Products",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ProductGroups_Products_FeaturedProductId",
+                table: "ProductGroups",
+                column: "FeaturedProductId",
+                principalTable: "Products",
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_ProductGroups_Products_FeaturedProductId",
+                table: "ProductGroups");
+
             migrationBuilder.DropTable(
                 name: "AppSettings");
 

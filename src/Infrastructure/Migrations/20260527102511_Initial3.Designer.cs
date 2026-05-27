@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infrastructure.Data.Migrations
+namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260524095216_ProductModified")]
-    partial class ProductModified
+    [Migration("20260527102511_Initial3")]
+    partial class Initial3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -472,20 +472,19 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReservedQuantity")
-                        .HasColumnType("int");
-
                     b.HasKey("ProductId", "WarehouseId");
 
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("ProductId", "WarehouseId"));
 
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("IX_Inventories_ProductId_Quantity");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ProductId"), new[] { "Quantity" });
+
                     b.HasIndex("WarehouseId")
                         .HasDatabaseName("IX_Inventories_WarehouseId");
 
-                    b.ToTable("Inventories", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_Inventories_ReservedQuantity", "[ReservedQuantity] <= [Quantity]");
-                        });
+                    b.ToTable("Inventories", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Orders.Order", b =>
@@ -662,8 +661,16 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("BrandId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("BrandName")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(100)");
+
                     b.Property<long>("CategoryId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -675,6 +682,9 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("NVARCHAR");
+
+                    b.Property<long?>("FeaturedProductId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsSerialized")
                         .HasColumnType("bit");
@@ -712,12 +722,18 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("CreatedBy");
 
+                    b.HasIndex("FeaturedProductId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_ProductGroup_FeaturedProductId")
+                        .HasFilter("[FeaturedProductId] IS NOT NULL");
+
                     b.HasIndex("LastModifiedBy");
 
-                    b.HasIndex("NormalizedTitle")
-                        .IsUnique()
-                        .HasDatabaseName("UX_Product_NormalizedTitle_Published")
-                        .HasFilter("[Status] = 2");
+                    b.HasIndex("Status", "NormalizedTitle")
+                        .HasDatabaseName("IX_ProductGroups_Search")
+                        .HasFilter("[FeaturedProductId] IS NOT NULL");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Status", "NormalizedTitle"), new[] { "Id", "FeaturedProductId", "Title", "BrandName" });
 
                     b.ToTable("ProductGroups", null, t =>
                         {
@@ -740,6 +756,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<byte?>("DiscountPercentage")
                         .HasColumnType("TINYINT");
 
+                    b.Property<bool>("HasActiveDiscount")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Height")
                         .HasColumnType("int");
 
@@ -752,7 +771,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<decimal?>("PriceAfterDiscount")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<long>("ProductsGroupId")
+                    b.Property<long>("ProductGroupId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Sku")
@@ -781,7 +800,7 @@ namespace Infrastructure.Data.Migrations
 
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
-                    b.HasIndex("ProductsGroupId");
+                    b.HasIndex("ProductGroupId");
 
                     b.ToTable("Products", null, t =>
                         {
@@ -1152,11 +1171,13 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Warehouses.Warehouse", null)
+                    b.HasOne("Domain.Warehouses.Warehouse", "Warehouse")
                         .WithMany()
                         .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("Domain.Orders.Order", b =>
@@ -1290,6 +1311,10 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Domain.ProductGroups.Products.Product", "FeaturedProduct")
+                        .WithMany()
+                        .HasForeignKey("FeaturedProductId");
+
                     b.HasOne("Application.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("LastModifiedBy")
@@ -1301,8 +1326,8 @@ namespace Infrastructure.Data.Migrations
                             b1.Property<long>("ProductGroupId")
                                 .HasColumnType("bigint");
 
-                            b1.Property<double>("Value")
-                                .HasColumnType("FLOAT")
+                            b1.Property<decimal>("Value")
+                                .HasColumnType("DECIMAL(9,4)")
                                 .HasColumnName("AverageRating");
 
                             b1.HasKey("ProductGroupId");
@@ -1315,13 +1340,15 @@ namespace Infrastructure.Data.Migrations
 
                     b.Navigation("AverageRating")
                         .IsRequired();
+
+                    b.Navigation("FeaturedProduct");
                 });
 
             modelBuilder.Entity("Domain.ProductGroups.Products.Product", b =>
                 {
                     b.HasOne("Domain.ProductGroups.ProductGroup", null)
                         .WithMany("Products")
-                        .HasForeignKey("ProductsGroupId")
+                        .HasForeignKey("ProductGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

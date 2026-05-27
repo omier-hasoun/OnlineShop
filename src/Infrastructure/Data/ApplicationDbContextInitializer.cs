@@ -22,7 +22,8 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         try
         {
             //await context.Database.MigrateAsync();
-            
+
+
             await SeedData();
         }
         catch (Exception ex)
@@ -46,23 +47,32 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await userManager.CreateAsync(user1, "1234");
 
         await SeedCurrencies();
+        var random = new Random();
 
         var brandId1 = new BrandId(Guid.Parse("019dd6b8-96d0-734b-97ca-02b8094e7f00"));
+        var brandName1 = "Apple";
         var brandId2 = new BrandId(Guid.Parse("019dd6b8-96d0-7904-8a7a-d1e750789a04"));
+        var brandName2 = "Nvidia";
 
-        context.Brands.Add(Brand.Create(brandId1, "Apple", "shity company", "Apple GmbH", "APP", null).Value);
-        context.Brands.Add(Brand.Create(brandId2, "Nvidia", "shity company", "NVidia GmbH", "NVIDIA", null).Value);
+        context.Brands.Add(Brand.Create(brandId1, brandName1, "shity company", "Apple GmbH", "APP", null).Value);
+        context.Brands.Add(Brand.Create(brandId2, brandName2, "shity company", "NVidia GmbH", "NVIDIA", null).Value);
 
         var categoryId1 = new CategoryId(1);
+        var categoryName1 = "Smart phones";
         var categoryId2 = new CategoryId(2);
+        var categoryName2 = "Books";
 
-        context.Categories.Add(Category.Create(categoryId1, "Smart phones", null).Value);
-        context.Categories.Add(Category.Create(categoryId2, "Books", null).Value);
+        context.Categories.Add(Category.Create(categoryId1, categoryName1, null).Value);
+        context.Categories.Add(Category.Create(categoryId2, categoryName2, null).Value);
 
         var productGroupId1 = new ProductGroupId(3);
         var productGroupId2 = new ProductGroupId(4);
-        var productGroup1 = ProductGroup.Create(productGroupId1, brandId1, categoryId1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }).Value;
-        var productGroup2 = ProductGroup.Create(productGroupId2, brandId2, categoryId2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }).Value;
+        var productGroup1 = ProductGroup.Create(productGroupId1, brandId1, brandName1, categoryId1, categoryName1, "Iphone 17 pro max", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "8Gb" }, { "Display", "17 Zoll" } }).Value;
+        var productGroup2 = ProductGroup.Create(productGroupId2, brandId2, brandName2, categoryId2, categoryName2, "Iphone 17 pro", "A shitty phone", true, new Dictionary<string, string>() { { "Ram", "6Gb" }, { "Display", "14 Zoll" } }).Value;
+
+        context.ProductGroups.Add(productGroup1);
+        context.ProductGroups.Add(productGroup2);
+        await context.SaveAsync();
 
 
         var productId1 = new ProductId(5);
@@ -74,9 +84,57 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         productGroup1.AddProduct(productId2, Money.From(220).Value, 10, 10, 10, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
         productGroup2.AddProduct(productId3, Money.From(160).Value, 10, 10, 10, 2, "ommei30273", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
         productGroup2.AddProduct(productId4, Money.From(150).Value, 10, 10, 10, 2, "ommei30272", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "gold" } });
+        await context.SaveAsync();
 
-        context.ProductGroups.Add(productGroup1);
-        context.ProductGroups.Add(productGroup2);
+
+        for (int i = 1; i <= 2000; i++)
+        {
+            // 1. Create the ProductGroup
+            var pgId = new ProductGroupId(i + 10); // Offset to avoid previous IDs
+            var brandId = (i % 2 == 0) ? brandId1 : brandId2;
+            var categoryId = (i % 2 == 0) ? categoryId1 : categoryId2;
+            var brandName = (i % 2 == 0) ? brandName1 : brandName2;
+            var categoryName = (i % 2 == 0) ? categoryName1 : categoryName2;
+
+
+            var pgResult = ProductGroup.Create(
+                pgId,
+                brandId,
+                brandName,
+                categoryId,
+                categoryName,
+                $"Product Group {i}",
+                "Generated test group",
+                true,
+                new Dictionary<string, string>() { { "Spec", "Standard" } }
+            );
+
+            if (pgResult.Succeeded)
+            {
+                var productGroup = pgResult.Value;
+                context.ProductGroups.Add(productGroup);
+                await context.SaveAsync();
+
+                // 2. Add 1 to 3 products
+                int productCount = random.Next(1, 10);
+                for (int j = 1; j <= productCount; j++)
+                {
+                    var pId = new ProductId((i * 10) + j);
+                    productGroup.AddProduct(
+                        pId,
+                        Money.From(100 + (i * 10)).Value,
+                        10, 5, 5, 1,
+                        $"SKU-{i}-{j}",
+                        "example.com",
+                        "1234567890",
+                        new Dictionary<string, string>() { { "Variation", $"Opt-{j}" } }
+                    );
+                }
+                productGroup.PublishGroup();
+                // 3. Add to context
+                await context.SaveAsync();
+            }
+        }
 
         var addressId = new AddressId(201);
         var address = Address.Create(addressId, "Omier Hason", "01789 386 4983", "DE", "41", "Essen", "45355", "Marktstr. 41", null, null, null, "best appartment").Value;

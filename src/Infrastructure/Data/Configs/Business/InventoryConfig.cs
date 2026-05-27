@@ -29,11 +29,11 @@ internal sealed class InventoryConfig : BaseEntityConfig<Inventory>
         builder.HasIndex(x => x.WarehouseId)
                .HasDatabaseName("IX_Inventories_WarehouseId");
 
-        builder.ToTable("Inventories", x =>
-            {
-                x.HasCheckConstraint("CK_Inventories_ReservedQuantity", "[ReservedQuantity] <= [Quantity]");
-            }
-        );
+        builder.HasIndex(x => x.ProductId)
+               .HasDatabaseName("IX_Inventories_ProductId_Quantity")
+               .IncludeProperties(x => x.Quantity);
+
+        builder.ToTable("Inventories");
 
     }
 }

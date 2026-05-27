@@ -15,7 +15,6 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
         base.Configure(builder);
 
         builder.Ignore(x => x.Specifications);
-        builder.Ignore(x => x.HasActiveDiscount);
 
         builder.HasKey(e => e.Id)
                .IsClustered();
@@ -48,6 +47,9 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
         builder.Property(x => x.Price)
                .IsRequired();
 
+        builder.Property(x => x.HasActiveDiscount)
+               .IsRequired();
+
         builder.Property(x => x.PriceAfterDiscount)
                .IsRequired(false);
 
@@ -65,7 +67,7 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
 
         builder.HasOne<ProductGroup>()
                .WithMany(x => x.Products)
-               .HasForeignKey(x => x.ProductsGroupId)
+               .HasForeignKey(x => x.ProductGroupId)
                .IsRequired();
 
         builder.ToTable("Products", x =>
