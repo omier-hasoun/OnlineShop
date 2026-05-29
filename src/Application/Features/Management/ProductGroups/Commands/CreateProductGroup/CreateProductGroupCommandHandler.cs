@@ -15,10 +15,26 @@ internal sealed class CreateProductGroupCommandHandler(IAppDbContext context, II
 
         ProductGroupId productId = idGen.NewId();
 
+        var brandName = await context.Brands.AsNoTracking()
+                                        .Where(x => x.Id == brandId)
+                                        .Select(x => x.Name)
+                                        .FirstOrDefaultAsync(ct);
+
+
+        var categoryName = await context.Categories.AsNoTracking()
+                                        .Where(x => x.Id == categoryId)
+                                        .Select(x => x.Name)
+                                        .FirstOrDefaultAsync(ct);
+        if (brandName is null || categoryName is null)
+            return brandName is null ? ApplicationErrors.NotFound.Brand : ApplicationErrors.NotFound.Category;
+
+
         var createProductResult = ProductGroup.Create(
             productId,
             brandId,
+            brandName,
             categoryId,
+            categoryName,
             command.Title,
             command.Description,
             command.IsSerialized,

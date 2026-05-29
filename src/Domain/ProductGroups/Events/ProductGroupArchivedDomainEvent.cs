@@ -2,4 +2,4 @@
 
 namespace Domain.ProductGroups.Events;
 
-public sealed class ProductGroupArchivedDomainEvent(ProductGroupId Id) : IDomainEvent;
+public sealed record ProductGroupArchivedDomainEvent(ProductGroupId Id) : IDomainEvent;

@@ -5,17 +5,16 @@ namespace Application.Common.Extensions;
 
 public static class CollectionsExtensions
 {
-    public static PaginatedList<TResult> ToPaginatedList<TResult>(this ICollection<TResult> elements, int page, int totalCount)
+    public static PaginatedList<TResult> ToPaginatedList<TResult>(this ICollection<TResult>? elements, int page, bool hasMore)
     {
         ArgumentNullException.ThrowIfNull(elements);
 
         return new PaginatedList<TResult>()
         {
-            Items = elements.ToList(),
+            Items = elements is null ? [] : elements.ToList(),
             Page = page,
-            Size = elements.Count,
-            TotalCount = totalCount,
-            TotalPages = elements.Count == 0 ? 1 : (int)Math.Ceiling((decimal)(totalCount / elements.Count))
+            Size = elements is null ? 0 : elements.Count,
+            HasMore = hasMore
 
         };
     }

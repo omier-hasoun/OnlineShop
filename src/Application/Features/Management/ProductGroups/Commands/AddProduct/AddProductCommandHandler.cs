@@ -44,6 +44,8 @@ public sealed class AddProductCommandHandler(IAppDbContext context, IIdGenerator
 
             if (result.Failed)
                 return result.Errors;
+
+            context.Inventories.AddRange(result.Value);
         }
 
         await context.SaveAsync(ct);
@@ -51,9 +53,7 @@ public sealed class AddProductCommandHandler(IAppDbContext context, IIdGenerator
         return productId.Value;
     }
 
-
-
-    private Result<Success> CreateProductInventories(List<ProductStockDto> StockPerWarehouse, ProductId productId)
+    internal static Result<List<Inventory>> CreateProductInventories(List<ProductStockDto> StockPerWarehouse, ProductId productId)
     {
 
         List<Inventory> inventories = new(StockPerWarehouse.Count);
@@ -67,11 +67,7 @@ public sealed class AddProductCommandHandler(IAppDbContext context, IIdGenerator
 
             inventories.Add(result.Value);
         }
-
-        context.Inventories.AddRange(inventories);
-
-        return Result.Success;
-
+        return inventories;
     }
 
     private async Task<Result<Success>> AddImages(ProductGroup productGroup, ProductId productId, List<FileUploadDto> images, CancellationToken ct)

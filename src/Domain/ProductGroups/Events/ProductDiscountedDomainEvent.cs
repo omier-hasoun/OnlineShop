@@ -1,4 +1,4 @@
 
 namespace Domain.ProductGroups.Events;
 
-public sealed class ProductDiscountedDomainEvent(ProductId Id) : IDomainEvent;
+public sealed record ProductDiscountedDomainEvent(ProductId Id) : IDomainEvent;

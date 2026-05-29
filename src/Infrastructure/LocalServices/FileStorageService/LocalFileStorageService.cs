@@ -6,8 +6,15 @@ internal sealed class LocalFileStorageService : IFileStorageService
 
     public void DeleteFile(string filePath)
     {
-        if(Path.Exists(filePath))
-            File.Delete(filePath);
+        try
+        {
+            if (Path.Exists(filePath))
+                File.Delete(filePath);
+        }
+        catch
+        {
+
+        }
     }
 
     public void DeleteAllFiles(List<string> filesPaths)

@@ -8,16 +8,16 @@ internal sealed class UpdateProductGroupCommandHandler(IAppDbContext context) : 
     public async Task<Result<Updated>> Handle(UpdateProductGroupCommand command, CancellationToken ct)
     {
 
-        ProductGroupId productId = new(command.ProductId);
+        ProductGroupId productGroupId = new(command.ProductGroupId);
 
         if (!command.HasChanges())
         {
             return Result.Updated;
         }
 
-        var product = await context.ProductGroups.FindAsync(productId);
+        var productGroup = await context.ProductGroups.FindAsync(productGroupId);
 
-        if (product is null)
+        if (productGroup is null)
         {
             return ApplicationErrors.NotFound.Product;
         }
@@ -27,7 +27,21 @@ internal sealed class UpdateProductGroupCommandHandler(IAppDbContext context) : 
 
         CategoryId? categoryId = command.CategoryId is null ? null : new(command.CategoryId.Value);
 
-        var updateResult = product.Update(brandId, categoryId, command.Title, command.Description, command.IsSerialized, command.Attributes);
+        var brandName = await context.Brands.AsNoTracking()
+                                .Where(x => x.Id == brandId)
+                                .Select(x => x.Name)
+                                .FirstOrDefaultAsync(ct);
+
+
+        var categoryName = await context.Categories.AsNoTracking()
+                                        .Where(x => x.Id == categoryId)
+                                        .Select(x => x.Name)
+                                        .FirstOrDefaultAsync(ct);
+
+        if (brandName is null || categoryName is null)
+            return brandName is null ? ApplicationErrors.NotFound.Brand : ApplicationErrors.NotFound.Category;
+
+        var updateResult = productGroup.Update(brandId, brandName, categoryId, categoryName, command.Title, command.Description, command.IsSerialized, command.Attributes);
 
         if (updateResult.Failed)
             return updateResult.Errors;

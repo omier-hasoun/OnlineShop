@@ -1,39 +1,61 @@
 
 using Application.Common.Dtos;
-using Application.Features.Management.ProductGroups.Dtos;
 using Domain.Brands;
 using Domain.Categories;
 using Domain.Common.ValueObjects;
 using Domain.ProductGroups.Products;
 using Shared.Helpers;
-using static Domain.DomainErrors;
 
 namespace Application.Common.Extensions;
 
 internal static class QueryableExtensions
 {
-    public static IQueryable<ProductGroup> ApplyDiscountedProductsFilter(
-        this IQueryable<ProductGroup> query)
+    #region products
+    public static IQueryable<Product> ApplyDiscountedProductsFilter(
+        this IQueryable<Product> query , bool apply)
     {
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-
-        return query.Where(g =>
-            g.Products.Any(p =>
-                p.DiscountExpiresOn != null &&
-                p.DiscountExpiresOn > today));
-    }
-
-    public static IQueryable<ProductGroup> ApplySearchTextFilter(this IQueryable<ProductGroup> query, string? searchText)
-    {
-        if (string.IsNullOrEmpty(searchText))
+        if (apply is false)
             return query;
 
-        searchText = RegexHelper.Normalize(searchText);
-        var words = searchText.Split(' ');
+        return query.Where(p => p.HasActiveDiscount);
+    }
 
-        return query.OrderByDescending(x => x.NormalizedTitle == searchText)
-                    .ThenByDescending(x => x.Title.Contains(searchText))
-                    .ThenByDescending(x => words.Count(w => x.Title.Contains(w)));
+    public static IQueryable<Product> ApplyProductStatusesFilter(
+    this IQueryable<Product> query, List<ProductState> statuses)
+    {
+        if (statuses is null || statuses.Count == 0)
+            return query;
+
+        return query.Where(p => statuses.Contains(p.Status));
+
+    }
+
+    public static IQueryable<Product> GetPubishedProducts(this IQueryable<Product> query)
+    {
+        return query.Where(x => x.Status == ProductState.Published);
+    }
+
+    public static IQueryable<Product> ApplyMaxPriceFilter(this IQueryable<Product> query, int? maxPrice)
+    {
+        if (!maxPrice.HasValue || maxPrice.Value < 0)
+            return query;
+
+        var moneyMaxPrice = Money.From(maxPrice.Value).Value;
+
+        return query.Where(p => p.Price <= moneyMaxPrice || (p.HasActiveDiscount && p.PriceAfterDiscount! <= moneyMaxPrice));
+    }
+    #endregion
+
+    #region productGroups
+    public static IQueryable<ProductGroup> ApplySearchTextFilter(
+        this IQueryable<ProductGroup> query,
+        string? searchText)
+    {
+        if (string.IsNullOrWhiteSpace(searchText))
+            return query.OrderBy(x => x.Id);
+
+        return query.Where(
+            x => x.NormalizedTitle.Contains(searchText));
     }
     public static IQueryable<ProductGroup> ApplyBrandFilter(this IQueryable<ProductGroup> query, Guid? brandId)
     {
@@ -53,16 +75,6 @@ internal static class QueryableExtensions
         return query.Where(group => group.CategoryId == parsedId);
     }
 
-    public static IQueryable<Product> ApplyMaxPriceFilter(this IQueryable<Product> query, int? maxPrice)
-    {
-        if (!maxPrice.HasValue)
-            return query;
-
-        var MoneyMaxPrice = Money.From(maxPrice.Value).Value;
-
-        return query.Where(x => x.Price <= MoneyMaxPrice);
-    }
-
     public static IQueryable<ProductGroup> ApplyStatusesFilter(this IQueryable<ProductGroup> query, List<ProductGroupState>? statuses)
     {
         if (statuses is null || statuses.Count == 0)
@@ -70,20 +82,29 @@ internal static class QueryableExtensions
 
         return query.Where(x => statuses.Contains(x.Status));
     }
+    public static IQueryable<ProductGroup> GetPubishedProductGroups(this IQueryable<ProductGroup> query)
+    {
+        return query.Where(x => x.Status == ProductGroupState.Published);
+    }
+
+    #endregion
 
     public static async Task<PaginatedList<TResult>> ToPaginatedListAsync<TResult>(
         this IQueryable<TResult> query,
         int page,
         int size,
-        int totalCount, 
         CancellationToken ct)
     {
         int skip = ((page - 1) * size);
 
         var list = await query.Skip(skip)
-                              .Take(size)
+                              .Take(size +1)
                               .ToListAsync(ct);
 
-        return list.ToPaginatedList(page, totalCount);
+        var hasMore = list.Count > size;
+        if (hasMore)
+            list.RemoveAt(list.Count - 1);
+
+        return list.ToPaginatedList(page, hasMore);
     }
 }

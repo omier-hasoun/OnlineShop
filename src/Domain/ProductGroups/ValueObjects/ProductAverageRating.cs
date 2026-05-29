@@ -9,9 +9,14 @@ public sealed record ProductAverageRating
         
     }
 
-    public float Value { get; internal init; } = 0;
+    public decimal Value { get; internal init; } = 0;
 
-    public static Result<ProductAverageRating> From(float value)
+    public float GetRoundedValue()
+    {
+        return (float)Math.Round(Value, 2);
+    }
+
+    public static Result<ProductAverageRating> From(decimal value)
     {
         if (ValHelper.IsOutOfRange(value, ProductGroupRules.MinAverageRatingValue, ProductGroupRules.MaxAverageRatingValue))
         {

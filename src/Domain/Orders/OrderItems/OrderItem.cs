@@ -26,12 +26,12 @@ public sealed class OrderItem : BaseEntity<OrderItemId>
 
     public short Quantity { get; private init; }
 
-    public Money UnitPrice { get; }
-    public Money TotalPrice { get; }
+    public Money UnitPrice { get; } = null!;
+    public Money TotalPrice { get; } = null!;
 
     public OrderItemStatus Status {get; private set;}
 
-    public ProductInfoSnapShotAtPurchase ProductInfo { get; private set; }
+    public ProductInfoSnapShotAtPurchase ProductInfo { get; private set; } = null!;
 
     private List<string> _serialNumbers = [];
     public IReadOnlyList<string> SerialNumbers { get{ return _serialNumbers.AsReadOnly(); } private set{_serialNumbers = value is null ?[] : value.ToList();} }

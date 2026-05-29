@@ -24,7 +24,7 @@ public sealed record ProductsGroupDto
         Brand = brand;
         Category = category;
         Variants = variants;
-        AverageRating = averageRating.Value;
+        AverageRating = averageRating.GetRoundedValue();
 
     }
 

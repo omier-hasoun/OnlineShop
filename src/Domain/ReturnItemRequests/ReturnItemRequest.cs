@@ -37,7 +37,7 @@ public sealed class ReturnItemRequest : AggregateRoot<ReturnItemRequestId>, IHas
     public string? CustomerMessage { get; private set; }
     public ReturnItemRequestStatus Status { get; private set; }
 
-    public Money ShippingFees { get; }
+    public Money ShippingFees { get; } = new();
     public short ReturnedQuantity { get; private set; }
 
     public DateTime CreatedAt {  get; set; }

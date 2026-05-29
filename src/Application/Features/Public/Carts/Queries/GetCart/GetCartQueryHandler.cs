@@ -35,7 +35,7 @@ internal sealed class GetCartQueryHandler(IAppDbContext context) : IRequestHandl
                             p.Images.FirstOrDefault(),
 
                             context.ProductGroups
-                                .Where(pg => pg.Id == p.ProductsGroupId)
+                                .Where(pg => pg.Id == p.ProductGroupId)
                                 .Select(pg => pg.Title)
                                 .First(),
 

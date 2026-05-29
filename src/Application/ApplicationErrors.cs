@@ -21,6 +21,23 @@ namespace Application;
  public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
 
  public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
+
+--
+        public static readonly Error rename1 = Error.Validation(GenerateErrorCode(nameof(rename1)));
+
+        public static readonly Error rename2 = Error.Validation(GenerateErrorCode(nameof(rename2)));
+
+        public static readonly Error rename3 = Error.Validation(GenerateErrorCode(nameof(rename3)));
+
+        public static readonly Error rename4 = Error.Validation(GenerateErrorCode(nameof(rename4)));
+
+        public static readonly Error rename5 = Error.Validation(GenerateErrorCode(nameof(rename5)));
+
+        public static readonly Error rename6 = Error.Validation(GenerateErrorCode(nameof(rename6)));
+
+        public static readonly Error rename7 = Error.Validation(GenerateErrorCode(nameof(rename7)));
+
+        public static readonly Error rename8 = Error.Validation(GenerateErrorCode(nameof(rename8)));
 */
 public static class ApplicationErrors
 {
@@ -104,9 +121,26 @@ public static class ApplicationErrors
         public static readonly Error ProductReview = Error.NotFound(GenerateErrorCode(nameof(ProductReview)));
 
         public static readonly Error User = Error.NotFound(GenerateErrorCode(nameof(User)));
+
         public static readonly Error Cart = Error.NotFound(GenerateErrorCode(nameof(Cart)));
+
         public static readonly Error Warehouse = Error.NotFound(GenerateErrorCode(nameof(Warehouse)));
 
+        public static readonly Error Category = Error.Validation(GenerateErrorCode(nameof(Category)));
+
+        public static readonly Error Brand = Error.Validation(GenerateErrorCode(nameof(Brand)));
+
+        public static readonly Error rename3 = Error.Validation(GenerateErrorCode(nameof(rename3)));
+
+        public static readonly Error rename4 = Error.Validation(GenerateErrorCode(nameof(rename4)));
+
+        public static readonly Error rename5 = Error.Validation(GenerateErrorCode(nameof(rename5)));
+
+        public static readonly Error rename6 = Error.Validation(GenerateErrorCode(nameof(rename6)));
+
+        public static readonly Error rename7 = Error.Validation(GenerateErrorCode(nameof(rename7)));
+
+        public static readonly Error rename8 = Error.Validation(GenerateErrorCode(nameof(rename8)));
     }
 
 

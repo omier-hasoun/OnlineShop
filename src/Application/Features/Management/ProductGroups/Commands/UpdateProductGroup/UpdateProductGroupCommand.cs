@@ -1,6 +1,6 @@
 
 namespace Application.Features.Management.ProductGroups.Commands.UpdateProductGroup;
-public sealed record UpdateProductGroupCommand(long ProductId, Guid? BrandId, long? CategoryId, string? Title, string? Description,
+public sealed record UpdateProductGroupCommand(long ProductGroupId, Guid? BrandId, long? CategoryId, string? Title, string? Description,
     bool? IsSerialized, Dictionary<string, string>? Attributes)
 : IRequest<Result<Updated>>;
 

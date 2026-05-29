@@ -7,7 +7,9 @@ internal sealed class ArchiveProductGroupCommandHandler(IAppDbContext context) :
     {
         var productId = command.ParsedProductId;
 
-        var productGroup = await context.ProductGroups.Include(x => x.Products).FirstOrDefaultAsync(x => x.Id == productId, ct);
+        var productGroup = await context.ProductGroups.Include(x => x.Products)
+                                                .ThenInclude(x => x.StockPerWarehouse)
+                                                .FirstOrDefaultAsync(x => x.Id == productId, ct);
 
         if (productGroup is null)
         {
@@ -18,6 +20,14 @@ internal sealed class ArchiveProductGroupCommandHandler(IAppDbContext context) :
 
         if (res.Failed)
             return res.Errors;
+
+        foreach ( var product in productGroup.Products)
+        {
+            product.StockPerWarehouse.ForEach(x =>
+            {
+                x.ResetStock();
+            });
+        }
 
         await context.SaveAsync(ct);
 

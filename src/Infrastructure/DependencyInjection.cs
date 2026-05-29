@@ -9,12 +9,13 @@ using Domain.ProductGroups;
 using Domain.ProductGroups.Products;
 using Domain.Warehouses;
 using FileSignatures;
-using Infrastructure.BackgroundServices;
+using Infrastructure.BackgroundJobs;
 using Infrastructure.Channels;
 using Infrastructure.Common.Exceptions;
 using Infrastructure.Data.IdGenerators;
 using Infrastructure.Data.IdGenerators.Primitives;
 using Infrastructure.Data.Interceptors;
+using Infrastructure.LocalServices.DiscountReset;
 using Infrastructure.LocalServices.FileNameGeneratorService;
 using Infrastructure.LocalServices.FileStorageService;
 using Infrastructure.LocalServices.FileValidator;
@@ -36,7 +37,7 @@ public static class DependencyInjection
                 .AddEfCoreServices(config, enviroment)
                 .AddIdGenServices(config)
                 .AddIdGeneratorsServices()
-                .AddIdentityServices(config, enviroment)
+                .AddIdentityServices()
                 .AddFileSignaturesServices();
         return services;
     }
@@ -46,6 +47,8 @@ public static class DependencyInjection
         services.AddTransient<IImageValidator, ImageValidator>();
         services.AddSingleton<IFileStorageService, LocalFileStorageService>();
         services.AddHostedService<ImageProcessorWorker>();
+        services.AddHostedService<ZeroOclockWorker>();
+
 
         services.AddSingleton(sp => {
 
@@ -65,6 +68,8 @@ public static class DependencyInjection
         services.AddSingleton<IUniqueFileNameGenerator, FileNameGenerator>();
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
+        services.AddSingleton<IZeroOclockService, DiscountResetService>();
+
         return services;
     }
 
@@ -82,11 +87,7 @@ public static class DependencyInjection
         services.AddSingleton<App.IIdGenerator<CartItemId>, CartItemIdGenerator>();
         services.AddSingleton<App.IIdGenerator<WarehouseId>, WarehouseIdGenerator>();
         services.AddSingleton<App.IIdGenerator<AddressId>, AddressIdGenerator>();
-
-
-
-
-
+        
         return services;
     }
 
@@ -104,7 +105,7 @@ public static class DependencyInjection
         {
             var options = new IdGen.IdGeneratorOptions()
             {
-                TimeSource = new IdGen.DefaultTimeSource(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc)),
+                TimeSource = new IdGen.DefaultTimeSource(new DateTime(2026, 5, 25, 0, 0, 0, DateTimeKind.Utc)),
                 IdStructure = new IdGen.IdStructure(41, 11, 11),
                 SequenceOverflowStrategy = IdGen.SequenceOverflowStrategy.SpinWait,
             };
@@ -115,25 +116,15 @@ public static class DependencyInjection
 
         return services;
     }
-    private static void GetIdentityOptions(IdentityOptions options, IConfiguration config)
-    {
-        var identitySection = config.GetSection("IdentityOptions");
 
-        identitySection.GetSection("Lockout").Bind(options.Lockout);
-        identitySection.GetSection("Password").Bind(options.Password);
-        identitySection.GetSection("SignIn").Bind(options.SignIn);
-        identitySection.GetSection("User").Bind(options.User);
-        identitySection.GetSection("ClaimsIdentity").Bind(options.ClaimsIdentity);
-    }
-
-    private static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config, IWebHostEnvironment env)
+    private static IServiceCollection AddIdentityServices(this IServiceCollection services)
     {
 
-        services.AddIdentityCore<AppUser>((options) => GetIdentityOptions(options, config))
-        .AddRoles<Role>()
-        .AddEntityFrameworkStores<AppDbContext>()
-        .AddApiEndpoints()
-        .AddDefaultTokenProviders();
+        services.AddIdentityCore<AppUser>()
+                    .AddRoles<Role>()
+                    .AddEntityFrameworkStores<AppDbContext>()
+                    .AddApiEndpoints()
+                    .AddDefaultTokenProviders();
 
         services.AddTransient<IEmailSender<AppUser>, EmailSenderFaker>();
         services.AddScoped<IPasswordHasher<AppUser>, UserPasswordHashService>();
@@ -153,6 +144,7 @@ public static class DependencyInjection
         string? connString;
 
         bool isProductionOrStaging = environment.IsDevelopment() == false;
+
         if (isProductionOrStaging)
             connString = config["CONNECTION_STRING"];
         else

@@ -25,8 +25,6 @@ namespace Api
 
             builder.Services.Configure<ProductImagePathOptions>(config.GetSection(nameof(ProductImagePathOptions)));
 
-            builder.Services.Configure<IdentityOptions>(config.GetSection(nameof(IdentityOptions)));
-
             builder.Services.Configure<FormOptions>(options =>
             {
                 options.MultipartBodyLengthLimit = 20 * 1024 * 1024;//20 mb

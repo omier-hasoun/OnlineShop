@@ -11,9 +11,9 @@ namespace Infrastructure.LocalServices.ImagesStore;
 internal sealed class ImagesStoreService(IImageJobWriter imageJobWriter, IWebHostEnvironment webEnv, IFileStorageService fileStore, IOptions<ProductImagePathOptions> options) : IImageStorageService
 {
     private readonly string _originalImagesDirPath = Path.Combine(webEnv.WebRootPath, options.Value.Images_Original);
-    private readonly string _150x150ImagesDirPath = Path.Combine(webEnv.WebRootPath, options.Value.Images_150x150);
-    private readonly string _500x375lImagesDirPath = Path.Combine(webEnv.WebRootPath, options.Value.Images_500x375);
-    private readonly string _1600x1700ImagesDirPath = Path.Combine(webEnv.WebRootPath, options.Value.Images_1600x1700);
+    private readonly string _150x150ImagesDirPath = Path.Combine(webEnv.WebRootPath, options.Value.Images_200x200);
+    private readonly string _500x375lImagesDirPath = Path.Combine(webEnv.WebRootPath, options.Value.Images_600x600);
+    private readonly string _1600x1700ImagesDirPath = Path.Combine(webEnv.WebRootPath, options.Value.Images_2000x2000);
 
 
     public Result<Success> DeleteAll(List<string> fileNames)

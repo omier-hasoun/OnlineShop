@@ -561,7 +561,7 @@ public static class DomainErrors
 
         public static readonly Error QuantityOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(QuantityOutOfRange)}");
 
-        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error UnableToResetStockNow = Error.Validation($"{BaseErrorCode}.{nameof(UnableToResetStockNow)}");
 
         public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
 

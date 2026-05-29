@@ -13,7 +13,7 @@ public sealed class Product : BaseEntity<ProductId>
         int width, int height, int length, int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications, List<ProductImage> images)
         : base(id)
     {
-        ProductsGroupId = productsGroupId;
+        ProductGroupId = productsGroupId;
                 
         PriceAfterDiscount = priceBeforeDiscount;
         DiscountPercentage = discountPercentage;
@@ -62,12 +62,9 @@ public sealed class Product : BaseEntity<ProductId>
             width, height, length, weight, sku, slug, barCode, specifications, images);
     }
 
-    public ProductGroupId ProductsGroupId { get; private init; }
+    public ProductGroupId ProductGroupId { get; private init; }
 
-    public bool HasActiveDiscount =>
-        DiscountPercentage is not null &&
-        DiscountExpiresOn.HasValue &&
-        ValHelper.IsDateInFuture(DiscountExpiresOn);
+    public bool HasActiveDiscount { get; private set; }
 
     public int Width { get; private set; }
     public int Height { get; private set; }
@@ -89,7 +86,7 @@ public sealed class Product : BaseEntity<ProductId>
 
     public string BarCode { get; private init; } = null!;
 
-    public List<Inventory> StockPerWarehouse { get; private set; }
+    public List<Inventory> StockPerWarehouse { get; private set; } = [];
 
     private bool CanTransitionTo(ProductState newStatus)
     {

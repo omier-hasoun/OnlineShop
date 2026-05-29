@@ -18,7 +18,7 @@ public sealed class Warehouse : AggregateRoot<WarehouseId>
     
     public AddressId AddressId { get; private init; }
 
-    public Address Address { get; set; }
+    public Address Address { get; set; } = null!;
 
     public string Name { get; private set; } = null!;
 } 

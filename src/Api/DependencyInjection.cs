@@ -2,7 +2,7 @@
 using System.Text.Json;
 using Api.Common.JsonConverters;
 using Api.Services;
-using Infrastructure.BackgroundServices;
+using Infrastructure.BackgroundJobs;
 using Infrastructure.LocalServices.Hashing;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
@@ -32,7 +32,8 @@ public static class DependencyInjection
         services.AddScoped<ICartIdentityService, CartIdentityService>();
 
 
-        services.AddControllers().AddJsonOptions(options =>
+        services.AddControllers()
+                    .AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             options.JsonSerializerOptions.Converters.Add(new LongAsStringJsonConverter());

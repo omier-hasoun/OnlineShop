@@ -7,12 +7,14 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
     private ProductGroup()
     {
     }
-    private ProductGroup(ProductGroupId id, BrandId brandId, CategoryId categoryId, string title, string normalizedTitle, string description, ProductAverageRating averageRating, ProductGroupState status,
+    private ProductGroup(ProductGroupId id, BrandId brandId, string brandName, CategoryId categoryId, string categoryName, string title, string normalizedTitle, string description, ProductAverageRating averageRating, ProductGroupState status,
        bool isSerialized, Dictionary<string, string> attributes, DateTime createdAt, DateTime lastModifiedAt, Guid createdBy, Guid lastModifiedBy)
         : base(id)
     {
         BrandId = brandId;
+        BrandName = brandName;
         CategoryId = categoryId;
+        CategoryName = categoryName;
         Title = title;
         NormalizedTitle = normalizedTitle;
         Description = description;
@@ -25,7 +27,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
         CreatedBy = createdBy;
         LastModifiedBy = lastModifiedBy;
     }
-    public static Result<ProductGroup> Create(ProductGroupId id, BrandId brandId, CategoryId categoryId, string title, string description,
+    public static Result<ProductGroup> Create(ProductGroupId id, BrandId brandId, string brandName, CategoryId categoryId, string categoryName, string title, string description,
         bool isSerialized, Dictionary<string, string> attributes)
     {
         // Add domain validation logic here
@@ -49,7 +51,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
 
         var normalizedTitle = RegexHelper.Normalize(title);
 
-        var productGroup = new ProductGroup(id, brandId, categoryId, title, normalizedTitle, description, averageRating, 
+        var productGroup = new ProductGroup(id, brandId, brandName, categoryId, categoryName, title, normalizedTitle, description, averageRating, 
             status, isSerialized, attributes, createdAt, lastModifiedAt, createdBy, lastModifiedBy);
 
         return productGroup;
@@ -58,12 +60,16 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
 
     public CategoryId CategoryId { get; private set; }
     public BrandId BrandId { get; private set; }
+    public ProductId? FeaturedProductId { get; private set; }
+
+    public string CategoryName { get; private set; } = null!;
+    public string BrandName { get; private set; } = null!;
 
     public string Title { get; private set; } = null!;
     public string NormalizedTitle { get; private init; } = null!;
     public string Description { get; private set; } = null!;
 
-    public ProductAverageRating AverageRating { get; private init; } = null!;
+    public ProductAverageRating AverageRating { get; private set; } = null!;
     public bool IsSerialized { get; private set; }
 
     public Guid CreatedBy { get; set; }
@@ -78,7 +84,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
     private List<Product> _products = [];
     public IReadOnlyCollection<Product> Products { get { return _products.AsReadOnly(); } private set { _products = value is null ? [] : value.ToList(); } }
 
-
+    public Product? FeaturedProduct { get; private set; }
     public ProductGroupState Status { get; private set; }
 
     private bool CanTransitionTo(ProductGroupState newStatus)
@@ -99,7 +105,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
     private bool CanModify() => Status != ProductGroupState.Archived;
 
 
-    public Result<Updated> Update(BrandId? brandId, CategoryId? categoryId, string? title, string? description,
+    public Result<Updated> Update(BrandId? brandId, string? brandName, CategoryId? categoryId, string? categoryName, string? title, string? description,
         bool? isSerialized, Dictionary<string, string>? attributes)
     {
         if (!CanModify())
@@ -107,7 +113,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
 
         List<Error> errors = new(7);
 
-        if (brandId != null)
+        if (brandId != null && brandName != null)
         {
             if (Status != ProductGroupState.Draft)
                 errors.Add(DomainErrors.Products.CannotChangeBrandAfterPublish);
@@ -122,7 +128,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
 
         }
 
-        if (categoryId != null)
+        if (categoryId != null && categoryName != null)
         {
             if (Status != ProductGroupState.Draft)
                 errors.Add(DomainErrors.Products.CannotChangeCategoryAfterPublish);
@@ -180,9 +186,10 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
         Title = title ?? Title;
 
         CategoryId = categoryId ?? CategoryId;
+        CategoryName = categoryName ?? CategoryName;
 
         BrandId = brandId ?? BrandId;
-
+        BrandName = brandName ?? BrandName;
 
         return Result.Updated;
     }
@@ -231,6 +238,13 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
 
         _products.Add(createVariantResult.Value);
         RaiseDomainEvent(new ProductCreatedDomainEvent(productId));
+
+        bool isFirstProductInGroup = _products.Count == 1;
+
+        if (isFirstProductInGroup)
+        {
+            FeaturedProductId = productId;
+        }
 
         return Result.Success;
     }

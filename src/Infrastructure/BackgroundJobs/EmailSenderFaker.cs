@@ -1,7 +1,7 @@
 using Application.Entities;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
-namespace Infrastructure.BackgroundServices;
+namespace Infrastructure.BackgroundJobs;
 
 public sealed class EmailSenderFaker: IEmailSender<AppUser>, IEmailSender
 {

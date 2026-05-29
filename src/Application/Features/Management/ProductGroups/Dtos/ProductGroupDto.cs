@@ -32,7 +32,7 @@ public sealed record ProductGroupDto
         Category = new ProductCategoryDto(categoryId, categoryName);
 
         Products = products;
-        AverageRating = averageRating.Value;
+        AverageRating = averageRating.GetRoundedValue();
         LastModifiedInfo = new(lastModifiedBy, lastModifiedByUserName, lastModifiedAt);
 
 
