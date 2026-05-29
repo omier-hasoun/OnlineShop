@@ -23,10 +23,10 @@ internal sealed class ArchiveProductGroupCommandHandler(IAppDbContext context) :
 
         foreach ( var product in productGroup.Products)
         {
-            product.StockPerWarehouse.ForEach(x =>
+            foreach (var stock in product.StockPerWarehouse)
             {
-                x.ResetStock();
-            });
+                stock.ResetStock();
+            }
         }
 
         await context.SaveAsync(ct);

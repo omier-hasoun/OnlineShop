@@ -6,45 +6,45 @@ internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : 
 {
     public async Task<Result<ProductsGroupDto>> Handle(GetProductsGroupByIdQuery request, CancellationToken ct)
     {
-        ProductGroupId productId = request.ProductId;
+        ProductGroupId productGroupId = request.ProductGroupId;
 
         var query = context.ProductGroups.AsNoTracking()
-                                    .Where(x => x.Id == productId && x.Status == ProductGroupState.Published)
-                                    .Join(context.Brands, p => p.BrandId, b => b.Id, (product, brand) => new { product, brand })
-                                    .Join(context.Categories, x => x.product.CategoryId, category => category.Id, (pb, category) => new { pb, category })
+                                    .Where(x => x.Id == productGroupId && x.Status == ProductGroupState.Published)
                                     .Select(
-                                            x =>
-                                            new ProductsGroupDto(
-                                               x.pb.product.Id,
-                                               x.pb.product.Title,
-                                               x.pb.product.Description,
-                                               x.pb.product.Attributes.ToDictionary(),
-                                               x.pb.brand.Name,
-                                               x.category.Name,
-                                               x.pb.product.AverageRating,
-                                               x.pb.product.Products.Select(x => new ProductDto(
+                                            p =>
+                                               new ProductsGroupDto(
+                                               p.Id,
+                                               p.FeaturedProductId,
+                                               p.Title,
+                                               p.Description,
+                                               p.Attributes.ToDictionary(),
+                                               p.BrandName,
+                                               p.CategoryName,
+                                               p.AverageRating,
+                                               p.Products.Select(x => new ProductDto(
                                                    id: x.Id,
                                                    price: x.Price,
-                                                   discountPercentage : x.DiscountPercentage,
-                                                   priceBeforeDiscount:x.PriceAfterDiscount,
-                                                   images : x.Images.ToList(),
+                                                   hasActiveDiscount: x.HasActiveDiscount,
+                                                   discountPercentage: x.DiscountPercentage,
+                                                   priceAfterDiscount: x.PriceAfterDiscount,
+                                                   images: x.Images,
                                                    slug: x.Slug,
-                                                   specifications: x.Specifications.ToDictionary()
-                                                   
+                                                   specifications: x.Specifications.ToDictionary(),
+                                                   isAvailable: x.StockPerWarehouse.Any(x => x.Quantity > 0)
+
                                                )).ToList()
                                             )
 
-
                                     );
 
-        ProductsGroupDto? productDto = await query.FirstOrDefaultAsync(ct);
+        ProductsGroupDto? productGroupDto = await query.FirstOrDefaultAsync(ct);
 
-        if (productDto is null)
+        if (productGroupDto is null)
         {
             return ApplicationErrors.NotFound.Product;
         }
 
-        return productDto;
+        return productGroupDto;
 
     }
 }

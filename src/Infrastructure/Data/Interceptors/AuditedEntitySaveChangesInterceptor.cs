@@ -41,10 +41,10 @@ internal sealed class AuditedEntitySaveChangesInterceptor : SaveChangesIntercept
                 mTime.LastModifiedAt = utcNow;
 
             if (entry.Entity is ICreationAudited cUser && isAdded)
-                cUser.CreatedBy = _user.Id ?? Guid.Parse("10000000-0000-0000-0000-000000000001");
+                cUser.CreatedBy = _user.GetUserId() ?? Guid.Parse("10000000-0000-0000-0000-000000000001");
 
             if (entry.Entity is IModificationAudited mUser && (isAdded || isModified))
-                mUser.LastModifiedBy = _user.Id ?? Guid.Parse("10000000-0000-0000-0000-000000000001"); ;
+                mUser.LastModifiedBy = _user.GetUserId() ?? Guid.Parse("10000000-0000-0000-0000-000000000001"); ;
         }
     }
 }

@@ -1,7 +1,10 @@
 
+using Application.Common.Dtos;
+
 namespace Application.Common.Abstractions;
 
 public interface ICurrentUserService
 {
-    Guid? Id { get; }
+    UserIdentity GetCurrentIdentity();
+    Guid? GetUserId();
 }

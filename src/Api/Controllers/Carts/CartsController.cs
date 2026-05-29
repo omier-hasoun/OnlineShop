@@ -9,7 +9,7 @@ using MediatR;
 namespace Api.Controllers.Carts;
 
 [Route("api/my-cart")]
-public sealed class CartsController(IMediator mediator, ICartIdentityService cartIdentity) : ApiController
+public sealed class CartsController(IMediator mediator, ICurrentUserService cartIdentity) : ApiController
 {
     [HttpGet()]
     public async Task<IActionResult> GetCartByUserIdOrGuestId(CancellationToken ct)

@@ -9,27 +9,32 @@ public sealed record ProductDto
 {
     public long Id { get; }
     public double Price { get; }
-    public double? PriceBeforeDiscount { get; }
+    public bool HasActiveDiscount { get; }
+    public double? PriceAfterDiscount { get; }
     public byte? DiscountPercentage { get; }
 
-    public List<ProductImageDto> Images { get; } = [];
-    public Dictionary<string, string> Specifications { get; } = [];
+    public bool IsAvailable { get; }
     public string Slug { get; } = null!;
+    public List<ProductImageDto> Images { get; } = [];
+    public IReadOnlyDictionary<string, string> Specifications { get; } = new Dictionary<string,string>();
 
-    public ProductDto(ProductId id, Money price, byte? discountPercentage, Money? priceBeforeDiscount, List<ProductImage> images, string slug, Dictionary<string, string> specifications)
+    public ProductDto(ProductId id, Money price, bool hasActiveDiscount, byte? discountPercentage, Money? priceAfterDiscount, 
+        IReadOnlyCollection<ProductImage> images, string slug, IReadOnlyDictionary<string, string> specifications, bool isAvailable)
     {
         Id = id.Value;
-        Slug = slug;
         Price = (double)price.Value;
-        PriceBeforeDiscount = priceBeforeDiscount is null ? null : (double)priceBeforeDiscount.Value;
+        Slug = slug;
+        HasActiveDiscount = hasActiveDiscount;
+        PriceAfterDiscount = hasActiveDiscount is false ? null : (double)priceAfterDiscount!.Value;
+        DiscountPercentage = hasActiveDiscount is false ? null : discountPercentage;
 
-        DiscountPercentage = discountPercentage ?? discountPercentage;
-
-        images.ForEach(productImage => Images.Add(new ProductImageDto(productImage)));
+        foreach (var productImage in images)
+        {
+            Images.Add(new ProductImageDto(productImage));
+        }
 
         Specifications = specifications;
-
-
+        IsAvailable = isAvailable;
     }
 
 }

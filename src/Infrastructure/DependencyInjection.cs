@@ -36,7 +36,7 @@ public static class DependencyInjection
         services.AddCustomServices()
                 .AddEfCoreServices(config, enviroment)
                 .AddIdGenServices(config)
-                .AddIdGeneratorsServices()
+                .AddIdGeneratorServices()
                 .AddIdentityServices()
                 .AddFileSignaturesServices();
         return services;
@@ -73,7 +73,7 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddIdGeneratorsServices(this IServiceCollection services)
+    private static IServiceCollection AddIdGeneratorServices(this IServiceCollection services)
     {
         services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<Guid>, GuidV7Generator>("GuidV7");
         services.AddKeyedSingleton<IPrimitiveTypeIdGenerator<long>, SnowflakeGenerator>("Snowflake");

@@ -28,8 +28,7 @@ public static class DependencyInjection
     {
         // for simple dependency injection Transient/Singleton/Scoped
         services.AddTransient<IEmailSender, EmailSenderFaker>();
-        services.AddScoped<ICurrentUserService, CurrentUserContextService>();
-        services.AddScoped<ICartIdentityService, CartIdentityService>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 
         services.AddControllers()

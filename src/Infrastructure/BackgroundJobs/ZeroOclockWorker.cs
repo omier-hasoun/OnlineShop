@@ -11,6 +11,8 @@ internal sealed class ZeroOclockWorker(IEnumerable<IZeroOclockService> services,
 {
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
+        await RunJob();// first time execution at startup
+
         var initialDelay = GetRemainingTimeUntilZeroOclock();
 
         await Task.Delay(initialDelay, ct);

@@ -9,33 +9,26 @@ internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : 
     public async Task<Result<ProductGroupDto>> Handle(GetProductsGroupByIdQuery query, CancellationToken ct)
     {
         var getProductQuery = context.ProductGroups.AsNoTracking()
-                                              .AsSingleQuery()
                                               .Where(g => g.Id == query.ProductGroupId)
                                               .Join(
-                                                    context.Brands, g => g.BrandId, b => b.Id,
-                                                    (g, b) => new { g, b }
-                                              )
-                                              .Join(
-                                                    context.Categories, x => x.g.CategoryId, c => c.Id,
-                                                    (gb, c) => new { gb.g, gb.b, c }
-                                              )
-                                              .Join(
-                                                    context.Users, x => x.g.LastModifiedBy, u => u.Id,
-                                                    (gbc, u) => new { gbc.g, gbc.b, gbc.c, u }
+                                                    context.Users, pg => pg.LastModifiedBy, u => u.Id,
+                                                    (pg, u) => new { pg, u }
                                               )
                                               .Select(
-                                                  gbc => new ProductGroupDto(gbc.g.Id, gbc.g.Title, gbc.g.Description, gbc.g.Attributes,
-                                                            gbc.g.BrandId, gbc.b.Name, gbc.c.Id, gbc.c.Name, gbc.g.AverageRating, gbc.g.LastModifiedAt,
-                                                            gbc.g.LastModifiedBy, gbc.u.UserName!,
+                                                  x => new ProductGroupDto(x.pg.Id, x.pg.Title, x.pg.Description, x.pg.Attributes,
+                                                            x.pg.BrandId, x.pg.BrandName, x.pg.CategoryId, x.pg.CategoryName, x.pg.AverageRating, x.pg.LastModifiedAt,
+                                                            x.pg.LastModifiedBy, x.u.UserName!,
 
-                                                  gbc.g.Products.Select(p => new ProductListItemDto(
+                                                  x.pg.Products.Select(p => new ProductListItemDto(
                                                                             p.Id, p.Price, p.HasActiveDiscount, p.DiscountPercentage,
                                                                             p.PriceAfterDiscount, p.DiscountExpiresOn, p.Status, p.Images.FirstOrDefault(),
-                                                                            p.StockPerWarehouse.Select(x => new ProductInventoryDto(x.WarehouseId,x.Warehouse.Name, x.Quantity))
-                                                                                               .Take(3)
+                                                                            p.StockPerWarehouse.OrderBy(x => x.Quantity)
+                                                                                               .Select(x => new ProductInventoryDto(
+                                                                                                   x.WarehouseId, x.Warehouse.Name, x.Quantity))
+                                                                                               .Take(2)
                                                                                                .ToList()
                                                                        ))
-                                                                        .ToList())
+                                                                       .ToList())
                                               );
 
 

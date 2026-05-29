@@ -1,29 +1,33 @@
+using Domain.ProductGroups.Products;
 using Domain.ProductGroups.ValueObjects;
 
 namespace Application.Features.Public.ProductsGroups.Dtos;
 
 public sealed record ProductsGroupDto
 {
-    public long Id { get; }
+    public long ProductGroupId { get; }
+    public long ProductId { get; }
+
     public string Title { get; init; } = null!;
     public string Description { get; init; } = null!;
-    public Dictionary<string,string> Attributes { get; init; } = null!;
+    public IReadOnlyDictionary<string,string> Attributes { get; init; } = null!;
     public string Brand { get; init; } = null!;
     public string Category { get; init; } = null!;
     public float AverageRating { get; init; }
 
-    public List<ProductDto> Variants { get; init; } = null!;
+    public IReadOnlyList<ProductDto> Products { get; init; } = null!;
 
-    public ProductsGroupDto(ProductGroupId id, string title, string description, Dictionary<string, string> attributes, string brand, string category, ProductAverageRating averageRating,
-        List<ProductDto> variants)
+    public ProductsGroupDto(ProductGroupId productGroupId, ProductId? productId, string title, string description, IReadOnlyDictionary<string, string> attributes,
+        string brand, string category, ProductAverageRating averageRating, IReadOnlyList<ProductDto> products)
     {
-        Id = id.Value;
+        ProductGroupId = productGroupId.Value;
+        ProductId = productId!.Value.Value;
         Title = title;
         Description = description;
         Attributes = attributes;
         Brand = brand;
         Category = category;
-        Variants = variants;
+        Products = products;
         AverageRating = averageRating.GetRoundedValue();
 
     }
