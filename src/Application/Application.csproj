@@ -25,7 +25,6 @@
     <Folder Include="Features\Management\Categories\Commands\" />
     <Folder Include="Features\Management\Categories\Dtos\" />
     <Folder Include="Features\Management\Categories\Queries\" />
-    <Folder Include="Features\Management\Inventories\" />
     <Folder Include="Features\Public\Categories\Dtos\" />
     <Folder Include="Features\Public\Categories\Queries\ListCategories\" />
     <Folder Include="Features\Public\Orders\Commands\" />

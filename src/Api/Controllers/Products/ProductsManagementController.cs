@@ -13,6 +13,7 @@ using Application.Features.Management.ProductGroups.Commands.UpdateImagesSortOrd
 using Api.Extensions;
 using Application.Features.Management.ProductGroups.Commands.RemoveImages;
 using Application.Features.Management.ProductGroups.Commands.ApplyDiscount;
+using Application.Features.Management.ProductGroups.Commands.RestockProduct;
 
 namespace Api.Controllers.Products;
 
@@ -39,11 +40,11 @@ public sealed class ProductsManagementController(IMediator mediator, IUniqueFile
         );
     }
 
-    [HttpPatch("product-group/{productGroupId}")]
-    public async Task<IActionResult> UpdateProductGroup(long productGroupId, [FromBody] UpdateProductGroupRequest request, CancellationToken ct)
+    [HttpPatch("product-group/{id}")]
+    public async Task<IActionResult> UpdateProductGroup(long id, [FromBody] UpdateProductGroupRequest request, CancellationToken ct)
     {
         var command = new UpdateProductGroupCommand(
-            productGroupId,
+            id,
             request.NewBrandId,
             request.NewCategoryId,
             request.NewDescription,
@@ -56,9 +57,9 @@ public sealed class ProductsManagementController(IMediator mediator, IUniqueFile
         return result.Match((response) => NoContent(), Problem);
     }
 
-    [HttpPost("product-group/{productGroupId:long}/products")]
+    [HttpPost("product-group/{id}/products")]
     [Consumes("multipart/form-data")]
-    public async Task<IActionResult> AddProduct(long productGroupId, [FromForm] AddProductRequest request, CancellationToken ct)
+    public async Task<IActionResult> AddProduct(long id, [FromForm] AddProductRequest request, CancellationToken ct)
     {
         List<FileUploadDto>? imagesDto = null;
         if(request.Images != null && request.Images.Count > 0)
@@ -80,7 +81,7 @@ public sealed class ProductsManagementController(IMediator mediator, IUniqueFile
 
 
         var command = new AddProductCommand(
-            productGroupId,
+            id,
             request.Price,
             request.Width,
             request.Height,
@@ -106,28 +107,28 @@ public sealed class ProductsManagementController(IMediator mediator, IUniqueFile
     }
 
 
-    [HttpPost("product-group/{productGroupId}/publish")]
-    public async Task<IActionResult> PublishProductGroup(long productGroupId, CancellationToken ct)
+    [HttpPost("product-group/{id}/publish")]
+    public async Task<IActionResult> PublishProductGroup(long id, CancellationToken ct)
     {
 
-        var result = await mediator.Send(new PublishProductGroupCommand(productGroupId), ct);
+        var result = await mediator.Send(new PublishProductGroupCommand(id), ct);
 
         return result.Match((response) => NoContent(), Problem);
     }
-    [HttpPost("product-group/{productGroupId}/unpublish")]
-    public async Task<IActionResult> UnpublishProductGroup(long productGroupId, CancellationToken ct)
+    [HttpPost("product-group/{id}/unpublish")]
+    public async Task<IActionResult> UnpublishProductGroup(long id, CancellationToken ct)
     {
 
-        var result = await mediator.Send(new UnpublishProductGroupCommand(productGroupId), ct);
+        var result = await mediator.Send(new UnpublishProductGroupCommand(id), ct);
 
         return result.Match((response) => NoContent(), Problem);
     }
 
-    [HttpPost("product-group/{productGroupId}/archive")]
-    public async Task<IActionResult> ArchiveProductGroup(long productGroupId, CancellationToken ct)
+    [HttpPost("product-group/{id}/archive")]
+    public async Task<IActionResult> ArchiveProductGroup(long id, CancellationToken ct)
     {
 
-        var result = await mediator.Send(new ArchiveProductGroupCommand(productGroupId), ct);
+        var result = await mediator.Send(new ArchiveProductGroupCommand(id), ct);
 
         return result.Match((response) => NoContent(), Problem);
     }
@@ -153,6 +154,14 @@ public sealed class ProductsManagementController(IMediator mediator, IUniqueFile
     public async Task<IActionResult> UnpublishProduct(long productGroupId, long productId, CancellationToken ct)
     {
         var result = await mediator.Send(new UnpublishProductCommand(productGroupId, productId), ct);
+
+        return result.Match((response) => NoContent(), Problem);
+    }
+
+    [HttpPost("products/{productId}/inventory/{warehouseId}")]
+    public async Task<IActionResult> RestockProduct(long warehouseId, long productId, [FromBody]int stockQuantity, CancellationToken ct)
+    {
+        var result = await mediator.Send(new RestockProductCommand(warehouseId, productId, stockQuantity), ct);
 
         return result.Match((response) => NoContent(), Problem);
     }
