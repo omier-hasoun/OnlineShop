@@ -1,7 +1,6 @@
 
 using Domain.Orders;
 using Domain.ProductGroups;
-using Domain.Orders.OrderPayments;
 using Domain.Orders.OrderItems;
 using Domain.ProductGroups.Products;
 using Domain.Brands;
@@ -14,7 +13,6 @@ using Domain.Orders.Shipments;
 using Domain.ProductReviews;
 using Domain.Transactions;
 using Domain.ReturnItemRequestsReviews;
-using Domain.UsersPaymentMethodsLogs;
 using Infrastructure.Common.EfCore.ValueConverters;
 using Domain.Inventories;
 using Domain.Common.ValueObjects;
@@ -32,7 +30,7 @@ namespace Infrastructure.Data;
 public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserClaim, IdentityUserRole<Guid>, UserLoginProvider, RoleClaim, UserToken, IdentityUserPasskey<Guid>>, IAppDbContext
 {
     public DbSet<Order> Orders => Set<Order>();
-    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<OrderLine> OrderItems => Set<OrderLine>();
     public DbSet<ProductReview> Reviews => Set<ProductReview>();
     public DbSet<CartItem> CartItems => Set<CartItem>();
     public DbSet<Shipment> Shipments => Set<Shipment>();
@@ -44,7 +42,6 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     public DbSet<Brand> Brands => Set<Brand>();
     public DbSet<AppSettings> AppSettings => Set<AppSettings>();
     public DbSet<Warehouse> Warehouses => Set<Warehouse>();
-    public DbSet<OrderPayment> OrderPayments => Set<OrderPayment>();
     public DbSet<PaymentProvider> PaymentProviders => Set<PaymentProvider>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Inventory> Inventories => Set<Inventory>();
@@ -53,7 +50,6 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     public DbSet<Address> Addresses => Set<Address>();
     public DbSet<ShippingAddress> ShippingAddresses => Set<ShippingAddress>();
     public DbSet<ReturnItemRequestReview> ReturnItemRequestReviews => Set<ReturnItemRequestReview>();
-    public DbSet<UserPaymentMethodLog> UserPaymentMethodLogs => Set<UserPaymentMethodLog>();
 
     public DbSet<Country> Countries => Set<Country>();
 
@@ -93,7 +89,10 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     {
         builder.Properties<Money>()
                .HaveConversion<MoneyConverter>();
-        
+
+        builder.Properties<EmailAddress>()
+               .HaveConversion<EmailAddressConverter>();
+
         builder.IgnoreAny<IDomainEvent>();
 
     }

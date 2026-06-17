@@ -10,7 +10,6 @@ using Domain.Inventories;
 using Domain.ReturnItemRequestsReviews;
 using Domain.ReturnItemRequests;
 using Domain.Transactions;
-using Domain.UsersPaymentMethodsLogs;
 using Domain.Warehouses;
 using Domain.ShippingAddresses;
 using Application.Entities;
@@ -28,7 +27,7 @@ public interface IAppDbContext
     DbSet<AppUser> Users {get; }
 
     DbSet<Order> Orders {get; }
-    DbSet<OrderItem> OrderItems {get; }
+    DbSet<OrderLine> OrderItems {get; }
 
     DbSet<ProductReview> ProductReviews {get; }
     DbSet<ProductGroup> ProductGroups {get; }
@@ -45,12 +44,8 @@ public interface IAppDbContext
     DbSet<Currency> Currencies { get; }
     DbSet<StateProvince> StateProvinces { get; }
 
-
-    DbSet<OrderPayment> OrderPayments { get; }
-
     DbSet<PaymentProvider> PaymentProviders { get; }
     DbSet<Transaction> Transactions { get; }
-    DbSet<UserPaymentMethodLog> UserPaymentMethodLogs { get; }
 
     DbSet<Category> Categories { get; }
 

@@ -13,7 +13,7 @@ public sealed class AddProductCommandHandler(IAppDbContext context, IIdGenerator
 
         ProductGroupId productGroupId = new(request.ProductGroupId);
 
-        var price = Money.From((decimal)request.Price).Value;
+        var price = Money.Create((decimal)request.Price);
 
         var productGroup = await context.ProductGroups.FirstOrDefaultAsync(x => x.Id == productGroupId, ct);
 

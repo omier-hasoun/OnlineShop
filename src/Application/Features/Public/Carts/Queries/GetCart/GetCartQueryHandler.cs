@@ -39,7 +39,7 @@ internal sealed class GetCartQueryHandler(IAppDbContext context) : IRequestHandl
                                 .Select(pg => pg.Title)
                                 .First(),
 
-                            p.Price,
+                            p.OriginalPrice,
                             p.DiscountPercentage,
                             p.PriceAfterDiscount
                         ))

@@ -7,10 +7,11 @@ public sealed class Cart : AggregateRoot<CartId>, IHasModificationTime
     {
         
     }
-    private Cart(CartId id, Guid? userId, GuestAccountId? guestId, DateTime lastModifiedAt) : base(id)
+    private Cart(CartId id, Guid? userId, GuestAccountId? guestId, int quantity, DateTime lastModifiedAt) : base(id)
     {
         UserId = userId;
         GuestId = guestId;
+        Quantity = quantity;
         LastModifiedAt = lastModifiedAt;
     }
 
@@ -25,7 +26,7 @@ public sealed class Cart : AggregateRoot<CartId>, IHasModificationTime
             return validationResult.Errors;
 
 
-        return new Cart(id, userId, guestId, DateTime.UtcNow);
+        return new Cart(id, userId, guestId, 0, DateTime.UtcNow);
     }
 
 
@@ -51,14 +52,27 @@ public sealed class Cart : AggregateRoot<CartId>, IHasModificationTime
         return Create(id, userId, default);
     }
 
+    public Result<Success> UpgradeToUser(Guid userId)
+    {
+        if (userId == default)
+            return DomainErrors.MissingInput.WithParameters(userId);
+
+        GuestId = null;
+        UserId = userId;
+        return Result.Success;
+    }
+
     public DateTime LastModifiedAt { get; set; }
-    public Guid? UserId { get; private init; }
-    public GuestAccountId? GuestId { get; private init; }
+    public Guid? UserId { get; private set; }
+    public GuestAccountId? GuestId { get; private set; }
+
+    public int Quantity { get; private set; }
 
     private List<CartItem> _items = [];
     public IReadOnlyCollection<CartItem> Items { get { return _items.AsReadOnly(); } private set { _items = value.ToList(); } }
 
-
+    private void CalculateQuantity()
+        => Quantity = Items.Sum(x => x.Quantity);
 
     public Result<Success> AddItem(CartItemId cartItemId, ProductId productId, short quantity)
     {
@@ -67,12 +81,30 @@ public sealed class Cart : AggregateRoot<CartId>, IHasModificationTime
             return DomainErrors.Carts.MaxNumberOfItemsReached;
         }
 
-        var createItemResult = CartItem.Create(cartItemId, this.Id, productId, quantity);
+        var item = _items.FirstOrDefault(i => i.ProductId == productId);
 
-        if (createItemResult.Failed)
-            return createItemResult.Errors;
+        // add quantity if item already exists
+        if(item is not null)
+        {
+            var newQuantity = item.Quantity + quantity;
 
-        _items.Add(createItemResult.Value);
+            var result = item.UpdateQuantity((short)newQuantity);
+
+            if (result.Failed)
+                return result.Errors;
+        }
+        else
+        {
+            var createItemResult = CartItem.Create(cartItemId, this.Id, productId, quantity);
+
+            if (createItemResult.Failed)
+                return createItemResult.Errors;
+
+            _items.Add(createItemResult.Value);
+
+        }
+
+        CalculateQuantity();
 
         return Result.Success;
     }
@@ -88,22 +120,28 @@ public sealed class Cart : AggregateRoot<CartId>, IHasModificationTime
 
         _items.Remove(cartItem);
 
+        CalculateQuantity();
+
+
         return Result.Success;
     }
 
     public Result<Success> UpdateItem(CartItemId cartItemId, short newQuantity)
     {
-        var cartItem = _items.FirstOrDefault(x => x.Id == cartItemId);
+        var item = _items.FirstOrDefault(x => x.Id == cartItemId);
 
-        if (cartItem is null)
+        if (item is null)
         {
             return DomainErrors.cartItemIdInvalid;
         }
 
-        var updateResult = cartItem.UpdateQuantity(newQuantity);
+        var updateResult = item.UpdateQuantity(newQuantity);
 
         if (updateResult.Failed)
             return updateResult.Errors;
+
+        CalculateQuantity();
+
 
         return Result.Success;
     }

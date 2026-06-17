@@ -1,9 +1,14 @@
 
+using System.Security.Principal;
 using Application.Common.Dtos;
+using Application.Features.Public.Checkout.Dtos;
 using Domain.Brands;
+using Domain.Carts;
+using Domain.Carts.CartItems;
 using Domain.Categories;
 using Domain.Common.ValueObjects;
 using Domain.ProductGroups.Products;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Shared.Helpers;
 
 namespace Application.Common.Extensions;
@@ -40,9 +45,10 @@ internal static class QueryableExtensions
         if (!maxPrice.HasValue || maxPrice.Value < 0)
             return query;
 
-        var moneyMaxPrice = Money.From(maxPrice.Value).Value;
+        var moneyMaxPrice = Money.Create(maxPrice.Value).Value;
 
-        return query.Where(p => p.Price <= moneyMaxPrice || (p.HasActiveDiscount && p.PriceAfterDiscount! <= moneyMaxPrice));
+        //return query.Where(p => p.OriginalPrice <= moneyMaxPrice || (p.HasActiveDiscount && p.PriceAfterDiscount! <= moneyMaxPrice));
+        return null;
     }
     #endregion
 
@@ -85,6 +91,26 @@ internal static class QueryableExtensions
     public static IQueryable<ProductGroup> GetPubishedProductGroups(this IQueryable<ProductGroup> query)
     {
         return query.Where(x => x.Status == ProductGroupState.Published);
+    }
+
+    #endregion
+
+    #region carts
+
+    public static IQueryable<Cart?> GetUserCart(this IQueryable<Cart> query, UserIdentity identity)
+    {
+        ArgumentNullException.ThrowIfNull(identity);
+
+        if (identity.IsUser)
+        {
+            query = query.Where(x => x.UserId == identity.UserId);
+        }
+        else
+        {
+            query = query.Where(x => x.GuestId == identity.GuestId);
+        }
+
+        return query;
     }
 
     #endregion

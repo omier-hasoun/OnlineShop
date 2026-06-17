@@ -44,7 +44,7 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
                .HasConversion<int>()
                .IsRequired();
 
-        builder.Property(x => x.Price)
+        builder.Property(x => x.OriginalPrice)
                .IsRequired();
 
         builder.Property(x => x.HasActiveDiscount)
@@ -73,7 +73,7 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
         builder.ToTable("Products", x =>
         {
             x.HasCheckConstraint("CK_Product_DiscountPercentage", $"[DiscountPercentage] between {ProductRules.MinDiscountPercentageValue} and {ProductRules.MaxDiscountPercentageValue}");
-            x.HasCheckConstraint("CK_Product_Price", $"[Price] between {ProductRules.MinPrice} and {ProductRules.MaxPrice}");
+            x.HasCheckConstraint("CK_Product_Price", $"[OriginalPrice] between {ProductRules.MinPrice} and {ProductRules.MaxPrice}");
 
         });
     }

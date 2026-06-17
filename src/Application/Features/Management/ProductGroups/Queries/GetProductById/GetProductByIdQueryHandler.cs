@@ -19,7 +19,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
                 product.Id,
                 product.ProductGroupId,
                 product.PriceAfterDiscount,
-                product.Price,
+                product.OriginalPrice,
                 product.DiscountPercentage,
                 product.DiscountExpiresOn,
                 product.Status,

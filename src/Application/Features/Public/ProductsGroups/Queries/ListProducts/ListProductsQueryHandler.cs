@@ -29,7 +29,7 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
             g.Id,
             g.FeaturedProduct!.Id,
             g.Title,
-            g.FeaturedProduct.Price,
+            g.FeaturedProduct.OriginalPrice,
             g.BrandName,
             g.AverageRating,
             g.FeaturedProduct.Images.FirstOrDefault(),

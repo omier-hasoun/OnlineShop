@@ -23,7 +23,7 @@ internal sealed class CartItemConfig : BaseEntityConfig<CartItem>
         builder.Property(x => x.ProductId)
                .IsRequired();
 
-        builder.HasOne<Product>()
+        builder.HasOne(x => x.Product)
                .WithMany()
                .HasForeignKey(x => x.ProductId)
                .IsRequired();

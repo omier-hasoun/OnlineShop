@@ -13,7 +13,7 @@ public sealed class ReturnItemRequest : AggregateRoot<ReturnItemRequestId>, IHas
         
     }
 
-    private ReturnItemRequest(ReturnItemRequestId id, OrderItemId orderItemId, ReturnItemRequestReasonType reasonType, string? customerMessage, ReturnItemRequestType type,
+    private ReturnItemRequest(ReturnItemRequestId id, OrderLineId orderItemId, ReturnItemRequestReasonType reasonType, string? customerMessage, ReturnItemRequestType type,
         ReturnItemRequestStatus status, short returnedQuantity)
         : base(id)
     {
@@ -25,11 +25,11 @@ public sealed class ReturnItemRequest : AggregateRoot<ReturnItemRequestId>, IHas
         ReturnedQuantity = returnedQuantity;
     }
 
-    public static Result<ReturnItemRequest> Create(ReturnItemRequestId id, OrderItemId orderItemId, ReturnItemRequestReasonType reasonType, string? customerMessage, ReturnItemRequestType type, short returnedQuantity)
+    public static Result<ReturnItemRequest> Create(ReturnItemRequestId id, OrderLineId orderItemId, ReturnItemRequestReasonType reasonType, string? customerMessage, ReturnItemRequestType type, short returnedQuantity)
     {
         return new ReturnItemRequest(id, orderItemId, reasonType, customerMessage, type, ReturnItemRequestStatus.PendingArrival, returnedQuantity);
     }
-    public OrderItemId OrderItemId { get; private init; }
+    public OrderLineId OrderItemId { get; private init; }
     public ReturnItemRequestType Type { get; private set; }
 
 

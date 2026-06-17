@@ -21,10 +21,16 @@ internal sealed class OrderConfig : BaseEntityConfig<Order>
                    value => new OrderId(value)
                );
 
-        builder.Property(x => x.TotalItemsPrice)
+        builder.Property(x => x.TotalPrice)
+               .IsRequired();
+
+        builder.Property(x => x.TotalTaxAmount)
                .IsRequired();
 
         builder.Property(x => x.ShippingFees)
+               .IsRequired();
+
+        builder.Property(x => x.Email)
                .IsRequired();
 
         builder.HasOne<AppUser>()

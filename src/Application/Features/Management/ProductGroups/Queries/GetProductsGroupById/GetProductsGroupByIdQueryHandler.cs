@@ -20,7 +20,7 @@ internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : 
                                                             x.pg.LastModifiedBy, x.u.UserName!,
 
                                                   x.pg.Products.Select(p => new ProductListItemDto(
-                                                                            p.Id, p.Price, p.HasActiveDiscount, p.DiscountPercentage,
+                                                                            p.Id, p.OriginalPrice, p.HasActiveDiscount, p.DiscountPercentage,
                                                                             p.PriceAfterDiscount, p.DiscountExpiresOn, p.Status, p.Images.FirstOrDefault(),
                                                                             p.StockPerWarehouse.OrderBy(x => x.Quantity)
                                                                                                .Select(x => new ProductInventoryDto(

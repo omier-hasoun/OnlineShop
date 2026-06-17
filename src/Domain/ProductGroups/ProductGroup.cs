@@ -95,6 +95,8 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
             (ProductGroupState.Draft, ProductGroupState.Archived) => true,
             (ProductGroupState.Published, ProductGroupState.Unpublished) => true,
             (ProductGroupState.Published, ProductGroupState.Archived) => true,
+            (ProductGroupState.Published, ProductGroupState.Published) => true,
+
             (ProductGroupState.Unpublished, ProductGroupState.Published) => true,
             (ProductGroupState.Unpublished, ProductGroupState.Archived) => true,
             _ => false
@@ -237,6 +239,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
         }
 
         _products.Add(createVariantResult.Value);
+
         RaiseDomainEvent(new ProductCreatedDomainEvent(productId));
 
         bool isFirstProductInGroup = _products.Count == 1;
@@ -301,9 +304,17 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
         if (product is null)
             return DomainErrors.ProductIdInvalid;
 
+        var featuredProduct = _products.First(x => x.Id == FeaturedProductId);
+
         var res = product.Publish();
+
         if (res.Failed)
             return res.Errors;
+
+        if (!featuredProduct.IsPublished())
+        {
+            ChangeFeaturedProduct(productId);
+        }
 
         this.Status = ProductGroupState.Published;
 
@@ -320,14 +331,29 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
         if (product is null)
             return DomainErrors.ProductIdInvalid;
 
+
+
         var res = product.Unpublish();
 
         if (res.Failed)
             return res.Errors;
 
-        if (_products.Any(p => p.IsPublished()) is false)// set group state unpublished if no products are published
-            this.Status = ProductGroupState.Unpublished;
+        // when unpublishing the featured product then make another published product the featured one.
 
+        if (FeaturedProductId == productId)
+        {
+            var getAnyPublishedProduct = _products.FirstOrDefault(x => x.IsPublished());
+
+            if (getAnyPublishedProduct is not null)
+            {
+                ChangeFeaturedProduct(productId);
+            }
+            else
+            {
+                this.Status = ProductGroupState.Unpublished;
+            }
+        }
+           
         return Result.Updated;
     }
 
@@ -376,6 +402,13 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
         RaiseDomainEvent(new ProductGroupArchivedDomainEvent(Id));
         return Result.Updated;
     }
+
+
+    private void ChangeFeaturedProduct(ProductId productId)
+    {
+        FeaturedProductId = productId;
+    }
+
 
     internal static Result<Success> ValidateTitle(string title)
     {

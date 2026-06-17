@@ -10,7 +10,6 @@ global using Application.Common;
 global using Microsoft.EntityFrameworkCore;
 global using System.Security.Claims;
 global using Domain.Orders;
-global using Domain.Orders.OrderPayments;
 global using Domain.ProductGroups;
 global using Domain.Common.Rules;
 global using Application;

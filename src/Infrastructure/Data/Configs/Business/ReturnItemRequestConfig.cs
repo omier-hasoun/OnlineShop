@@ -40,7 +40,7 @@ internal sealed class ReturnItemRequestConfig : BaseEntityConfig<ReturnItemReque
         builder.Property(x => x.ShippingFees)
                .IsRequired();
 
-        builder.HasOne<OrderItem>()
+        builder.HasOne<OrderLine>()
                .WithMany()
                .HasForeignKey(x => x.OrderItemId)
                .IsRequired();

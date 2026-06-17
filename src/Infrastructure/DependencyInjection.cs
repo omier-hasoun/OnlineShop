@@ -15,6 +15,7 @@ using Infrastructure.Common.Exceptions;
 using Infrastructure.Data.IdGenerators;
 using Infrastructure.Data.IdGenerators.Primitives;
 using Infrastructure.Data.Interceptors;
+using Infrastructure.ExternalServices.Checkout.StripeService;
 using Infrastructure.LocalServices.DiscountReset;
 using Infrastructure.LocalServices.FileNameGeneratorService;
 using Infrastructure.LocalServices.FileStorageService;
@@ -64,7 +65,7 @@ public static class DependencyInjection
         services.AddSingleton<IImageStorageService, ImagesStoreService>();
         services.AddSingleton<IImageJobReader, ImageProcessingJobsChannel>();
         services.AddSingleton<IImageJobWriter, ImageProcessingJobsChannel>();
-
+        services.AddSingleton<ICheckoutProvider, StripeCheckoutService>();
         services.AddSingleton<IUniqueFileNameGenerator, FileNameGenerator>();
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 

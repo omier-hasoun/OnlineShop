@@ -1,81 +1,83 @@
 
+using Domain.Services.Models;
+
 namespace Domain.Orders;
 
 public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
 {
+    private Order()
+    {
+        
+    }
 
-    private Order(OrderId id, Guid userId, Money totalItemsPrice, Money shippingFees, DateTime createdAt)
+    private Order(OrderId id, Guid? userId, Money totalPrice, EmailAddress email, Money totalTaxAmount,
+            Money shippingFees, IReadOnlyList<OrderLine> items, 
+            DateTime createdAt)
         : base(id)
     {
         UserId = userId;
-        TotalItemsPrice = totalItemsPrice;
+        TotalPrice = totalPrice;
+        Email = email;
+        TotalTaxAmount = totalTaxAmount;
         ShippingFees = shippingFees;
+        Items = items;
         CreatedAt = createdAt;
     }
-    //private static decimal CalculateTotalItemsPrice(IReadOnlyList<OrderItem> items)
-    //{
-    //    if(items == null)
-    //        return 0;
 
-    //    return items.Sum(item => item.TotalPrice.Value);
-    //}
-    //public static Result<Order> Create(OrderId id, UserId userId, decimal shippingFees)
-    //{
+    internal static Result<Order> Create(OrderId id, Guid? userId, Money shippingFees, Money totalTaxAmount, Money totalPrice,
+        EmailAddress email, IReadOnlyList<OrderLinePreview> items)
+    {
+        //var validationResult = Result.ValidateAll(
+        //                        () => ValidateOrderItemDetails(items),
+        //                        () => id.IsValid()
+        //                    );
 
-    //    var result = Result.ValidateAll(
-    //        () => ValidateOrderItems(items),
-    //        () => ValidateShippingFees(shippingFees),
-    //        () => ValidateTotalItemsPrice(totalItemsPrice)
-    //        );
+        //if (validationResult.Failed)
+        //    return validationResult.Errors;
 
-    //    if (result.Failed)
-    //    {
-    //        return result.Errors;
-    //    }
+        //List<OrderLine> orderItems = new (items.Count);
 
+        //foreach (var item in items)
+        //{
+        //    var orderItemResult = OrderLine.Create(item.Id, id, item.ProductId, item.ProductTitle,
+        //                                           item.Quantity, item.UnitPrice, item.TaxAmount);
 
-    //    return new Order(id, userId, totalItemsPrice, shippingFees, items, TimeService.UtcNow);
-    //}
-    public Guid UserId { get; private init; }
-    public Money TotalItemsPrice { get; private set; }
-    public Money ShippingFees { get; private set; }
+        //    if (orderItemResult.Failed)
+        //        return orderItemResult.Errors;
+
+        //    orderItems.Add(orderItemResult.Value);
+        //}
+
+        //return new Order(id, userId, totalPrice, email, totalTaxAmount, shippingFees, orderItems, DateTime.UtcNow);
+
+        throw new NotImplementedException();
+    }
+    public Guid? UserId { get; private init; }
+    public EmailAddress Email { get; private init; }
+    public Address BillingAddress { get; private init; }
+    public Money TotalPrice { get; private init; }
+    public Money TotalTaxAmount { get; private init; }
+
+    public Money ShippingFees { get; private init; }
     public DateTime CreatedAt { get; set; }
 
 
-    private List<OrderPayment> _payments = [];
-    public IReadOnlyList<OrderPayment> Payments { get { return _payments; } private set { _payments = value.ToList(); } }
+    //private List<Transaction> _payments = [];
+    //public IReadOnlyList<Transaction> Payments { get { return _payments; } private set { _payments = value.ToList(); } }
 
-
-    private List<OrderItem> _items = [];
-    public IReadOnlyList<OrderItem> Items { get { return _items; } private set { _items = value.ToList(); } }
+    public IReadOnlyList<OrderLine> Items { get; private init; }
 
 
     private List<Shipment> _shipments = [];
     public IReadOnlyList<Shipment> Shipments { get { return _shipments; } private set { _shipments = value.ToList(); } }
 
-    private static Result<Success> ValidateShippingFees(decimal shippingFees)
+    private static Result<Success> ValidateOrderItemDetails(IReadOnlyList<OrderLinePreview> items)
     {
-        if(ValHelper.IsOutOfRange(shippingFees, OrderRules.MinShippingFeesValue, OrderRules.MaxShippingFeesValue))
-        {
-            return DomainErrors.Orders.ShippingFeesOutOfRange;
-        }
-
-        return Result.Success;
-    }
-    private static Result<Success> ValidateTotalItemsPrice(decimal totalItemsPrice)
-    {
-        if (ValHelper.IsOutOfRange(totalItemsPrice, OrderRules.MinTotalItemsPriceValue, OrderRules.MaxTotalItemsPriceValue))
-        {
-            return DomainErrors.Orders.TotalItemsPriceOutOfRange;
-        }
-        return Result.Success;
-    }
-    private static Result<Success> ValidateOrderItems(List<OrderItem> orderItems)
-    {
-        if (orderItems is null || ValHelper.IsOutOfRange(orderItems.Count, OrderRules.MinOrderItemsCount, OrderRules.MaxOrderItemsCount))
+        if (items is null || ValHelper.IsOutOfRange(items.Count, OrderRules.MinOrderItemsCount, OrderRules.MaxOrderItemsCount))
         {
             return DomainErrors.Orders.ItemsOutOfRange;
         }
+
         return Result.Success;
     }
 }

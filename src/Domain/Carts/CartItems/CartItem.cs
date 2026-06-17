@@ -32,6 +32,7 @@ public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
     public ProductId ProductId { get; private init; }
     public short Quantity { get; private set; }
     public DateTime CreatedAt { get; set; }
+    public Product? Product { get; private set; }
 
     public Result<Updated> UpdateQuantity(short newQuantity)
     {
@@ -42,7 +43,7 @@ public sealed class CartItem : BaseEntity<CartItemId>, IHasCreationTime
             return validationResult.Errors;
         }
 
-        Quantity = newQuantity;
+        Quantity = (short)newQuantity;
 
         return Result.Updated;
     }

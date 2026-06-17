@@ -42,9 +42,12 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
             UserName = "om@gmail.com",
             NormalizedUserName = "om@gmail.com".ToUpper(),
             EmailConfirmed = true,
-            AccessFailedCount = 0
+            AccessFailedCount = 0,
+            PhoneNumber = "092737287",
+
         };
-        await userManager.CreateAsync(user1, "1234");
+        var result = await userManager.CreateAsync(user1, "1234Omier#");
+
 
         await SeedCurrencies();
         var random = new Random();
@@ -80,10 +83,10 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         var productId3 = new ProductId(7);
         var productId4 = new ProductId(8);
 
-        productGroup1.AddProduct(productId1, Money.From(200).Value, 20, 20, 20, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "blue" } });
-        productGroup1.AddProduct(productId2, Money.From(220).Value, 10, 10, 10, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
-        productGroup2.AddProduct(productId3, Money.From(160).Value, 10, 10, 10, 2, "ommei30273", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
-        productGroup2.AddProduct(productId4, Money.From(150).Value, 10, 10, 10, 2, "ommei30272", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "gold" } });
+        productGroup1.AddProduct(productId1, Money.Create(200), 20, 20, 20, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "blue" } });
+        productGroup1.AddProduct(productId2, Money.Create(220), 10, 10, 10, 2, "OMIERHASOUNKAMHEA", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
+        productGroup2.AddProduct(productId3, Money.Create(160), 10, 10, 10, 2, "ommei30273", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "pink" } });
+        productGroup2.AddProduct(productId4, Money.Create(150), 10, 10, 10, 2, "ommei30272", "omier-hasoun.com", "1234567890", new Dictionary<string, string>() { { "Color", "gold" } });
         await context.SaveAsync();
 
 
@@ -122,7 +125,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
                     var pId = new ProductId((i * 10) + j);
                     productGroup.AddProduct(
                         pId,
-                        Money.From(100 + (i * 10)).Value,
+                        Money.Create(100 + (i * 10)),
                         10, 5, 5, 1,
                         $"SKU-{i}-{j}",
                         "example.com",
@@ -171,7 +174,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
 
 
 
-        await context.SaveChangesAsync();
+        await context.SaveAsync();
     }
 
 

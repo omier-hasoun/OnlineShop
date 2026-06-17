@@ -64,7 +64,7 @@ public static class ApplicationErrors
 
         public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
 
-        public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error CartIsEmpty = Error.Validation($"{BaseErrorCode}.{nameof(CartIsEmpty)}");
 
         public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
 

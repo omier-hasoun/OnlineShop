@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
+namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -257,6 +257,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("LastModifiedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
@@ -489,13 +492,23 @@ namespace Infrastructure.Migrations
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("BillingAddressId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("ShippingFees")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal>("TotalItemsPrice")
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal>("TotalTaxAmount")
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<Guid>("UserId")
@@ -505,12 +518,14 @@ namespace Infrastructure.Migrations
 
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
+                    b.HasIndex("BillingAddressId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Orders", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Orders.OrderItems.OrderItem", b =>
+            modelBuilder.Entity("Domain.Orders.OrderItems.OrderLine", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
@@ -521,11 +536,21 @@ namespace Infrastructure.Migrations
                     b.Property<long>("ProductId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("ProductTitleSnapshot")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
                     b.Property<short>("Quantity")
                         .HasColumnType("smallint");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18,4)");
@@ -543,32 +568,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Orders.OrderPayments.OrderPayment", b =>
-                {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("InvoiceFileName")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
-
-                    b.Property<long>("OrderId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UserPaymentMethodLogId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("UserPaymentMethodLogId");
-
-                    b.ToTable("OrderPayments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Orders.Shipments.Shipment", b =>
@@ -629,16 +628,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BrandName")
+                    b.Property<string>("Brand")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR(50)");
-
-                    b.Property<string>("CompanyName")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(100)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LogoUrl")
                         .HasColumnType("NVARCHAR(255)");
@@ -747,6 +739,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(50)");
 
+                    b.Property<decimal>("CurrentPrice")
+                        .HasColumnType("decimal(18,4)");
+
                     b.Property<DateOnly?>("DiscountExpiresOn")
                         .HasColumnType("date");
 
@@ -762,7 +757,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Length")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal>("OriginalPrice")
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal?>("PriceAfterDiscount")
@@ -803,7 +798,7 @@ namespace Infrastructure.Migrations
                         {
                             t.HasCheckConstraint("CK_Product_DiscountPercentage", "[DiscountPercentage] between 1 and 80");
 
-                            t.HasCheckConstraint("CK_Product_Price", "[Price] between 5 and 500000");
+                            t.HasCheckConstraint("CK_Product_Price", "[OriginalPrice] between 5 and 500000");
                         });
                 });
 
@@ -963,6 +958,10 @@ namespace Infrastructure.Migrations
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("CardFingerprint")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -999,38 +998,15 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("TransferAmount")
                         .HasColumnType("decimal(18,4)");
 
+                    b.Property<string>("_additionalDetails")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("AdditionalDetails");
+
                     b.HasKey("Id");
 
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
                     b.ToTable("Transactions", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.UsersPaymentMethodsLogs.UserPaymentMethodLog", b =>
-                {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsBlacklisted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ProviderBrandName")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(50)");
-
-                    b.Property<string>("ProviderCustomerId")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(100)");
-
-                    b.Property<string>("_details")
-                        .HasColumnType("NVARCHAR(MAX)")
-                        .HasColumnName("Details");
-
-                    b.HasKey("Id");
-
-                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
-
-                    b.ToTable("UsersPaymentMethodsLogs", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Warehouses.Warehouse", b =>
@@ -1106,11 +1082,13 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.ProductGroups.Products.Product", null)
+                    b.HasOne("Domain.ProductGroups.Products.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Domain.Categories.Category", b =>
@@ -1179,14 +1157,22 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Orders.Order", b =>
                 {
+                    b.HasOne("Domain.Common.Entities.Addresses.Address", "BillingAddress")
+                        .WithMany()
+                        .HasForeignKey("BillingAddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Application.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("BillingAddress");
                 });
 
-            modelBuilder.Entity("Domain.Orders.OrderItems.OrderItem", b =>
+            modelBuilder.Entity("Domain.Orders.OrderItems.OrderLine", b =>
                 {
                     b.HasOne("Domain.Orders.Order", null)
                         .WithMany("Items")
@@ -1198,84 +1184,6 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsOne("Domain.Orders.ValueObjects.ProductInfoSnapShotAtPurchase", "ProductInfo", b1 =>
-                        {
-                            b1.Property<long>("OrderItemId");
-
-                            b1.Property<float>("Price");
-
-                            b1.Property<string>("Title")
-                                .IsRequired();
-
-                            b1.Property<string>("productId")
-                                .IsRequired();
-
-                            b1.HasKey("OrderItemId");
-
-                            b1.ToTable("OrderItems");
-
-                            b1
-                                .ToJson("ProductInfo")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderItemId");
-
-                            b1.OwnsOne("Dictionary", "Attributes", b2 =>
-                                {
-                                    b2.Property<long>("ProductInfoSnapShotAtPurchaseOrderItemId");
-
-                                    b2.HasKey("ProductInfoSnapShotAtPurchaseOrderItemId");
-
-                                    b2.ToTable("OrderItems");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("ProductInfoSnapShotAtPurchaseOrderItemId");
-                                });
-
-                            b1.OwnsOne("System.Collections.Generic.Dictionary<string, string>", "VariantSpecification", b2 =>
-                                {
-                                    b2.Property<long>("ProductInfoSnapShotAtPurchaseOrderItemId");
-
-                                    b2.HasKey("ProductInfoSnapShotAtPurchaseOrderItemId");
-
-                                    b2.ToTable("OrderItems");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("ProductInfoSnapShotAtPurchaseOrderItemId");
-                                });
-
-                            b1.Navigation("Attributes")
-                                .IsRequired();
-
-                            b1.Navigation("VariantSpecification")
-                                .IsRequired();
-                        });
-
-                    b.Navigation("ProductInfo")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Orders.OrderPayments.OrderPayment", b =>
-                {
-                    b.HasOne("Domain.Transactions.Transaction", null)
-                        .WithMany()
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Orders.Order", null)
-                        .WithMany("Payments")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.UsersPaymentMethodsLogs.UserPaymentMethodLog", null)
-                        .WithMany()
-                        .HasForeignKey("UserPaymentMethodLogId")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -1393,7 +1301,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.ReturnItemRequests.ReturnItemRequest", b =>
                 {
-                    b.HasOne("Domain.Orders.OrderItems.OrderItem", null)
+                    b.HasOne("Domain.Orders.OrderItems.OrderLine", null)
                         .WithMany()
                         .HasForeignKey("OrderItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1505,8 +1413,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Orders.Order", b =>
                 {
                     b.Navigation("Items");
-
-                    b.Navigation("Payments");
 
                     b.Navigation("Shipments");
                 });

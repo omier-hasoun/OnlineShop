@@ -1,4 +1,5 @@
 
+using Api.Minimals;
 using Application.Common.Configurations;
 using Application.Entities;
 using Microsoft.AspNetCore.Http.Features;
@@ -110,6 +111,8 @@ namespace Api
 
             app.MapGroup("/api/auth").
                 MapIdentityApi<AppUser>();
+
+            app.MapEndpoints();
 
             await app.RunAsync();
         }

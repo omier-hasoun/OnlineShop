@@ -6,7 +6,7 @@ namespace Application.Features.Public.ProductsGroups.Dtos;
 public sealed record ProductsGroupDto
 {
     public long ProductGroupId { get; }
-    public long ProductId { get; }
+    public long FeaturedProductId { get; }
 
     public string Title { get; init; } = null!;
     public string Description { get; init; } = null!;
@@ -15,13 +15,13 @@ public sealed record ProductsGroupDto
     public string Category { get; init; } = null!;
     public float AverageRating { get; init; }
 
-    public IReadOnlyList<ProductDto> Products { get; init; } = null!;
+    public IEnumerable<ProductDto> Products { get; init; } = null!;
 
-    public ProductsGroupDto(ProductGroupId productGroupId, ProductId? productId, string title, string description, IReadOnlyDictionary<string, string> attributes,
-        string brand, string category, ProductAverageRating averageRating, IReadOnlyList<ProductDto> products)
+    public ProductsGroupDto(ProductGroupId productGroupId, ProductId? featuredProductId, string title, string description, IReadOnlyDictionary<string, string> attributes,
+        string brand, string category, ProductAverageRating averageRating, IEnumerable<ProductDto> products)
     {
         ProductGroupId = productGroupId.Value;
-        ProductId = productId!.Value.Value;
+        FeaturedProductId = featuredProductId!.Value.Value;
         Title = title;
         Description = description;
         Attributes = attributes;

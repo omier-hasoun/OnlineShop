@@ -9,16 +9,17 @@ public sealed class Product : BaseEntity<ProductId>
     {
     }
 
-    private Product(ProductId id, ProductGroupId productsGroupId, Money? priceBeforeDiscount, Money price, byte? discountPercentage, DateOnly? discountExpiresOn, ProductState status,
+    private Product(ProductId id, ProductGroupId productsGroupId, Money? priceAfterDiscount, Money originalPrice, Money currentPrice, byte? discountPercentage, DateOnly? discountExpiresOn, ProductState status,
         int width, int height, int length, int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications, List<ProductImage> images)
         : base(id)
     {
         ProductGroupId = productsGroupId;
                 
-        PriceAfterDiscount = priceBeforeDiscount;
+        PriceAfterDiscount = priceAfterDiscount;
         DiscountPercentage = discountPercentage;
         DiscountExpiresOn = discountExpiresOn;
-        Price = price;
+        OriginalPrice = originalPrice;
+        CurrentPrice = currentPrice;
         Status = status;
         Width = width;
         Height = height;
@@ -32,12 +33,12 @@ public sealed class Product : BaseEntity<ProductId>
         _specifications = specifications;
     }
 
-    public static Result<Product> Create(ProductId id, ProductGroupId productsGroupId, Money Price, int width, int height, int length,
+    public static Result<Product> Create(ProductId id, ProductGroupId productsGroupId, Money originalPrice, int width, int height, int length,
         int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications, List<ProductImage>? images = null)
     {
         var validationResult = Result.ValidateAll(
                                 () => id.IsValid(),
-                                () => ValidatePrice(Price),
+                                () => ValidatePrice(originalPrice),
                                 () => Validate_Width_Height_Length(width, height, length),
                                 () => ValidateSpecifications(specifications),
                                 () => ValidateSku(sku),
@@ -53,29 +54,35 @@ public sealed class Product : BaseEntity<ProductId>
 
         byte? discountPercentage = null;
         Money? priceBeforeDisount = null;
+        Money currentPrice = originalPrice;
+
         DateOnly? discountExpiresOn = null;
+        
         ProductState status = ProductState.Draft;
         images  ??= [];
 
 
-        return new Product(id, productsGroupId, priceBeforeDisount, Price, discountPercentage, discountExpiresOn, status,
+        return new Product(id, productsGroupId, priceBeforeDisount, originalPrice, currentPrice, discountPercentage, discountExpiresOn, status,
             width, height, length, weight, sku, slug, barCode, specifications, images);
     }
 
     public ProductGroupId ProductGroupId { get; private init; }
 
-    public bool HasActiveDiscount { get; private set; }
 
     public int Width { get; private set; }
     public int Height { get; private set; }
     public int Length { get; private set; }
     public int Weight { get; private set; }
 
-    public Money Price { get; private set; } = null!;
+    public Money OriginalPrice { get; private set; } = null!;
 
-    public DateOnly? DiscountExpiresOn { get; private set; }
+    public bool HasActiveDiscount { get; private set; }
+
+    public Money CurrentPrice { get; private set; }
 
     public Money? PriceAfterDiscount { get; private set; }
+
+    public DateOnly? DiscountExpiresOn { get; private set; }
     public byte? DiscountPercentage { get; private set;}
 
     public ProductState Status { get; private set; }
@@ -103,7 +110,7 @@ public sealed class Product : BaseEntity<ProductId>
 
     }
     private bool CanModify() => Status != ProductState.Archived;
-    internal bool IsPublished() => Status == ProductState.Published;
+    public bool IsPublished() => Status == ProductState.Published;
 
     private List<ProductImage> _images = [];
     public IReadOnlyCollection<ProductImage> Images { get { return _images.AsReadOnly(); } private set { _images = value is null ? [] : value.ToList(); } }
@@ -167,8 +174,7 @@ public sealed class Product : BaseEntity<ProductId>
         SortImages();
         return Result.Deleted;
     }
-
-
+     
     public Result<Success> Publish()
     {
         if(!CanTransitionTo(ProductState.Published))
@@ -240,7 +246,7 @@ public sealed class Product : BaseEntity<ProductId>
         if (!CanModify())
             return DomainErrors.Locked;
 
-        if (Price.Value < ProductRules.MinPriceToApplyADiscount)
+        if (OriginalPrice.Value < ProductRules.MinPriceToApplyADiscount)
         {
             return DomainErrors.Products.ProductPriceNotApplicableForDiscount;
         }
@@ -255,10 +261,17 @@ public sealed class Product : BaseEntity<ProductId>
         if (val2Result.Failed)
             return val2Result;
 
-        PriceAfterDiscount = Money.From(Price.Value * (100 - discountPercentage) / 100).Value;
+        PriceAfterDiscount = Money.Create(CalculateDiscount(OriginalPrice.Value, discountPercentage));
         this.DiscountExpiresOn = discountExpiresOn;
         this.DiscountPercentage = discountPercentage;
+        this.CurrentPrice = PriceAfterDiscount;
+        this.HasActiveDiscount = true;
         return Result.Success;
+    }
+
+    private static decimal CalculateDiscount(decimal price, byte discount)
+    {
+        return price * (100 - discount) / 100;
     }
 
 

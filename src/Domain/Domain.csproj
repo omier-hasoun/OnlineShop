@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Brands\Services\" />
-    <Folder Include="Common\Services\" />
+    <Folder Include="Orders\ValueObjects\" />
+    <Folder Include="Services\Models\" />
   </ItemGroup>
 
 </Project>

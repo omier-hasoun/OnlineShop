@@ -29,7 +29,7 @@ public sealed class ReturnItemRequestReview : AggregateRoot<ReturnItemRequestId>
         DateTime createdAt = TimeService.UtcNow;
         DateTime lastModifiedAt = createdAt;
 
-        additionalFees ??= Money.From(0).Value;
+        additionalFees ??= Money.Create(0);
 
         return new ReturnItemRequestReview(Id, createdBy, lastModifiedBy, createdAt, lastModifiedAt, decisionType, decisionReason, additionalFees);
     }
