@@ -1,45 +1,38 @@
 
 using Application.Common.Extensions;
-using Application.Features.Public.Checkout.Dtos;
-using Domain.Common.ValueObjects;
-using Domain.Services;
+
+using Domain.Services.Checkout;
 
 namespace Application.Features.Public.Checkout.Queries.ReviewOrderDetails;
 
-internal sealed class ReviewOrderDetailsQueryHandler(IAppDbContext context) : IRequestHandler<ReviewOrderDetailsQuery, Result<OrderPreviewDto>>
+internal sealed class ReviewOrderDetailsQueryHandler(IAppDbContext context, CheckoutService checkoutService) : IRequestHandler<ReviewOrderDetailsQuery, Result<OrderPreview>>
 {
-    public async Task<Result<OrderPreviewDto>> Handle(ReviewOrderDetailsQuery request, CancellationToken ct)
+    public async Task<Result<OrderPreview>> Handle(ReviewOrderDetailsQuery request, CancellationToken ct)
     {
         //var identity = request.Identity;
 
-        //var items  = await context.Carts.AsNoTracking()
-        //                        .GetUserCart(identity)
+        //var items = await context.Carts.AsNoTracking()
+        //                        .UserCartQuery(identity)
         //                        .Join(context.CartItems, c => c.Id, i => i.CartId, (c, i) => new { c, i })
         //                        .Join(context.Products, x => x.i.ProductId, p => p.Id, (ci, p) => new { ci.c, ci.i, p })
-        //                        .Join(context.ProductGroups, x => x.p.ProductGroupId, pg => pg.Id, (cip, pg) => new { cip.c, cip.i, cip.p, pg })
-        //                        .Select(x => new OrderItemPreviewDto(
-        //                                        x.p.Id,
-        //                                        x.p.Images.FirstOrDefault(),
-        //                                        x.pg.Title,
-        //                                        x.p.HasActiveDiscount,
-        //                                        x.p.HasActiveDiscount ? x.p.DiscountPercentage : null,
-        //                                        x.p.HasActiveDiscount ? x.p.OriginalPrice : null,
-        //                                        x.p.HasActiveDiscount ? x.p.PriceAfterDiscount : null,
-        //                                        x.p.CurrentPrice,
-        //                                        x.i.Quantity     
+        //                        .Join(context.ProductGroups, x => x.p.ProductGroupId, pg => pg.Id, (cip, pg) => new { cip.c, CartItem = cip.i, Product= cip.p, Group = pg })
+        //                        .Select(x => new OrderLineDetails
+        //                        (
+        //                            x.CartItem.Quantity,
+        //                            x.Product,
+        //                            x.Group
         //                        ))
         //                        .ToListAsync(ct);
 
         //if (items is null)
         //    return ApplicationErrors.Validation.CartIsEmpty;
 
+        //var result = checkoutService.CreateOrder(items);
 
-        ////var itemsSubtotal = Money.Create(items.Sum(x => x.TotalPrice));
-        ////var shippingCost = new ShippingCostCalculator().Calculate(itemsSubtotal);
-        ////var orderTotal = itemsSubtotal + shippingCost;
+        //if (result.Failed)
+        //    return result.Errors;
 
-        //return new OrderPreviewDto(items, itemsSubtotal, shippingCost, orderTotal);
-
+        //return result.Value;
         throw new NotImplementedException();
 
     }

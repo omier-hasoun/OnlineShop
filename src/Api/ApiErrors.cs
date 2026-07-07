@@ -8,7 +8,7 @@ public static class ApiErrors
     public static class Client
     {
         public const string BaseErrorCode = "ClientErrors";
-        public static readonly Error UnableToIdentifyGuest = Error.Unauthorized($"{BaseErrorCode}.{nameof(UnableToIdentifyGuest)}");
+        public static readonly Error UnableToIdentifyUser = Error.Unauthorized($"{BaseErrorCode}.{nameof(UnableToIdentifyUser)}");
 
         public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
 

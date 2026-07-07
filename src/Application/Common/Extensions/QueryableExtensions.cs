@@ -97,7 +97,7 @@ internal static class QueryableExtensions
 
     #region carts
 
-    public static IQueryable<Cart?> GetUserCart(this IQueryable<Cart> query, UserIdentity identity)
+    public static IQueryable<Cart?> UserCartQuery(this IQueryable<Cart> query, UserIdentity identity)
     {
         ArgumentNullException.ThrowIfNull(identity);
 
@@ -114,6 +114,22 @@ internal static class QueryableExtensions
     }
 
     #endregion
+
+    public static IQueryable<Order?> UserAbandonedOrderQuery(this IQueryable<Order> query, UserIdentity identity)
+    {
+        ArgumentNullException.ThrowIfNull(identity);
+
+        if (identity.IsUser)
+        {
+            query = query.Where(x => x.UserId == identity.UserId);
+        }
+        else
+        {
+            query = query.Where(x => x.GuestId == identity.GuestId);
+        }
+
+        return query.Where(x => x.Status == OrderState.Pending);
+    }
 
     public static async Task<PaginatedList<TResult>> ToPaginatedListAsync<TResult>(
         this IQueryable<TResult> query,

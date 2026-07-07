@@ -1,10 +1,11 @@
-namespace Domain.Services.Models;
+namespace Domain.Services.Checkout;
 
 public record OrderLinePreview(
-    ProductId ProductId,
+    string? ProductThumbnail,
+    long ProductId,
     string ProductTitle,
     short Quantity,
-    Money UnitPrice,
-    Money LineTotal
+    decimal UnitPrice,
+    decimal LineTotal
 );
 

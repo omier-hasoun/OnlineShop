@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <Folder Include="Orders\ValueObjects\" />
-    <Folder Include="Services\Models\" />
+    <Folder Include="Services\Cart\" />
   </ItemGroup>
 
 </Project>

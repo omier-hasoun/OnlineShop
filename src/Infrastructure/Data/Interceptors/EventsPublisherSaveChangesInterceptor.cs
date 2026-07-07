@@ -1,12 +1,15 @@
 
-using Application.Common.Dtos;
-using MediatR;
+using System.Text.Json;
+using Infrastructure.Data.Models;
 
 namespace Infrastructure.Data.Interceptors;
 
-internal sealed class EventsPublisherSaveChangesInterceptor(IDomainEventDispatcher dispatcher) : SaveChangesInterceptor
+internal sealed class EventsPublisherSaveChangesInterceptor(TimeProvider time, [FromKeyedServices("Snowflake")] IPrimitiveTypeIdGenerator<long> idGen) : SaveChangesInterceptor
 {
-    List<IDomainEvent>? _domainEvents = null;
+    private static readonly JsonSerializerOptions _serializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
     public async override ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,
         InterceptionResult<int> result,
@@ -16,15 +19,30 @@ internal sealed class EventsPublisherSaveChangesInterceptor(IDomainEventDispatch
         {
 
 
-            _domainEvents = eventData.Context.ChangeTracker.Entries<IAggregateRoot>()
-                .Select(entry => entry.Entity)
-                .SelectMany(entity =>
+            var outboxMessages = eventData.Context.ChangeTracker
+                .Entries<IAggregateRoot>()
+                .SelectMany(entry =>
                 {
-                    var events = entity.DomainEvents.ToList();
-                    entity.ClearDomainEvents();
-                    return events;
+                    var aggregate = entry.Entity;
+
+                    var messages = aggregate.DomainEvents.Select(ev =>
+                        new OutboxMessage
+                        {
+                            Id = idGen.Generate(),
+                            Type = ev.GetType().AssemblyQualifiedName!,
+                            Content = JsonSerializer.Serialize(ev, ev.GetType(), _serializerOptions),
+                            OccurredOnUtc = time.GetUtcNow().UtcDateTime
+                        })
+                        .ToList();
+
+                    aggregate.ClearDomainEvents();
+                    return messages;
                 })
                 .ToList();
+
+            eventData.Context.AddRange(outboxMessages);
+
+
         }
 
         return await base.SavingChangesAsync(eventData, result, ct);
@@ -32,8 +50,6 @@ internal sealed class EventsPublisherSaveChangesInterceptor(IDomainEventDispatch
 
     public async override ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken ct = default)
     {
-        if (_domainEvents != null)
-            await dispatcher.DispatchAsync(_domainEvents, ct);
 
         return await base.SavedChangesAsync(eventData, result, ct);
     }

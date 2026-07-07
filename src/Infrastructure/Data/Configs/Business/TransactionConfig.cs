@@ -29,7 +29,7 @@ internal sealed class TransactionConfig : BaseEntityConfig<Transaction>
                .HasConversion<string>()
                .IsRequired();
 
-        builder.Property(x => x.PaymentProviderName)
+        builder.Property(x => x.PaymentMethod)
                .HasColumnType("VARCHAR(50)")
                .IsRequired();
 
@@ -41,7 +41,7 @@ internal sealed class TransactionConfig : BaseEntityConfig<Transaction>
                .IsRequired();
 
 
-        builder.Property(x => x.CardFingerprint)
+        builder.Property(x => x.ProviderCustomerId)
                .HasColumnType("NVARCHAR(255)")
                .IsRequired();
 
@@ -53,14 +53,6 @@ internal sealed class TransactionConfig : BaseEntityConfig<Transaction>
         builder.Property(x => x.Status)
                .HasColumnType("VARCHAR(50)")
                .HasConversion<string>()
-               .IsRequired();
-
-        builder.Property(x => x.ReceiverId)
-               .HasColumnType("VARCHAR(100)")
-               .IsRequired();
-
-        builder.Property(x => x.SenderId)
-               .HasColumnType("VARCHAR(100)")
                .IsRequired();
 
         builder.Property("_additionalDetails")

@@ -55,7 +55,7 @@ public static class DomainErrors
 
     public static readonly Error OrderPaymentIdInvalid = Error.Validation($"{BaseErrorCode}.{nameof(OrderPaymentIdInvalid)}");
 
-    public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+    public static readonly Error ProviderReferenceIdMissing = Error.Validation($"{BaseErrorCode}.{nameof(ProviderReferenceIdMissing)}");
 
     public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
 
@@ -243,7 +243,7 @@ public static class Products
 
         public static readonly Error OrderIdInvalid = Error.Validation($"{BaseErrorCode}.{nameof(OrderIdInvalid)}");
 
-        public static readonly Error ItemsOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(ItemsOutOfRange)}");
+        public static readonly Error ItemsNumberLimitExceeded = Error.Validation($"{BaseErrorCode}.{nameof(ItemsNumberLimitExceeded)}");
 
         public static readonly Error ShippingFeesOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(ShippingFeesOutOfRange)}");
 
@@ -255,13 +255,13 @@ public static class Products
 
         public static readonly Error OrderItemIdInvalid = Error.Validation($"{BaseErrorCode}.{nameof(OrderItemIdInvalid)}");
 
-        public static readonly Error InvoiceFileNameInvalid = Error.Validation($"{BaseErrorCode}.{nameof(InvoiceFileNameInvalid)}");
+        public static readonly Error TaxAmountInvalid = Error.Validation($"{BaseErrorCode}.{nameof(TaxAmountInvalid)}");
 
         public static readonly Error ItemQuantityOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(ItemQuantityOutOfRange)}");
 
-        public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
+        public static readonly Error BillingAddressInvalid = Error.Validation($"{BaseErrorCode}.{nameof(BillingAddressInvalid)}");
 
-        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error ShippingAddressInvalid = Error.Validation($"{BaseErrorCode}.{nameof(ShippingAddressInvalid)}");
 
         public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
 
@@ -271,7 +271,7 @@ public static class Products
 
         public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
 
-        public static readonly Error rename10 = Error.Validation($"{BaseErrorCode}.{nameof(rename10)}");
+        public static readonly Error EmailInvalid = Error.Validation($"{BaseErrorCode}.{nameof(EmailInvalid)}");
     }
 
     public static class Brands

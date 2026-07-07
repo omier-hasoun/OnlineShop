@@ -32,7 +32,7 @@ internal sealed class AuditedEntitySaveChangesInterceptor : SaveChangesIntercept
             var isAdded = entry.State == EntityState.Added;
             var isModified = entry.State == EntityState.Modified;
 
-            var utcNow = _time.GetUtcNow().DateTime;
+            var utcNow = _time.GetUtcNow().UtcDateTime;
             
             if (entry.Entity is IHasCreationTime cTime && isAdded)
                 cTime.CreatedAt = utcNow;

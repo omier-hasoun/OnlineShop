@@ -76,12 +76,12 @@ public sealed class Product : BaseEntity<ProductId>
 
     public Money OriginalPrice { get; private set; } = null!;
 
-    public bool HasActiveDiscount { get; private set; }
 
     public Money CurrentPrice { get; private set; }
 
     public Money? PriceAfterDiscount { get; private set; }
 
+    public bool HasActiveDiscount { get; private set; }
     public DateOnly? DiscountExpiresOn { get; private set; }
     public byte? DiscountPercentage { get; private set;}
 

@@ -1,6 +1,6 @@
 
 using Domain.Common.Rules;
-using Domain.Orders.OrderItems;
+using Domain.Orders.OrderLines;
 using Domain.ReturnItemRequests;
 using Domain.ReturnItemRequests.ValueObjects;
 

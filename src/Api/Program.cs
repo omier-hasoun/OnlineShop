@@ -24,13 +24,6 @@ namespace Api
             else 
                 config.AddUserSecrets("7f342e59-c0e1-4ef5-9bd1-126a96fa7a5b");
 
-            builder.Services.Configure<ProductImagePathOptions>(config.GetSection(nameof(ProductImagePathOptions)));
-
-            builder.Services.Configure<FormOptions>(options =>
-            {
-                options.MultipartBodyLengthLimit = 20 * 1024 * 1024;//20 mb
-                options.MemoryBufferThreshold = 32 * 1024; // 32 KB
-            });
 
             builder.Services.AddApiServices(config, builder.Environment)
                             .AddApplicationServices(config)
@@ -50,7 +43,6 @@ namespace Api
                     scope.ServiceProvider.GetRequiredService<RoleManager<Role>>());
 
                 await initialiser.InitialiseAndSeedData();
-                IOptions<ProductImagePathOptions> options = scope.ServiceProvider.GetRequiredService<IOptions<ProductImagePathOptions>>();
             }
 
 
@@ -112,7 +104,7 @@ namespace Api
             app.MapGroup("/api/auth").
                 MapIdentityApi<AppUser>();
 
-            app.MapEndpoints();
+            app.MapStripeWebhookEndpoints();
 
             await app.RunAsync();
         }

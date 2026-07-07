@@ -62,7 +62,7 @@ public static class ApplicationErrors
 
         public static readonly Error ProductStatusInvalid = Error.Validation(GenerateErrorCode(nameof(ProductStatusInvalid)));
 
-        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error InvalidEmail = Error.Validation($"{BaseErrorCode}.{nameof(InvalidEmail)}");
 
         public static readonly Error CartIsEmpty = Error.Validation($"{BaseErrorCode}.{nameof(CartIsEmpty)}");
 
@@ -167,7 +167,7 @@ public static class ApplicationErrors
         public static readonly Error UnableToAddThisItem = Error.Unexpected(GenerateErrorCode(nameof(UnableToAddThisItem)));
         public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
 
-        public static readonly Error rename2 = Error.Unexpected($"{BaseErrorCode}.{nameof(rename2)}");
+        public static readonly Error CheckoutFailed = Error.Unexpected($"{BaseErrorCode}.{nameof(CheckoutFailed)}");
 
         public static readonly Error rename3 = Error.Unexpected($"{BaseErrorCode}.{nameof(rename3)}");
 

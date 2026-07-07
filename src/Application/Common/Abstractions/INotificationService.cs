@@ -1,7 +1,9 @@
 
+using Application.Common.Dtos;
+
 namespace Application.Common.Abstractions;
 
 public interface INotificationService
 {
-    Task SendEmailAsync(string message);
+    Task NotifyAsync(NotificationRequest request);
 }

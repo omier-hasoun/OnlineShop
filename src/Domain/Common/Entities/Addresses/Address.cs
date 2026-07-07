@@ -55,7 +55,7 @@ public class Address : BaseEntity<AddressId>
     
     public string? Notes { get; private set; }
     public string? StateProvince { get; private set; }
-    public string HouseNo { get; private set; } = null!;
+    public string? HouseNo { get; private set; }
 
 
 }

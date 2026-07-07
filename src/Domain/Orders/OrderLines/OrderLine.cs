@@ -1,10 +1,10 @@
 
-namespace Domain.Orders.OrderItems;
+namespace Domain.Orders.OrderLines;
 
 public sealed class OrderLine : BaseEntity<OrderLineId>
 {
     private OrderLine(OrderLineId id, OrderId orderId, ProductId productId, short quantity, string productTitleSnapshot,
-        Money unitPrice, Money totalPrice, Money taxAmount, OrderLineStatus status)
+        Money unitPrice, Money total, OrderLineState status)
         : base(id)
     {
         OrderId = orderId;
@@ -12,8 +12,7 @@ public sealed class OrderLine : BaseEntity<OrderLineId>
         Quantity = quantity;
         ProductTitleSnapshot = productTitleSnapshot;
         UnitPrice = unitPrice;
-        TotalPrice = totalPrice;
-        TaxAmount = taxAmount;
+        Total = total;
         Status = status;
     }
 
@@ -21,7 +20,7 @@ public sealed class OrderLine : BaseEntity<OrderLineId>
         => unitPrice * quantity;
     
     internal static Result<OrderLine> Create(OrderLineId id, OrderId orderId, ProductId productId, string productTitleSnapshot,
-        short quantity, Money unitPrice, Money taxAmount)
+        short quantity, Money unitPrice)
     {
 
         var validationResult = Result.ValidateAll(
@@ -35,14 +34,9 @@ public sealed class OrderLine : BaseEntity<OrderLineId>
         if (validationResult.Failed)
             return validationResult.Errors;
 
-        var totalPriceResult = Money.Create(CalculateTotalPrice(unitPrice.Value, quantity));
+        var total = Money.Create(CalculateTotalPrice(unitPrice.Value, quantity));
 
-        //if (totalPriceResult.Failed)
-        //    return totalPriceResult.Errors;
-
-
-
-        return new OrderLine(id, orderId, productId, quantity, productTitleSnapshot, unitPrice, totalPriceResult, taxAmount, OrderLineStatus.Pending);
+        return new OrderLine(id, orderId, productId, quantity, productTitleSnapshot, unitPrice, total, OrderLineState.Pending);
     }
 
 
@@ -54,11 +48,9 @@ public sealed class OrderLine : BaseEntity<OrderLineId>
     public short Quantity { get; private init; }
 
     public Money UnitPrice { get; private init; } = null!;
-    public Money TotalPrice { get; private init; } = null!;
-    public Money TaxAmount { get; private init; } = null!;
+    public Money Total { get; private init; } = null!;
 
-
-    public OrderLineStatus Status {get; private set;}
+    public OrderLineState Status {get; private set;}
 
     private List<string> _serialNumbers = [];
     public IReadOnlyList<string> SerialNumbers { get{ return _serialNumbers.AsReadOnly(); } private set{_serialNumbers = value is null ?[] : value.ToList();} }

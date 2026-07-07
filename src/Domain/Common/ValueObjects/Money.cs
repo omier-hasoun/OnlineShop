@@ -1,14 +1,24 @@
 
+using System.Text.Json.Serialization;
+
 namespace Domain.Common.ValueObjects;
 
 public sealed record Money
 {
-    public const int MaxValue = 1_000_000;
-    public static readonly Money Zero =new Money() { Value = 0};
+    public const int MaxValue = 1_000_0000;
+    private const int _maxCentsvalue = 1_000_000_000;
+
+    public static readonly Money Zero = new Money() { Value = 0};
 
     internal Money()
     {
         
+    }
+
+    [JsonConstructor]
+    public Money(decimal value)
+    {
+        Value = value;
     }
 
 
@@ -24,14 +34,34 @@ public sealed record Money
             Value = value
         };
     }
+    public static Money FromCents(long value)
+    {
+        if (ValHelper.IsOutOfRange(value, 0, _maxCentsvalue))
+        {
+            throw new ArgumentException("money cannot be less than zero or more than 1billion");
+        }
 
-    public long ToCents()
+        decimal decimalValue = Math.Round(value / 100m, 2, MidpointRounding.AwayFromZero);
+
+        return new Money()
+        {
+            Value = decimalValue
+        };
+    }
+    public long ToCents() => ToCents(Value);
+
+    public static long ToCents(decimal value)
     {
         return (long)Math.Round(
-            Value * 100m,
+            value * 100m,
             0,
             MidpointRounding.AwayFromZero
         );
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString("N2");
     }
 
     public decimal Value { get; internal init; }

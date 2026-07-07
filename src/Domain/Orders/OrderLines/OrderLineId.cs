@@ -1,5 +1,5 @@
 
-namespace Domain.Orders.OrderItems;
+namespace Domain.Orders.OrderLines;
 
 public readonly record struct OrderLineId
 {

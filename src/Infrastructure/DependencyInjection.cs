@@ -1,10 +1,12 @@
 
 using System.Threading.Channels;
+using Application.Common.Configurations;
 using Application.Entities;
 using Domain.Carts;
 using Domain.Carts.CartItems;
 using Domain.Common.Entities.Addresses;
 using Domain.Orders;
+using Domain.Orders.OrderLines;
 using Domain.ProductGroups;
 using Domain.ProductGroups.Products;
 using Domain.Warehouses;
@@ -15,7 +17,8 @@ using Infrastructure.Common.Exceptions;
 using Infrastructure.Data.IdGenerators;
 using Infrastructure.Data.IdGenerators.Primitives;
 using Infrastructure.Data.Interceptors;
-using Infrastructure.ExternalServices.Checkout.StripeService;
+using Infrastructure.ExternalServices.Email.Console;
+using Infrastructure.ExternalServices.Payment.StripeService;
 using Infrastructure.LocalServices.DiscountReset;
 using Infrastructure.LocalServices.FileNameGeneratorService;
 using Infrastructure.LocalServices.FileStorageService;
@@ -24,6 +27,7 @@ using Infrastructure.LocalServices.Hashing;
 using Infrastructure.LocalServices.ImagesStore;
 using Infrastructure.LocalServices.Messaging;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Hosting;
 using App = Application.Common.Abstractions;
 
@@ -39,7 +43,27 @@ public static class DependencyInjection
                 .AddIdGenServices(config)
                 .AddIdGeneratorServices()
                 .AddIdentityServices()
-                .AddFileSignaturesServices();
+                .AddFileSignaturesServices()
+                .AddOptions(config);
+        return services;
+    }
+
+
+    private static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration config)
+    {
+        services.Configure<ProductImagePathOptions>(config.GetSection(nameof(ProductImagePathOptions)));
+
+        services.Configure<StripeOptions>(options =>
+        {
+            options.TestKey = config["STRIPE_TEST_KEY"] ?? throw new StripeApiKeyWasNotProvidedException();
+        });
+
+        services.Configure<FormOptions>(options =>
+        {
+            options.MultipartBodyLengthLimit = 20 * 1024 * 1024;//20 mb
+            options.MemoryBufferThreshold = 32 * 1024; // 32 KB
+        });
+
         return services;
     }
 
@@ -47,9 +71,21 @@ public static class DependencyInjection
     {
         services.AddTransient<IImageValidator, ImageValidator>();
         services.AddSingleton<IFileStorageService, LocalFileStorageService>();
-        services.AddHostedService<ImageProcessorWorker>();
-        services.AddHostedService<ZeroOclockWorker>();
 
+        services.AddHostedService<ImageProcessingWorker>();
+        services.AddHostedService<ZeroOclockWorker>();
+        services.AddHostedService<StripeEventProcessingWorker>();
+        services.AddHostedService<OrderRefundProcessingWorker>();
+        services.AddHostedService<OutboxMessagesProcessingWorker>();
+
+
+        services.AddSingleton<ApplicationSettings>(sp =>
+        {
+            var baseUrl = sp.GetRequiredService<IConfiguration>()["BaseUrl"];
+            var businessName = sp.GetRequiredService<IConfiguration>()["BusinessName"];
+
+            return new ApplicationSettings(baseUrl, businessName);
+        });
 
         services.AddSingleton(sp => {
 
@@ -65,11 +101,13 @@ public static class DependencyInjection
         services.AddSingleton<IImageStorageService, ImagesStoreService>();
         services.AddSingleton<IImageJobReader, ImageProcessingJobsChannel>();
         services.AddSingleton<IImageJobWriter, ImageProcessingJobsChannel>();
-        services.AddSingleton<ICheckoutProvider, StripeCheckoutService>();
+        services.AddSingleton<IPaymentGateway, StripePaymentGateway>();
         services.AddSingleton<IUniqueFileNameGenerator, FileNameGenerator>();
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
         services.AddSingleton<IZeroOclockService, DiscountResetService>();
+        services.AddSingleton<INotificationService, ConsoleMailService>();
+
 
         return services;
     }
@@ -82,6 +120,8 @@ public static class DependencyInjection
         services.AddSingleton<App.IIdGenerator<ProductGroupId>, ProductGroupIdGenerator>();
 
         services.AddSingleton<App.IIdGenerator<ProductId>, ProductIdGenerator>();
+
+        services.AddSingleton<App.IIdGenerator<OrderLineId>, OrderLineIdGenerator>();
 
         services.AddSingleton<App.IIdGenerator<OrderId>, OrderIdGenerator>();
         services.AddSingleton<App.IIdGenerator<CartId>, CartIdGenerator>();
@@ -164,9 +204,9 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>((sp, options) =>
         {
             options.UseSqlServer(GetDbConnectionString(config, environment)).AddInterceptors(
-            sp.GetRequiredService<SoftDeleteEntitySaveChangesInterceptor>(),
-            sp.GetRequiredService<AuditedEntitySaveChangesInterceptor>(),
-            sp.GetRequiredService<EventsPublisherSaveChangesInterceptor>()
+                sp.GetRequiredService<SoftDeleteEntitySaveChangesInterceptor>(),
+                sp.GetRequiredService<AuditedEntitySaveChangesInterceptor>(),
+                sp.GetRequiredService<EventsPublisherSaveChangesInterceptor>()
             );
         });
 

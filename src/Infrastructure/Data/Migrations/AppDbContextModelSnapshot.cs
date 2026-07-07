@@ -492,40 +492,52 @@ namespace Infrastructure.Data.Migrations
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("BillingAddressId")
-                        .HasColumnType("bigint");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
+                        .HasColumnType("VARCHAR(254)");
+
+                    b.Property<Guid?>("GuestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProviderReferenceId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("ShippingFees")
+                    b.Property<decimal>("ShippingCost")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal>("TotalPrice")
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("SubTotal")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal>("TotalTaxAmount")
+                    b.Property<decimal>("TaxAmount")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
 
-                    b.HasIndex("BillingAddressId");
+                    b.HasIndex("GuestId")
+                        .HasDatabaseName("IX_Orders_GuestId")
+                        .HasFilter("[GuestId] is not null");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_Orders_UserId")
+                        .HasFilter("[UserId] is not null");
 
                     b.ToTable("Orders", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Orders.OrderItems.OrderLine", b =>
+            modelBuilder.Entity("Domain.Orders.OrderLines.OrderLine", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
@@ -546,10 +558,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TaxAmount")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("TotalPrice")
+                    b.Property<decimal>("Total")
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("UnitPrice")
@@ -567,7 +576,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderLines", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Orders.Shipments.Shipment", b =>
@@ -577,14 +586,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("ActualDelivery")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("AddressFrom")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(500)");
-
-                    b.Property<string>("AddressTo")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(500)");
 
                     b.Property<string>("CarrierName")
                         .IsRequired()
@@ -924,7 +925,55 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("ReturnItemRequestsReviews", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.ShippingAddresses.ShippingAddress", b =>
+            modelBuilder.Entity("Domain.Transactions.Transaction", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExternalTransactionId")
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("NVARCHAR(1000)");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<string>("ProviderCustomerId")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<string>("ReceiverType")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<string>("SenderType")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<decimal>("TransferAmount")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<string>("_additionalDetails")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("AdditionalDetails");
+
+                    b.HasKey("Id");
+
+                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
+
+                    b.ToTable("Transactions", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.UserShippingAddresses.UserShippingAddress", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
@@ -953,62 +1002,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("ShippingAddresses", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Transactions.Transaction", b =>
-                {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("CardFingerprint")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ExternalTransactionId")
-                        .HasColumnType("VARCHAR(50)");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("NVARCHAR(1000)");
-
-                    b.Property<string>("PaymentProviderName")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
-
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(100)");
-
-                    b.Property<string>("ReceiverType")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
-
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(100)");
-
-                    b.Property<string>("SenderType")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(50)");
-
-                    b.Property<decimal>("TransferAmount")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<string>("_additionalDetails")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("AdditionalDetails");
-
-                    b.HasKey("Id");
-
-                    SqlServerKeyBuilderExtensions.IsClustered(b.HasKey("Id"));
-
-                    b.ToTable("Transactions", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Warehouses.Warehouse", b =>
                 {
                     b.Property<long>("Id")
@@ -1029,6 +1022,67 @@ namespace Infrastructure.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Warehouses", (string)null);
+                });
+
+            modelBuilder.Entity("Infrastructure.Data.Models.OutboxMessage", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(Max)");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.Property<DateTime>("OccurredOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ProcessedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(1000)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessages", (string)null);
+                });
+
+            modelBuilder.Entity("Infrastructure.Data.Models.StripeEvent", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ReceivedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StripeEventId")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(255)");
+
+                    b.Property<string>("StripeSessionId")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(255)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StripeEventId")
+                        .IsUnique();
+
+                    b.ToTable("StripeEvents", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
@@ -1157,25 +1211,103 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Orders.Order", b =>
                 {
-                    b.HasOne("Domain.Common.Entities.Addresses.Address", "BillingAddress")
-                        .WithMany()
-                        .HasForeignKey("BillingAddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Application.Entities.AppUser", null)
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
+
+                    b.OwnsOne("Domain.Common.ValueObjects.AddressDetails", "BillingAddress", b1 =>
+                        {
+                            b1.Property<long>("OrderId");
+
+                            b1.Property<string>("AddressLine1")
+                                .IsRequired();
+
+                            b1.Property<string>("AddressLine2");
+
+                            b1.Property<string>("City")
+                                .IsRequired();
+
+                            b1.Property<string>("Country")
+                                .IsRequired();
+
+                            b1.Property<string>("FullName")
+                                .IsRequired();
+
+                            b1.Property<string>("HouseNo");
+
+                            b1.Property<string>("Notes");
+
+                            b1.Property<string>("PhoneNumber")
+                                .IsRequired();
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired();
+
+                            b1.Property<string>("StateProvince");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Orders");
+
+                            b1
+                                .ToJson("BillingAddress")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
+                    b.OwnsOne("Domain.Common.ValueObjects.AddressDetails", "ShippingAddress", b1 =>
+                        {
+                            b1.Property<long>("OrderId");
+
+                            b1.Property<string>("AddressLine1")
+                                .IsRequired();
+
+                            b1.Property<string>("AddressLine2");
+
+                            b1.Property<string>("City")
+                                .IsRequired();
+
+                            b1.Property<string>("Country")
+                                .IsRequired();
+
+                            b1.Property<string>("FullName")
+                                .IsRequired();
+
+                            b1.Property<string>("HouseNo");
+
+                            b1.Property<string>("Notes");
+
+                            b1.Property<string>("PhoneNumber")
+                                .IsRequired();
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired();
+
+                            b1.Property<string>("StateProvince");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Orders");
+
+                            b1
+                                .ToJson("ShippingAddress")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
 
                     b.Navigation("BillingAddress");
+
+                    b.Navigation("ShippingAddress");
                 });
 
-            modelBuilder.Entity("Domain.Orders.OrderItems.OrderLine", b =>
+            modelBuilder.Entity("Domain.Orders.OrderLines.OrderLine", b =>
                 {
                     b.HasOne("Domain.Orders.Order", null)
-                        .WithMany("Items")
+                        .WithMany("Lines")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1193,6 +1325,44 @@ namespace Infrastructure.Data.Migrations
                         .WithMany("Shipments")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.Common.ValueObjects.AddressDetails", "AddressFrom", b1 =>
+                        {
+                            b1.Property<long>("ShipmentId");
+
+                            b1.HasKey("ShipmentId");
+
+                            b1.ToTable("Shipments");
+
+                            b1
+                                .ToJson("AddressFrom")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ShipmentId");
+                        });
+
+                    b.OwnsOne("Domain.Common.ValueObjects.AddressDetails", "AddressTo", b1 =>
+                        {
+                            b1.Property<long>("ShipmentId");
+
+                            b1.HasKey("ShipmentId");
+
+                            b1.ToTable("Shipments");
+
+                            b1
+                                .ToJson("AddressTo")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ShipmentId");
+                        });
+
+                    b.Navigation("AddressFrom")
+                        .IsRequired();
+
+                    b.Navigation("AddressTo")
                         .IsRequired();
                 });
 
@@ -1301,7 +1471,7 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.ReturnItemRequests.ReturnItemRequest", b =>
                 {
-                    b.HasOne("Domain.Orders.OrderItems.OrderLine", null)
+                    b.HasOne("Domain.Orders.OrderLines.OrderLine", null)
                         .WithMany()
                         .HasForeignKey("OrderItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1353,11 +1523,11 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.ShippingAddresses.ShippingAddress", b =>
+            modelBuilder.Entity("Domain.UserShippingAddresses.UserShippingAddress", b =>
                 {
                     b.HasOne("Domain.Common.Entities.Addresses.Address", "Address")
                         .WithOne()
-                        .HasForeignKey("Domain.ShippingAddresses.ShippingAddress", "AddressId")
+                        .HasForeignKey("Domain.UserShippingAddresses.UserShippingAddress", "AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1412,7 +1582,7 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Orders.Order", b =>
                 {
-                    b.Navigation("Items");
+                    b.Navigation("Lines");
 
                     b.Navigation("Shipments");
                 });

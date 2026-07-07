@@ -40,4 +40,8 @@ public static class ValHelper
     {
         return value < min || value > max;
     }
+    public static bool IsOutOfRange(long value, long min, long max)
+    {
+        return value < min || value > max;
+    }
 }

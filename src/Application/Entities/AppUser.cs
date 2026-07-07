@@ -1,6 +1,6 @@
 using Domain;
 using Domain.Common.Entities.Addresses;
-using Domain.ShippingAddresses;
+using Domain.UserShippingAddresses;
 
 namespace Application.Entities;
 
@@ -19,8 +19,8 @@ public sealed class AppUser : IdentityUser<Guid>, IAggregateRoot, ISoftDelete, I
     public IReadOnlyCollection<UserToken> Tokens { get; private set; } = [];
     public IReadOnlyCollection<Role> Roles { get; private set; } = [];
 
-    private List<ShippingAddress> _addresses = [];
-    public IReadOnlyCollection<ShippingAddress> ShippingAddresses { get { return _addresses.AsReadOnly(); } private set { _addresses = value.ToList(); } }
+    private List<UserShippingAddress> _addresses = [];
+    public IReadOnlyCollection<UserShippingAddress> ShippingAddresses { get { return _addresses.AsReadOnly(); } private set { _addresses = value.ToList(); } }
 
     public bool IsDeleted { get; private set; }
 
@@ -30,14 +30,14 @@ public sealed class AppUser : IdentityUser<Guid>, IAggregateRoot, ISoftDelete, I
 
 
 
-    public Result<Success> AddShippingAddress(ShippingAddressId shippingAddressId, AddressId addressId, bool isDefault)
+    public Result<Success> AddShippingAddress(UserShippingAddressId shippingAddressId, AddressId addressId, bool isDefault)
     {
         if (_addresses.Count >= UserRules.MaxNumberOfAddresses)
         {
             return DomainErrors.Users.MaxNumberOfAddressesReached;
         }
 
-        var createAddressResult = ShippingAddress.Create(shippingAddressId, this.Id, addressId, isDefault);
+        var createAddressResult = UserShippingAddress.Create(shippingAddressId, this.Id, addressId, isDefault);
 
         if (createAddressResult.Failed)
         {
@@ -55,7 +55,7 @@ public sealed class AppUser : IdentityUser<Guid>, IAggregateRoot, ISoftDelete, I
         return Result.Success;
     }
 
-    public Result<Success> SetAsDefaultShippingAddress(ShippingAddressId shippingAddressId)
+    public Result<Success> SetAsDefaultShippingAddress(UserShippingAddressId shippingAddressId)
     {
 
         var newDefaultAddress = _addresses.FirstOrDefault(x => x.Id == shippingAddressId);
@@ -71,7 +71,7 @@ public sealed class AppUser : IdentityUser<Guid>, IAggregateRoot, ISoftDelete, I
         return Result.Success;
     }
 
-    public Result<Success> RemoveShippingAddress(ShippingAddressId shippingAddressId)
+    public Result<Success> RemoveShippingAddress(UserShippingAddressId shippingAddressId)
     {
         var address = _addresses.FirstOrDefault(y => y.Id == shippingAddressId);
 

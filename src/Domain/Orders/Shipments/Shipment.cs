@@ -3,8 +3,12 @@ namespace Domain.Orders.Shipments;
 
 public sealed class Shipment : BaseEntity<ShipmentId>, IHasModificationTime, IHasCreationTime
 {
+    private Shipment()
+    {
+            
+    }
     private Shipment(ShipmentId id, OrderId orderId,
-        DateTime estimatedDelivery, string carrierName, string addressFrom, string addressTo,
+        DateTime estimatedDelivery, string carrierName, AddressDetails addressFrom, AddressDetails addressTo,
         ShipmentStatus status, string? trackingNumber, string? notes, DateTime createdAt, DateTime lastModifiedAt)
         : base(id)
     {
@@ -22,7 +26,7 @@ public sealed class Shipment : BaseEntity<ShipmentId>, IHasModificationTime, IHa
     }
 
     public static Result<Shipment> Create(ShipmentId id, OrderId orderId, DateTime estimatedDelivery, string carrierName,
-        string addressFrom, string addressTo, string? trackingNumber, string? notes)
+        AddressDetails addressFrom, AddressDetails addressTo, string? trackingNumber, string? notes)
     {
 
 
@@ -36,8 +40,8 @@ public sealed class Shipment : BaseEntity<ShipmentId>, IHasModificationTime, IHa
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
 
-    public string AddressFrom { get; private set; } = null!;
-    public string AddressTo { get; private set; } = null!;
+    public AddressDetails AddressFrom { get; private set; } = null!;
+    public AddressDetails AddressTo { get; private set; } = null!;
     public string CarrierName { get; private set; } = null!;
     public string? TrackingNumber { get; private set; } = null!;
     public string? Notes { get; private set; }

@@ -1,19 +1,19 @@
 
 using Application.Entities;
-using Domain.ShippingAddresses;
+using Domain.UserShippingAddresses;
 
 namespace Infrastructure.Data.Configs.Business;
 
-internal sealed class ShippingAddressConfig : BaseEntityConfig<ShippingAddress>
+internal sealed class ShippingAddressConfig : BaseEntityConfig<UserShippingAddress>
 {
-    public override void Configure(EntityTypeBuilder<ShippingAddress> builder)
+    public override void Configure(EntityTypeBuilder<UserShippingAddress> builder)
     {
 
         builder.HasKey(e => e.Id)
                .IsClustered();
 
         builder.Property(x => x.Id)
-               .HasConversion(id => id.Value, value => new ShippingAddressId(value))
+               .HasConversion(id => id.Value, value => new UserShippingAddressId(value))
                .ValueGeneratedNever();
 
         builder.Property(x => x.IsDefault)
@@ -26,7 +26,7 @@ internal sealed class ShippingAddressConfig : BaseEntityConfig<ShippingAddress>
 
         builder.HasOne(x => x.Address)
                .WithOne()
-               .HasForeignKey<ShippingAddress>(x => x.AddressId)
+               .HasForeignKey<UserShippingAddress>(x => x.AddressId)
                .IsRequired();
 
         builder.Navigation( x => x.Address)

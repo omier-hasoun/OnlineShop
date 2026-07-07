@@ -1,7 +1,7 @@
 using Domain.Brands;
 using Domain.Categories;
 using Domain.Common.Entities.Addresses;
-using Domain.Orders.OrderItems;
+using Domain.Orders.OrderLines;
 using Domain.Orders.Shipments;
 using Domain.PaymentProviders;
 using Domain.ProductReviews;
@@ -11,7 +11,7 @@ using Domain.ReturnItemRequestsReviews;
 using Domain.ReturnItemRequests;
 using Domain.Transactions;
 using Domain.Warehouses;
-using Domain.ShippingAddresses;
+using Domain.UserShippingAddresses;
 using Application.Entities;
 using Domain.Carts.CartItems;
 using Domain.Carts;
@@ -53,7 +53,7 @@ public interface IAppDbContext
     DbSet<ReturnItemRequestReview> ReturnItemRequestReviews { get; }
 
     DbSet<Address> Addresses {get; }
-    DbSet<ShippingAddress> ShippingAddresses { get; }
+    DbSet<UserShippingAddress> ShippingAddresses { get; }
 
     DbSet<Cart> Carts { get; }
 

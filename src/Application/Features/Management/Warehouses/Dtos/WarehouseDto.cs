@@ -1,5 +1,3 @@
-
-using Application.Common.Dtos;
 using Domain.Warehouses;
 
 namespace Application.Features.Management.Warehouses.Dtos;
@@ -12,14 +10,14 @@ public sealed record WarehouseDto
         Id = warehouse.Id.Value;
         Name = warehouse.Name;
         var address = warehouse.Address;
-        Address = new AddressResponse(address.Id.Value, address.FullName, address.PhoneNumber, address.CountryCode, address.HouseNo,
+        Address = new WarehouseAddressResponse(address.Id.Value, address.FullName, address.PhoneNumber, address.CountryCode, address.HouseNo,
             address.City, address.PostalCode, address.AddressLine1, address.AddressLine2,
-            address.StateProvince, address.Notes, address.GeoLocation?.Latitude, address.GeoLocation?.Longitude);
+            address.StateProvince, address.Notes);
     }
 
     public long Id { get; private set; }
     public string Name { get; private set; }
 
-    public AddressResponse Address { get; private set; }
+    public WarehouseAddressResponse Address { get; private set; }
 
 }

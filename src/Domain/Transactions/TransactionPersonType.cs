@@ -5,5 +5,5 @@ public enum TransactionPersonType
 {
     Customer = 2,
     Carrier = 3,
-    SystemActor = 4
+    MyCompany = 4
 }

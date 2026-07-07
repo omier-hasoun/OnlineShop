@@ -1,5 +1,6 @@
 
 using System.Net.Mail;
+using System.Text.Json.Serialization;
 
 namespace Domain.Common.ValueObjects;
 
@@ -8,6 +9,12 @@ public sealed record EmailAddress
     private EmailAddress()
     {
         
+    }
+
+    [JsonConstructor]
+    public EmailAddress(string value)
+    {
+        Value = value;
     }
 
     public string Value { get; private init; } = null!;
@@ -25,7 +32,12 @@ public sealed record EmailAddress
 
         return new EmailAddress
         {
-            Value = RegexHelper.Normalize(email)
+            Value = email.ToLower()
         };
+    }
+
+    public override string ToString()
+    {
+        return Value;
     }
 }

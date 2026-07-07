@@ -25,13 +25,9 @@ internal sealed class ShipmentConfig : BaseEntityConfig<Shipment>
                .HasColumnType("NVARCHAR(50)")
                .IsRequired();
 
-        builder.Property(x => x.AddressFrom)
-               .HasColumnType("NVARCHAR(500)")
-               .IsRequired();
+        builder.OwnsOne(x => x.AddressFrom, nb => nb.ToJson());
+        builder.OwnsOne(x => x.AddressTo , nb => nb.ToJson());
 
-        builder.Property(x => x.AddressTo)
-               .HasColumnType("NVARCHAR(500)")
-               .IsRequired();
 
         builder.Property(x => x.TrackingNumber)
                .HasColumnType("VARCHAR")

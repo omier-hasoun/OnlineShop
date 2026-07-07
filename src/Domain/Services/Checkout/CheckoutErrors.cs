@@ -5,15 +5,15 @@ public sealed class CheckoutErrors
 {
     public const string BaseErrorCode = "CheckoutErrors";
 
-    public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+    public static readonly Error QuantityLimitExceeded = Error.Validation($"{BaseErrorCode}.{nameof(QuantityLimitExceeded)}");
 
-    public static readonly Error rename2 = Error.Validation($"{BaseErrorCode}.{nameof(rename2)}");
+    public static readonly Error OrderHasNoItems = Error.Validation($"{BaseErrorCode}.{nameof(OrderHasNoItems)}");
 
     public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
 
     public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
 
-    public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+    public static readonly Error InvalidOrder = Error.Validation($"{BaseErrorCode}.{nameof(InvalidOrder)}");
 
     public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
 
@@ -21,5 +21,5 @@ public sealed class CheckoutErrors
 
     public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
 
-    public static readonly Error InvalidProduct = Error.Validation($"{BaseErrorCode}.{nameof(InvalidProduct)}");
+    public static readonly Error ProductNotPurchasbale = Error.Validation($"{BaseErrorCode}.{nameof(ProductNotPurchasbale)}");
 }

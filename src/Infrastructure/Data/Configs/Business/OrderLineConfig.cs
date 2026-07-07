@@ -1,7 +1,7 @@
 
 
 using Domain.Orders;
-using Domain.Orders.OrderItems;
+using Domain.Orders.OrderLines;
 using Domain.ProductGroups.Products;
 using Infrastructure.Common.EfCore.ValueComparers;
 using Infrastructure.Common.EfCore.ValueConverters;
@@ -27,11 +27,7 @@ internal sealed class OrderLineConfig : BaseEntityConfig<OrderLine>
         builder.Property(x => x.UnitPrice)
                .IsRequired();
 
-        builder.Property(x => x.TotalPrice)
-               .IsRequired();
-
-
-        builder.Property(x => x.TaxAmount)
+        builder.Property(x => x.Total)
                .IsRequired();
 
         builder.Property(x => x.Status)
@@ -50,7 +46,7 @@ internal sealed class OrderLineConfig : BaseEntityConfig<OrderLine>
                .IsRequired(false);
 
         builder.HasOne<Order>()
-               .WithMany(x => x.Items)
+               .WithMany(x => x.Lines)
                .HasForeignKey(x => x.OrderId)
                .IsRequired();
 
@@ -59,6 +55,6 @@ internal sealed class OrderLineConfig : BaseEntityConfig<OrderLine>
                .HasForeignKey(x => x.ProductId)
                .IsRequired();
 
-        builder.ToTable("OrderItems");
+        builder.ToTable("OrderLines");
     }
 }

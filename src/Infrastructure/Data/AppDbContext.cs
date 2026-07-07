@@ -1,7 +1,7 @@
 
 using Domain.Orders;
 using Domain.ProductGroups;
-using Domain.Orders.OrderItems;
+using Domain.Orders.OrderLines;
 using Domain.ProductGroups.Products;
 using Domain.Brands;
 using Domain.Warehouses;
@@ -16,13 +16,14 @@ using Domain.ReturnItemRequestsReviews;
 using Infrastructure.Common.EfCore.ValueConverters;
 using Domain.Inventories;
 using Domain.Common.ValueObjects;
-using Domain.ShippingAddresses;
+using Domain.UserShippingAddresses;
 using Application.Entities;
 using Domain.Carts.CartItems;
 using Domain.Carts;
 using Domain.Countries;
 using Domain.Currencies;
 using Domain.Countries.StateProvinces;
+using Infrastructure.Data.Models;
 
 
 namespace Infrastructure.Data;
@@ -48,7 +49,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     public DbSet<ReturnItemRequest> ReturnRequests => Set<ReturnItemRequest>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<Address> Addresses => Set<Address>();
-    public DbSet<ShippingAddress> ShippingAddresses => Set<ShippingAddress>();
+    public DbSet<UserShippingAddress> ShippingAddresses => Set<UserShippingAddress>();
     public DbSet<ReturnItemRequestReview> ReturnItemRequestReviews => Set<ReturnItemRequestReview>();
 
     public DbSet<Country> Countries => Set<Country>();
@@ -56,6 +57,10 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     public DbSet<Currency> Currencies => Set<Currency>();
 
     public DbSet<StateProvince> StateProvinces => Set<StateProvince>();
+
+    public DbSet<StripeEvent> StripeEvents => Set<StripeEvent>();
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -91,6 +96,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
                .HaveConversion<MoneyConverter>();
 
         builder.Properties<EmailAddress>()
+               .HaveColumnType("VARCHAR(254)")
                .HaveConversion<EmailAddressConverter>();
 
         builder.IgnoreAny<IDomainEvent>();

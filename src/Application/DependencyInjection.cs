@@ -1,4 +1,6 @@
 
+using Domain.Services.Checkout;
+using Domain.Services.Shipping;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,8 +10,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
-        services.AddCustomServices(config);
-
+        services.AddCustomServices(config)
+                .AddDomainServices();
 
         return services;
     }
@@ -21,5 +23,12 @@ public static class DependencyInjection
 
         return services;
     }
+    private static IServiceCollection AddDomainServices(this IServiceCollection services)
+    {
+        services.AddTransient<ShippingCostCalculator>();
+        services.AddTransient<CheckoutService>();
 
+
+        return services;
+    }
 }
