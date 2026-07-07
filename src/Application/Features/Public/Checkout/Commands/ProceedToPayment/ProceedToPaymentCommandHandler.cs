@@ -3,7 +3,7 @@ using Application.Common.Extensions;
 using Application.Features.Public.Checkout.Dtos;
 using Domain.Orders.OrderLines;
 using Domain.Services.Checkout;
-
+#pragma warning disable IDE0042
 namespace Application.Features.Public.Checkout.Commands.ProceedToPayment;
 
 internal sealed class ProceedToPaymentCommandHandler(
@@ -20,8 +20,6 @@ internal sealed class ProceedToPaymentCommandHandler(
     public async Task<Result<string>> Handle(ProceedToPaymentCommand request, CancellationToken ct)
     {
         var identity = request.UserIdentity;
-        var successUrl = settings.BaseUrl;
-        var cancelUrl = settings.BaseUrl;
 
         var abandonedOrder = await context.Orders.UserAbandonedOrderQuery(identity)
                                                   .FirstOrDefaultAsync(ct);
@@ -33,7 +31,7 @@ internal sealed class ProceedToPaymentCommandHandler(
         }
 
 
-        var items = await context.CartItems.AsNoTracking()
+        var items = await context.CartItems
                                 .Join(context.Carts.UserCartQuery(identity), ci => ci.CartId, c => c.Id, (CartItem, Cart) => new { CartItem } )
                                 .Join(context.Products, x => x.CartItem.ProductId, p => p.Id, (CartItem, Product) => new { c = CartItem.CartItem, Product })
                                 .Join(context.ProductGroups, x => x.Product.ProductGroupId, g => g.Id, (cp, g) => new { CartItem = cp.c, Product = cp.Product, Group = g })
@@ -41,7 +39,8 @@ internal sealed class ProceedToPaymentCommandHandler(
                                 {
                                     x.CartItem.Quantity,
                                     x.Product,
-                                    x.Group
+                                    x.Group,
+                                    x.Product.Inventories
                                 }
                                 )
                                 .ToListAsync(ct);
@@ -53,7 +52,7 @@ internal sealed class ProceedToPaymentCommandHandler(
 
         var orderId = orderIdGen.NewId();
 
-        var lineDetails = items.Select(x => new OrderLineDetails(orderLineIdGen.NewId(), x.Product, x.Group, x.Quantity))
+        var lineDetails = items.Select(x => new OrderLineEntities(orderLineIdGen.NewId(), x.Product, x.Inventories, x.Group, x.Quantity))
                                .ToList();
 
         var orderResult = checkout.PlaceOrder(orderId, identity.UserId, identity.GuestId, null,  lineDetails);
@@ -76,7 +75,10 @@ internal sealed class ProceedToPaymentCommandHandler(
             return new OrderLineDetailsDto(x.Product.Id.Value, thumbnailUrl, x.Product.CurrentPrice.ToCents(), x.Group.Title, x.Quantity);
         }).ToList();
 
-        var checkoutDetails = new OrderDetailsDto(orderId.ToString(), _defaultCurrency, successUrl, cancelUrl, order.ShippingCost.ToCents(), orderLinesDetails);
+        var successUrl = Path.Combine(settings.OrderPaymentSucceededUrl, identity.IsUser ? identity.UserId.ToString()! : identity.GuestId!.ToString()!);
+        var failUrl = settings.OrderPaymentFailedUrl;
+
+        var checkoutDetails = new OrderDetailsDto(orderId.ToString(), _defaultCurrency, successUrl, failUrl, order.ShippingCost.ToCents(), orderLinesDetails);
 
         var response = await paymentGateway.StartPaymentProcessAsync(checkoutDetails, ct);
 

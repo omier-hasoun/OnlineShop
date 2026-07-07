@@ -19,7 +19,7 @@ public sealed class CheckoutErrors
 
     public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
 
-    public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+    public static readonly Error QuantityForProductNotAvailable = Error.Validation($"{BaseErrorCode}.{nameof(QuantityForProductNotAvailable)}");
 
     public static readonly Error ProductNotPurchasbale = Error.Validation($"{BaseErrorCode}.{nameof(ProductNotPurchasbale)}");
 }

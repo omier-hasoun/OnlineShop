@@ -1,4 +1,7 @@
 
+using Domain.Inventories;
+using static Domain.DomainErrors;
+
 namespace Domain.Services.Checkout;
 
 public sealed class CheckoutService
@@ -15,7 +18,7 @@ public sealed class CheckoutService
         GuestAccountId? guestId,
         string? ProviderPaymentId,
 
-        IReadOnlyCollection<OrderLineDetails> lineDetails)
+        IReadOnlyCollection<OrderLineEntities> lineDetails)
     {
         if (IsEmptyOrder(lineDetails))
         {
@@ -23,6 +26,7 @@ public sealed class CheckoutService
         }
 
         List<OrderLine> orderLines = new(lineDetails.Count);
+
 
         foreach (var l in lineDetails)
         {
@@ -35,6 +39,19 @@ public sealed class CheckoutService
             {
                 return CheckoutErrors.QuantityLimitExceeded;
             }
+
+            var inventory = l.inventories?.FirstOrDefault(x => x.StockQuantity >= l.Quantity);// get first inventory that has enough stock for the order
+
+            if (inventory is null)
+            {
+                return CheckoutErrors.QuantityForProductNotAvailable.WithParameters(l.Product.Id);
+            }
+
+            var remvoveQuantityResult = inventory.RemoveQuantity(l.Quantity);
+
+            if (remvoveQuantityResult.Failed)
+                return remvoveQuantityResult.TopError;
+
 
             var orderLineResult = OrderLine.Create(
                 l.Id,
@@ -60,11 +77,11 @@ public sealed class CheckoutService
         return Order.Create(orderId, userId, guestId, subTotal, total, shippingCost, ProviderPaymentId, orderLines);
     }
 
-    private static bool IsEmptyOrder(IReadOnlyCollection<OrderLineDetails> lines) => lines is null || lines.Count == 0;
+    private static bool IsEmptyOrder(IReadOnlyCollection<OrderLineEntities> lines) => lines is null || lines.Count == 0;
 
     private static bool CanBuyProduct(Product product) => product != null && product.IsPublished();
 
-    private static bool IsQuantityWithinLimit(OrderLineDetails line)
+    private static bool IsQuantityWithinLimit(OrderLineEntities line)
     {
         if (line.Quantity < 1)
             return false;

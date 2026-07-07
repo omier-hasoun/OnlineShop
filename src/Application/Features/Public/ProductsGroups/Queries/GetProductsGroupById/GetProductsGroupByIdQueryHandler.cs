@@ -20,7 +20,7 @@ internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : 
                         p.Images,
                         p.Slug,
                         p.Specifications,
-                        p.StockPerWarehouse.Any(stock => stock.Quantity > 0)
+                        p.Inventories.Any(stock => stock.StockQuantity > 0)
                     ))
                     .ToListAsync(ct);
 

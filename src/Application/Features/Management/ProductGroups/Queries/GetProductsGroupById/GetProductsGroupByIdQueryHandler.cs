@@ -22,9 +22,9 @@ internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : 
                                                   x.pg.Products.Select(p => new ProductListItemDto(
                                                                             p.Id, p.OriginalPrice, p.HasActiveDiscount, p.DiscountPercentage,
                                                                             p.PriceAfterDiscount, p.DiscountExpiresOn, p.Status, p.Images.FirstOrDefault(),
-                                                                            p.StockPerWarehouse.OrderBy(x => x.Quantity)
+                                                                            p.Inventories.OrderBy(x => x.StockQuantity)
                                                                                                .Select(x => new ProductInventoryDto(
-                                                                                                   x.WarehouseId, x.Warehouse.Name, x.Quantity))
+                                                                                                   x.WarehouseId, x.Warehouse.Name, x.StockQuantity))
                                                                                                .Take(2)
                                                                                                .ToList()
                                                                        ))

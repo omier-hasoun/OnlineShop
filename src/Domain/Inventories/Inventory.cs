@@ -10,7 +10,7 @@ public sealed class Inventory : IAggregateRoot // i want to a composite id in th
     {
         WarehouseId = warehouseId;
         ProductId = productId;
-        Quantity = quantity;
+        StockQuantity = quantity;
     }
 
     public static Result<Inventory> Create(WarehouseId warehouseId, ProductId productId, int quantity)
@@ -30,24 +30,21 @@ public sealed class Inventory : IAggregateRoot // i want to a composite id in th
 
     public WarehouseId WarehouseId { get; private init; }
     public ProductId ProductId { get; private init; }
-    public int Quantity { get; private set; }
+    public int StockQuantity { get; private set; }
 
     public Warehouse Warehouse { get; private set; } = null!;
 
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
     private readonly List<IDomainEvent> _domainEvents = [];
 
-    public Result<Success> ReserveItem(short quantity)
+    public Result<Success> RemoveQuantity(short quantity)
     {
-        if (quantity <= 0)
+        if (quantity <= 0 || quantity > StockQuantity)
         {
-
-        }
-        if (quantity > Quantity)
-        {
-
+            return DomainErrors.Inventories.QuantityOutOfRange;
         }
 
+        StockQuantity -= quantity;
 
         return Result.Success;
     }
@@ -62,7 +59,7 @@ public sealed class Inventory : IAggregateRoot // i want to a composite id in th
 
     public void ResetStock()
     {
-        Quantity = 0;
+        StockQuantity = 0;
     }
 
 

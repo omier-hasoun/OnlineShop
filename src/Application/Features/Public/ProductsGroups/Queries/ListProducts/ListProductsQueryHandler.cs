@@ -36,7 +36,7 @@ internal sealed class ListProductsQueryHandler(IAppDbContext context) : IRequest
             g.FeaturedProduct.HasActiveDiscount,
             g.FeaturedProduct.PriceAfterDiscount,
             g.FeaturedProduct.DiscountPercentage,
-            g.FeaturedProduct.StockPerWarehouse.Any(i => i.Quantity > 0)
+            g.FeaturedProduct.Inventories.Any(i => i.StockQuantity > 0)
         ));
 
 

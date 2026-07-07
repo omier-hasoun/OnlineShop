@@ -15,7 +15,7 @@ internal sealed class InventoryConfig : BaseEntityConfig<Inventory>
                .IsClustered();
 
         builder.HasOne<Product>()
-               .WithMany(x => x.StockPerWarehouse)
+               .WithMany(x => x.Inventories)
                .HasForeignKey(x => x.ProductId)
                .OnDelete(DeleteBehavior.Cascade)
                .IsRequired();
@@ -31,7 +31,7 @@ internal sealed class InventoryConfig : BaseEntityConfig<Inventory>
 
         builder.HasIndex(x => x.ProductId)
                .HasDatabaseName("IX_Inventories_ProductId_Quantity")
-               .IncludeProperties(x => x.Quantity);
+               .IncludeProperties(x => x.StockQuantity);
 
         builder.ToTable("Inventories");
 
