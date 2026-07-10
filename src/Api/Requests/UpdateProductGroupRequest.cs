@@ -2,17 +2,17 @@ namespace Api.Requests;
 
 public sealed record UpdateProductGroupRequest
 {
-    public Guid? NewBrandId { get; init; }
+    public Guid? BrandId { get; init; }
 
-    public long? NewCategoryId { get; init; }
+    public long? CategoryId { get; init; }
 
-    public string? NewTitle { get; init; }
+    public string? Title { get; init; }
 
-    public string? NewDescription { get; init; }
+    public string? Description { get; init; }
 
-    public bool? NewIsSerialized { get; init; }
+    public bool? IsSerialized { get; init; }
 
-    public Dictionary<string, string>? NewAttributes { get; init; }
+    public Dictionary<string, string>? Attributes { get; init; }
 
     public UpdateProductGroupRequest()
     {

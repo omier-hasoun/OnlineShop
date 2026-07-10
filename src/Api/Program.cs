@@ -1,9 +1,6 @@
 
 using Api.Minimals;
-using Application.Common.Configurations;
 using Application.Entities;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 
 namespace Api
@@ -16,19 +13,18 @@ namespace Api
             var config = builder.Configuration;
 
             // specifies how much space can an image be allocated in memory that is processed by NetVips.
-            // so this env means : 5 megabytes if bigger then use temp files instead when processing an image
+            // so this env means : 5 megabytes if the image is bigger, then it uses temp files instead
+            GlobalSetups.Init();
             Environment.SetEnvironmentVariable("VIPS_DISC_THRESHOLD", "5m");
 
-            if (!builder.Environment.IsDevelopment())
-                config.AddEnvironmentVariables();
-            else 
-                config.AddUserSecrets("7f342e59-c0e1-4ef5-9bd1-126a96fa7a5b");
+            config.AddEnvironmentVariables();
+            config.AddUserSecrets("7f342e59-c0e1-4ef5-9bd1-126a96fa7a5b");
 
 
             builder.Services.AddApiServices(config, builder.Environment)
                             .AddApplicationServices(config)
                             .AddInfrastructureServices(config,  builder.Environment);
-            GlobalSetups.Init();
+
 
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();

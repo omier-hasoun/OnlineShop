@@ -469,7 +469,7 @@ namespace Infrastructure.Data.Migrations
                     b.Property<long>("WarehouseId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("StockQuantity")
                         .HasColumnType("int");
 
                     b.HasKey("ProductId", "WarehouseId");
@@ -479,7 +479,7 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("ProductId")
                         .HasDatabaseName("IX_Inventories_ProductId_Quantity");
 
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ProductId"), new[] { "Quantity" });
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ProductId"), new[] { "StockQuantity" });
 
                     b.HasIndex("WarehouseId")
                         .HasDatabaseName("IX_Inventories_WarehouseId");
@@ -1195,7 +1195,7 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("Domain.Inventories.Inventory", b =>
                 {
                     b.HasOne("Domain.ProductGroups.Products.Product", null)
-                        .WithMany("StockPerWarehouse")
+                        .WithMany("Inventories")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1594,7 +1594,7 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.ProductGroups.Products.Product", b =>
                 {
-                    b.Navigation("StockPerWarehouse");
+                    b.Navigation("Inventories");
                 });
 #pragma warning restore 612, 618
         }

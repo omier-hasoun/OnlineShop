@@ -1,41 +1,51 @@
+using Application.Common.Dtos;
 using Application.Entities;
-using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Infrastructure.BackgroundJobs;
 
-public sealed class EmailSenderFaker: IEmailSender<AppUser>, IEmailSender
+public sealed class EmailSenderFaker(IEmailService emailService) : IEmailSender<AppUser>
 {
-    public Task SendConfirmationLinkAsync(AppUser user, string email, string confirmationLink)
+    public async Task SendConfirmationLinkAsync(AppUser user, string email, string confirmationLink)
     {
 
-        if(user.EmailConfirmed)
+        if (user.EmailConfirmed)
         {
-            Console.WriteLine("Email is already confirmed.");
+            return;
         }
-        Console.WriteLine($"Send confirmation: {confirmationLink}");
-
-        return Task.CompletedTask;
+        string body =
+$@"
+<a 
+  href=""{confirmationLink}""
+  style=""
+    display:inline-block;
+    padding:12px 24px;
+    background:#2563eb;
+    color:white;
+    text-decoration:none;
+    border-radius:6px;
+  "">
+  Confirm Email
+</a>
+    ";
+        await emailService.SendEmailAsync(new EmailMessageRequest("Omier Hasoun", emailService.NoReplyInfoEmail, email, "Confirm your email", body, true));
     }
-
-    public Task SendPasswordResetLinkAsync(AppUser user, string email, string resetLink)
+    public async Task SendPasswordResetLinkAsync(AppUser user, string email, string resetLink)
     {
 
-        Console.WriteLine(@$"/////Send password reset: {resetLink}\\\\\\");
+//        string body =
+//$@"
 
-        return Task.CompletedTask;
+//    ";
+//        await emailService.SendEmailAsync(new EmailMessageRequest("", email, "Confirm your email", body));
     }
 
-    public Task SendPasswordResetCodeAsync(AppUser user, string email, string resetCode)
+    public async Task SendPasswordResetCodeAsync(AppUser user, string email, string resetCode)
     {
-        Console.WriteLine($"Reset code: {resetCode}");
-        return Task.CompletedTask;
+//        string body =
+//$@"
+
+//    ";
+//        await emailService.SendEmailAsync(new EmailMessageRequest("", email, "Confirm your email", body));
     }
 
-    public Task SendEmailAsync(string email, string subject, string htmlMessage)
-    {
-        // Implement your email sending logic here.
-        Console.WriteLine($"Sending email to {email} with subject '{subject}'");
-        Console.WriteLine($"Message: {htmlMessage}");
-        return Task.CompletedTask;
-    }
 }

@@ -1,6 +1,5 @@
-
+#region usings
 using System.Threading.Channels;
-using Application.Common.Configurations;
 using Application.Entities;
 using Domain.Carts;
 using Domain.Carts.CartItems;
@@ -14,23 +13,24 @@ using FileSignatures;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.Channels;
 using Infrastructure.Common.Exceptions;
+using Infrastructure.Configurations;
 using Infrastructure.Data.IdGenerators;
 using Infrastructure.Data.IdGenerators.Primitives;
 using Infrastructure.Data.Interceptors;
-using Infrastructure.ExternalServices.Email.Console;
-using Infrastructure.ExternalServices.Payment.StripeService;
-using Infrastructure.LocalServices.DiscountReset;
-using Infrastructure.LocalServices.FileNameGeneratorService;
-using Infrastructure.LocalServices.FileStorageService;
-using Infrastructure.LocalServices.FileValidator;
-using Infrastructure.LocalServices.Hashing;
-using Infrastructure.LocalServices.ImagesStore;
-using Infrastructure.LocalServices.Messaging;
+using Infrastructure.Services.DiscountReset;
+using Infrastructure.Services.Email.Console;
+using Infrastructure.Services.Email.Maileroo;
+using Infrastructure.Services.Hashing;
+using Infrastructure.Services.Messaging;
+using Infrastructure.Services.Payment.StripeService;
+using Infrastructure.Services.Storage;
+using Infrastructure.Services.Storage.Images;
+using Infrastructure.Services.UrlProviders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Hosting;
 using App = Application.Common.Abstractions;
-
+#endregion
 
 namespace Infrastructure; 
 
@@ -38,7 +38,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config, IWebHostEnvironment enviroment)
     {
-        services.AddCustomServices()
+        services.AddCustomServices(config)
                 .AddEfCoreServices(config, enviroment)
                 .AddIdGenServices(config)
                 .AddIdGeneratorServices()
@@ -51,7 +51,9 @@ public static class DependencyInjection
 
     private static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration config)
     {
-        services.Configure<ProductImagePathOptions>(config.GetSection(nameof(ProductImagePathOptions)));
+        services.Configure<ApplicationUrlsOptions>(config.GetSection(ApplicationUrlsOptions.SectionName));
+
+        services.Configure<MediaOptions>(config.GetSection(MediaOptions.SectionName));
 
         services.Configure<StripeOptions>(options =>
         {
@@ -67,7 +69,7 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddCustomServices(this IServiceCollection services)
+    private static IServiceCollection AddCustomServices(this IServiceCollection services, IConfiguration config)
     {
         services.AddTransient<IImageValidator, ImageValidator>();
         services.AddSingleton<IFileStorageService, LocalFileStorageService>();
@@ -77,15 +79,6 @@ public static class DependencyInjection
         services.AddHostedService<StripeEventProcessingWorker>();
         services.AddHostedService<OrderRefundProcessingWorker>();
         services.AddHostedService<OutboxMessagesProcessingWorker>();
-
-
-        services.AddSingleton<ApplicationSettings>(sp =>
-        {
-            var baseUrl = sp.GetRequiredService<IConfiguration>()["BaseUrl"];
-            var businessName = sp.GetRequiredService<IConfiguration>()["BusinessName"];
-
-            return new ApplicationSettings(baseUrl, businessName);
-        });
 
         services.AddSingleton(sp => {
 
@@ -98,18 +91,48 @@ public static class DependencyInjection
             });
             
          });
-        services.AddSingleton<IImageStorageService, ImagesStoreService>();
+
+        services.AddSingleton<IProductThumbnailUrlProvider, ProductThumbnailUrlProvider>();
+
+        services.AddSingleton<IApplicationUrlProvider, ApplicationUrlProvider>();
+
+        services.AddSingleton<IImageStorageService, ImagesStorageService>();
         services.AddSingleton<IImageJobReader, ImageProcessingJobsChannel>();
         services.AddSingleton<IImageJobWriter, ImageProcessingJobsChannel>();
         services.AddSingleton<IPaymentGateway, StripePaymentGateway>();
-        services.AddSingleton<IUniqueFileNameGenerator, FileNameGenerator>();
+        services.AddSingleton<IEmailService, MailerooMailService>(sp =>
+        {
+            var noReplyInfoEmail = config["NoReplyInfoEmail"] ?? throw new InvalidOperationException("NoReplyInfoEmail was not configured");
+            var serviceEmail = config["ServiceEmail"] ?? throw new InvalidOperationException("ServiceEmail was not configured");
+
+            return new MailerooMailService(sp.GetRequiredService<IHttpClientFactory>(), noReplyInfoEmail, serviceEmail);
+        });
+
+        services.AddSingleton<IUniqueImageNameProvider, UniqueImageNameProvider>();
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
         services.AddSingleton<IZeroOclockService, DiscountResetService>();
-        services.AddSingleton<INotificationService, ConsoleMailService>();
 
+        services.AddHttpClient("Maileroo", client =>
+        {
+            var apiKey = config["OMIER_MAILEROO_KEY"];
 
-        return services;
+            if (string.IsNullOrWhiteSpace(apiKey))
+            {
+                throw new InvalidOperationException("Maileroo API key was not configured.");
+            }
+
+            client.BaseAddress = new Uri("https://smtp.maileroo.com/api/v2/");
+            client.Timeout = TimeSpan.FromSeconds(15);
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+
+        }).AddStandardResilienceHandler(options =>
+        {
+            options.Retry.MaxRetryAttempts = 1;
+            
+        });
+
+  return services;
     }
 
     private static IServiceCollection AddIdGeneratorServices(this IServiceCollection services)

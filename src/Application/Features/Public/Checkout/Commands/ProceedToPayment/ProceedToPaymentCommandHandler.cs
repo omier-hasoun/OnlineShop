@@ -1,19 +1,20 @@
-using Application.Common.Configurations;
-using Application.Common.Extensions;
+
 using Application.Features.Public.Checkout.Dtos;
+using Domain.Common.ValueObjects;
 using Domain.Orders.OrderLines;
 using Domain.Services.Checkout;
 #pragma warning disable IDE0042
+
 namespace Application.Features.Public.Checkout.Commands.ProceedToPayment;
 
 internal sealed class ProceedToPaymentCommandHandler(
     IAppDbContext context,
     CheckoutService checkout,
+    IProductThumbnailUrlProvider thumbnailUrlProvider,
     IPaymentGateway paymentGateway,
-    IOptions<ProductImagePathOptions> opt,
     IIdGenerator<OrderId> orderIdGen,
     IIdGenerator<OrderLineId> orderLineIdGen,
-    ApplicationSettings settings) : IRequestHandler<ProceedToPaymentCommand, Result<string>>
+    IApplicationUrlProvider appUrlProvider) : IRequestHandler<ProceedToPaymentCommand, Result<string>>
 {
     private const string _defaultCurrency = "usd";
 
@@ -21,47 +22,32 @@ internal sealed class ProceedToPaymentCommandHandler(
     {
         var identity = request.UserIdentity;
 
-        var abandonedOrder = await context.Orders.UserAbandonedOrderQuery(identity)
-                                                  .FirstOrDefaultAsync(ct);
+        var orderId = orderIdGen.NewId();
 
-        if (abandonedOrder != null)
-        {
-           await paymentGateway.CancelPaymentProcess(abandonedOrder!.ProviderReferenceId!, CancellationToken.None);
-           context.Orders.Remove(abandonedOrder);
-        }
+        string successUrl = appUrlProvider.GetPaymentSuccessUrl("dd");// should change later
 
+        string cancelUrl = appUrlProvider.GetPaymentFailedUrl("dd");// should change later
 
-        var items = await context.CartItems
-                                .Join(context.Carts.UserCartQuery(identity), ci => ci.CartId, c => c.Id, (CartItem, Cart) => new { CartItem } )
-                                .Join(context.Products, x => x.CartItem.ProductId, p => p.Id, (CartItem, Product) => new { c = CartItem.CartItem, Product })
-                                .Join(context.ProductGroups, x => x.Product.ProductGroupId, g => g.Id, (cp, g) => new { CartItem = cp.c, Product = cp.Product, Group = g })
-                                .Select(x => new
-                                {
-                                    x.CartItem.Quantity,
-                                    x.Product,
-                                    x.Group,
-                                    x.Product.Inventories
-                                }
-                                )
-                                .ToListAsync(ct);
+        await CancelOrderPaymentProcessAndOrderIfExists(identity, ct);
+
+        var items = await GetCartDetails(identity, ct);
 
         if (items.Count == 0)
         {
             return ApplicationErrors.Validation.CartIsEmpty;
         }
 
-        var orderId = orderIdGen.NewId();
 
-        var lineDetails = items.Select(x => new OrderLineEntities(orderLineIdGen.NewId(), x.Product, x.Inventories, x.Group, x.Quantity))
-                               .ToList();
+        items.ForEach(x => x.Id = orderLineIdGen.NewId());// giving ids for the order lines
 
-        var orderResult = checkout.PlaceOrder(orderId, identity.UserId, identity.GuestId, null,  lineDetails);
+
+        var orderResult = checkout.PlaceOrder(orderId, identity.UserId, identity.GuestId, null, items);
 
         if (orderResult.Failed)
             return orderResult.Errors;
 
         var order = orderResult.Value;
-        var productThumnailUrl = Path.Combine(settings.BaseUrl, opt.Value.Images_200x200);
+
 
         var orderLinesDetails = items.Select(x =>
         {
@@ -70,30 +56,70 @@ internal sealed class ProceedToPaymentCommandHandler(
             string? thumbnailUrl = null;
 
             if (imageFileName != null)
-                thumbnailUrl = Path.Combine(productThumnailUrl, imageFileName);
+                thumbnailUrl = thumbnailUrlProvider.GetUrl(imageFileName, ProductThumbnailSize.Small);
 
             return new OrderLineDetailsDto(x.Product.Id.Value, thumbnailUrl, x.Product.CurrentPrice.ToCents(), x.Group.Title, x.Quantity);
-        }).ToList();
+        })
+        .ToList();
 
-        var successUrl = Path.Combine(settings.OrderPaymentSucceededUrl, identity.IsUser ? identity.UserId.ToString()! : identity.GuestId!.ToString()!);
-        var failUrl = settings.OrderPaymentFailedUrl;
 
-        var checkoutDetails = new OrderDetailsDto(orderId.ToString(), _defaultCurrency, successUrl, failUrl, order.ShippingCost.ToCents(), orderLinesDetails);
+        string? userEmail = await context.Users.Where(x => x.Id == identity.UserId)
+                                               .Select(x => x.NormalizedUserName)
+                                               .FirstOrDefaultAsync(ct);
+        bool collectUserEmail = false;
 
-        var response = await paymentGateway.StartPaymentProcessAsync(checkoutDetails, ct);
+        if (!string.IsNullOrEmpty(userEmail))
+        {
+            order.SetEmailAddress(EmailAddress.Create(userEmail).Value);
+        }
+        else
+        {
+            collectUserEmail = true;
+        }
 
-        if(response.SessionUrl is null || response.SessionId is null)
+        var orderDetails = new OrderDetailsDto(orderId.ToString(), _defaultCurrency, successUrl, cancelUrl, order.ShippingCost.ToCents(), orderLinesDetails, collectUserEmail);
+
+        var PaymentProcess = await paymentGateway.StartPaymentProcessAsync(orderDetails, ct);
+
+        if (PaymentProcess.SessionUrl is null || PaymentProcess.SessionId is null)
         {
             return ApplicationErrors.Unexpected.CheckoutFailed;
         }
 
-        order.SetProviderPaymentId(response.SessionId);
+        order.SetProviderPaymentId(PaymentProcess.SessionId);
 
         context.Orders.Add(order);
 
         await context.SaveAsync(ct);
 
-        return response.SessionUrl;
+        return PaymentProcess.SessionUrl;
+    }
+
+    private async Task CancelOrderPaymentProcessAndOrderIfExists(UserIdentity identity, CancellationToken ct)
+    {
+        var Order = await context.Orders.UserAbandonedOrderQuery(identity)
+                                        .FirstOrDefaultAsync(ct);
+
+        if (Order != null)
+        {
+            await paymentGateway.CancelPaymentProcess(Order.ProviderReferenceId!, CancellationToken.None);
+            context.Orders.Remove(Order);
+        }
+    }
+
+    private async Task<List<ItemInfo>> GetCartDetails(UserIdentity identity, CancellationToken ct)
+    {
+        return await context.CartItems
+                     .Join(context.Carts.GetUserCartQuery(identity), ci => ci.CartId, c => c.Id, (CartItem, Cart) => new { CartItem })
+                     .Join(context.Products, x => x.CartItem.ProductId, p => p.Id, (CartItem, Product) => new { c = CartItem.CartItem, Product })
+                     .Join(context.ProductGroups, x => x.Product.ProductGroupId, g => g.Id, (cp, g) => new { CartItem = cp.c, Product = cp.Product, Group = g })
+                     .Select(x => new ItemInfo(
+                         x.Product,
+                         x.Product.Inventories.ToList(),
+                         x.Group,
+                         x.CartItem.Quantity
+                     ))
+                     .ToListAsync(ct);
     }
 
 }

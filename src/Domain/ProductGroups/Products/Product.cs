@@ -93,7 +93,7 @@ public sealed class Product : BaseEntity<ProductId>
 
     public string BarCode { get; private init; } = null!;
 
-    public IReadOnlyList<Inventory> Inventories { get; private set; } = [];
+    public IReadOnlyList<Inventory> Inventories { get; private set { field = value.ToList(); } }
 
     private bool CanTransitionTo(ProductState newStatus)
     {

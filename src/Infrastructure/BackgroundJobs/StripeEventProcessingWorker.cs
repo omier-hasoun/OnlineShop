@@ -1,5 +1,5 @@
 
-using Application.Features.Public.Checkout.Commands.ProcessCheckoutCompleted;
+using Application.Features.Public.Checkout.Commands.ProcessPaymentSucceeded;
 using Infrastructure.Data.Models;
 using MediatR;
 using Microsoft.Extensions.Hosting;
@@ -33,7 +33,7 @@ internal sealed class StripeEventProcessingWorker(IServiceProvider provider, Tim
                 await UpdateStatus(db, e.Id, StripeEventState.Processing, ct);
                 try
                 {
-                    await mediator.Send(new ProcessCheckoutCompletedCommand(e.StripeSessionId), ct);
+                    await mediator.Send(new ProcessPaymentSucceededCommand(e.StripeSessionId), ct);
 
                     await UpdateStatus(db, e.Id, StripeEventState.Processed, ct);
                 }

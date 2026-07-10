@@ -3,7 +3,7 @@ using System.Text.Json;
 using Api.Common.JsonConverters;
 using Api.Services;
 using Infrastructure.BackgroundJobs;
-using Infrastructure.LocalServices.Hashing;
+using Infrastructure.Services.Hashing;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
 
@@ -13,8 +13,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration config, IWebHostEnvironment env)
     {
-
-
         services.AddCustomServices()
                 .AddHttpContextAccessor()
                 .AddOpenApiAndScalarServices()
@@ -26,8 +24,6 @@ public static class DependencyInjection
 
     private static IServiceCollection AddCustomServices(this IServiceCollection services)
     {
-        // for simple dependency injection Transient/Singleton/Scoped
-        services.AddTransient<IEmailSender, EmailSenderFaker>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 

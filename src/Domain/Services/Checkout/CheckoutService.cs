@@ -18,7 +18,7 @@ public sealed class CheckoutService
         GuestAccountId? guestId,
         string? ProviderPaymentId,
 
-        IReadOnlyCollection<OrderLineEntities> lineDetails)
+        IReadOnlyCollection<ItemInfo> lineDetails)
     {
         if (IsEmptyOrder(lineDetails))
         {
@@ -77,11 +77,11 @@ public sealed class CheckoutService
         return Order.Create(orderId, userId, guestId, subTotal, total, shippingCost, ProviderPaymentId, orderLines);
     }
 
-    private static bool IsEmptyOrder(IReadOnlyCollection<OrderLineEntities> lines) => lines is null || lines.Count == 0;
+    private static bool IsEmptyOrder(IReadOnlyCollection<ItemInfo> lines) => lines is null || lines.Count == 0;
 
     private static bool CanBuyProduct(Product product) => product != null && product.IsPublished();
 
-    private static bool IsQuantityWithinLimit(OrderLineEntities line)
+    private static bool IsQuantityWithinLimit(ItemInfo line)
     {
         if (line.Quantity < 1)
             return false;

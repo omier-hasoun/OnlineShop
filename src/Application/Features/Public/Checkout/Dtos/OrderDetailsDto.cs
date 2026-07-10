@@ -7,7 +7,8 @@ string Currency,
 string SuccessUrl,
 string CancelUrl,
 long ShippingCost,
-IReadOnlyCollection<OrderLineDetailsDto> OrderLines
+IReadOnlyCollection<OrderLineDetailsDto> OrderLines,
+bool CollectEmailAddress = true
 )
 {
 

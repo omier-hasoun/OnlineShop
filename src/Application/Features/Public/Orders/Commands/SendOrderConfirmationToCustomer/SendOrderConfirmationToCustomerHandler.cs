@@ -1,12 +1,12 @@
 
-using Application.Common.Dtos;
 using Domain.Orders.Events;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Public.Orders.Commands.SendOrderConfirmationToCustomer;
 
-internal sealed class SendOrderConfirmationToCustomerHandler(INotificationService notifier, ApplicationSettings settings) : INotificationHandler<DomainEventNotification<OrderConfirmed>>
+internal sealed class SendOrderConfirmationToCustomerHandler(IEmailService emailService, ILogger<SendOrderConfirmationToCustomerHandler> logger) : INotificationHandler<DomainEventNotification<OrderPaidSuccessfully>>
 {
-    public async Task Handle(DomainEventNotification<OrderConfirmed> notification, CancellationToken ct)
+    public async Task Handle(DomainEventNotification<OrderPaidSuccessfully> notification, CancellationToken ct)
     {
         var dm = notification.DomainEvent;
 
@@ -16,7 +16,7 @@ internal sealed class SendOrderConfirmationToCustomerHandler(INotificationServic
 Hello {dm.BillingAddress.FullName},
 
 Your order has been confirmed.
-Thank you for ordering from {settings.BusinessName}.
+Thank you for ordering from alternate.
 
 order details:
 
@@ -34,7 +34,15 @@ order subtotal amount: {dm.SubTotal}
 order shipping cost: {dm.ShippingCost}
 order total amount: {dm.Total}";
 
-        var request = new NotificationRequest("om@gmail.com", dm.Email.ToString(), subject, body);
-        await notifier.NotifyAsync(request);
+        var request = new EmailMessageRequest("Omier Hasoun", emailService.NoReplyInfoEmail, dm.Email.ToString(), subject, body);
+
+        try
+        {
+            await emailService.SendEmailAsync(request);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.Message);
+        }
     }
 }

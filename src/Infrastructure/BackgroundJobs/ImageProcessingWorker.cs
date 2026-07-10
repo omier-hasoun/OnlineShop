@@ -1,5 +1,5 @@
 
-using Application.Common.Configurations;
+using Infrastructure.Configurations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -10,7 +10,7 @@ namespace Infrastructure.BackgroundJobs;
 
 internal sealed class ImageProcessingWorker : BackgroundService
 {
-    public ImageProcessingWorker(IOptions<ProductImagePathOptions> options, IImageJobReader reader, IWebHostEnvironment env, IFileStorageService storageService)
+    public ImageProcessingWorker(IOptions<MediaOptions> options, IImageJobReader reader, IWebHostEnvironment env, IFileStorageService storageService)
     {
         _reader = reader;
         _storageService = storageService;
@@ -19,20 +19,20 @@ internal sealed class ImageProcessingWorker : BackgroundService
 
         _dir2000x2000 = Path.Combine(
             _webRootPath,
-            options.Value.Images_2000x2000);
+            options.Value.Images.Products.Large);
 
         _dir600x600 = Path.Combine(
         _webRootPath,
-        options.Value.Images_600x600);
+        options.Value.Images.Products.Medium);
 
         _dir200x200 = Path.Combine(
             _webRootPath,
-            options.Value.Images_200x200);
+            options.Value.Images.Products.Small);
 
 
         _dirOriginal = Path.Combine(
             _webRootPath,
-            options.Value.Images_Original);
+            options.Value.Images.Products.Original);
     }
 
     private readonly IImageJobReader _reader;

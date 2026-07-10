@@ -70,7 +70,23 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
         return Result.Updated;
     }
 
-    public Result<Updated> MarkAsConfirmed(AddressDetails billingAddress, AddressDetails shippingAddress, EmailAddress email, Money taxAmount)
+    public Result<Updated> SetEmailAddress(EmailAddress email)
+    {
+        if (Status != OrderState.Pending)
+        {
+            return DomainErrors.Locked;
+        }
+
+        var result = ValidateEmail(email);
+
+        if (result.Failed)
+            return result.Errors;
+
+        Email = email;
+        return Result.Updated;
+    }
+
+    public Result<Updated> MarkAsConfirmed(AddressDetails billingAddress, AddressDetails shippingAddress, Money taxAmount)
     {
         if (!CanTransitionTo(OrderState.Confirmed))
         {
@@ -83,7 +99,7 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
         }
 
         var validationResult = Result.ValidateAll(
-                                () => ValidateEmail(email),
+                                () => ValidateEmail(Email),
                                 () => ValidateBillingAddress(billingAddress),
                                 () => ValidateShippingAddress(shippingAddress),
                                 () => ValidateTaxAmount(taxAmount));
@@ -92,13 +108,12 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
             return validationResult.Errors;
 
         this.Status = OrderState.Confirmed;
-        this.Email = email;
         this.BillingAddress = billingAddress;
         this.ShippingAddress = shippingAddress;
 
         this.TaxAmount = taxAmount;
         this.Total = Money.Create(SubTotal.Value + taxAmount.Value + ShippingCost.Value);
-        RaiseDomainEvent(new OrderConfirmed(Id, Email, Total, SubTotal, ShippingCost, ShippingAddress, BillingAddress));
+        RaiseDomainEvent(new OrderPaidSuccessfully(Id, Email!, Total, SubTotal, ShippingCost, ShippingAddress, BillingAddress));
 
         return Result.Updated;
     }
@@ -146,13 +161,13 @@ public sealed class Order : AggregateRoot<OrderId>, IHasCreationTime
         return Result.Success;
     }
 
-    private static Result<Success> ValidateEmail(EmailAddress email) => 
+    private static Result<Success> ValidateEmail(EmailAddress? email) => 
       email != null ? Result.Success : DomainErrors.Orders.EmailInvalid;
-    private static Result<Success> ValidateBillingAddress(AddressDetails billingAddress) =>
+    private static Result<Success> ValidateBillingAddress(AddressDetails? billingAddress) =>
   billingAddress != null ? Result.Success : DomainErrors.Orders.BillingAddressInvalid;
-    private static Result<Success> ValidateShippingAddress(AddressDetails shippingAddress) =>
+    private static Result<Success> ValidateShippingAddress(AddressDetails? shippingAddress) =>
   shippingAddress != null ? Result.Success : DomainErrors.Orders.ShippingAddressInvalid;
 
-    private static Result<Success> ValidateTaxAmount(Money taxAmount) =>
+    private static Result<Success> ValidateTaxAmount(Money? taxAmount) =>
 taxAmount != null ? Result.Success : DomainErrors.Orders.TaxAmountInvalid;
 }

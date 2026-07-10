@@ -1,6 +1,7 @@
 
 using System.Security.Principal;
 using Application.Common.Dtos;
+using Application.Entities;
 using Application.Features.Public.Checkout.Dtos;
 using Domain.Brands;
 using Domain.Carts;
@@ -8,7 +9,6 @@ using Domain.Carts.CartItems;
 using Domain.Categories;
 using Domain.Common.ValueObjects;
 using Domain.ProductGroups.Products;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Shared.Helpers;
 
 namespace Application.Common.Extensions;
@@ -97,7 +97,7 @@ internal static class QueryableExtensions
 
     #region carts
 
-    public static IQueryable<Cart?> UserCartQuery(this IQueryable<Cart> query, UserIdentity identity)
+    public static IQueryable<Cart?> GetUserCartQuery(this IQueryable<Cart> query, UserIdentity identity)
     {
         ArgumentNullException.ThrowIfNull(identity);
 

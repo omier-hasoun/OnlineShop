@@ -13,3 +13,6 @@ global using Domain.Orders;
 global using Domain.ProductGroups;
 global using Domain.Common.Rules;
 global using Application;
+global using Application.Common.Dtos;
+global using Application.Common.Enums;
+global using Application.Common.Extensions;

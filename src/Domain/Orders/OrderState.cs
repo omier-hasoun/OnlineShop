@@ -4,7 +4,7 @@ namespace Domain.Orders;
 public enum OrderState
 {
     Pending = 1,
-    Confirmed,
+    Confirmed = 2,
     RefundRequired,
     Processing,
     Delivered,
