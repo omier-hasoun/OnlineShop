@@ -31,7 +31,7 @@ namespace Infrastructure.Data;
 public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserClaim, IdentityUserRole<Guid>, UserLoginProvider, RoleClaim, UserToken, IdentityUserPasskey<Guid>>, IAppDbContext
 {
     public DbSet<Order> Orders => Set<Order>();
-    public DbSet<OrderLine> OrderItems => Set<OrderLine>();
+    public DbSet<OrderLine> OrderLines => Set<OrderLine>();
     public DbSet<ProductReview> Reviews => Set<ProductReview>();
     public DbSet<CartItem> CartItems => Set<CartItem>();
     public DbSet<Shipment> Shipments => Set<Shipment>();
@@ -74,6 +74,13 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
     protected override void OnModelCreating(ModelBuilder builder)
     {
 
+        builder.Entity<IdentityUserRole<Guid>>(b =>
+        {
+            b.ToTable("UserRoles");
+
+            b.HasKey(ur => new { ur.UserId, ur.RoleId });
+        });
+
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
         ConfigureISoftDeleted(builder);
@@ -86,8 +93,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
         ApplySoftDeleteQueryFilterOnAllMembersOfISoftDelete(builder);
 
         builder.Ignore<IdentityUserPasskey<Guid>>();
-        builder.Ignore<RoleClaim>();
-        
+
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder builder)
@@ -108,7 +114,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
         var types = builder.Model.GetEntityTypes().ToList();
         foreach (var entityType in types)
         {
-            
+
             if(typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
             {
                 var method = typeof(AppDbContext).GetMethod(nameof(ApplySoftDeleteQueryFilter), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
@@ -160,7 +166,7 @@ public sealed class AppDbContext : IdentityDbContext<AppUser, Role, Guid, UserCl
         {
             b.Property(nameof(IModificationAudited.LastModifiedBy))
              .IsRequired();
-            
+
             b.HasOne(typeof(AppUser))
              .WithMany()
              .HasForeignKey(nameof(IModificationAudited.LastModifiedBy))

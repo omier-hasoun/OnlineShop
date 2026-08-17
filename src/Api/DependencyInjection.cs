@@ -1,10 +1,6 @@
-//using Api.Services;
 using System.Text.Json;
 using Api.Common.JsonConverters;
 using Api.Services;
-using Infrastructure.BackgroundJobs;
-using Infrastructure.Services.Hashing;
-using Microsoft.AspNetCore.Identity.UI.Services;
 
 
 namespace Api;
@@ -25,15 +21,17 @@ public static class DependencyInjection
     private static IServiceCollection AddCustomServices(this IServiceCollection services)
     {
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-
+        
+        services.AddExceptionHandler<GlobalExceptionHandler>();
 
         services.AddControllers()
-                    .AddJsonOptions(options =>
+                   .AddJsonOptions(options =>
         {
-            options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            options.JsonSerializerOptions.Converters.Add(new LongAsStringJsonConverter());
-            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+           options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+           options.JsonSerializerOptions.Converters.Add(new LongAsStringJsonConverter());
+           options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
+
 
         return services;
     }

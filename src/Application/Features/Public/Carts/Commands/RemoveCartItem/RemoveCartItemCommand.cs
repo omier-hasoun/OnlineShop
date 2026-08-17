@@ -4,7 +4,7 @@ using Domain.Carts.CartItems;
 
 namespace Application.Features.Public.Carts.Commands.RemoveCartItem;
 
-public sealed record RemoveCartItemCommand(long CartItemId, UserIdentity CartIdentity) : IRequest<Result<Deleted>>
+public sealed record RemoveCartItemCommand(long CartItemId, CurrentUser CartIdentity) : IRequest<Result<Deleted>>
 {
     internal CartItemId ParsedCartItemId => new(CartItemId);
 }

@@ -15,8 +15,8 @@ internal sealed class InventoryConfig : BaseEntityConfig<Inventory>
                .IsClustered();
 
         builder.HasOne<Product>()
-               .WithMany(x => x.Inventories)
-               .HasForeignKey(x => x.ProductId)
+               .WithOne(x => x.Inventory)
+               .HasForeignKey<Inventory>(x => x.ProductId)
                .OnDelete(DeleteBehavior.Cascade)
                .IsRequired();
 

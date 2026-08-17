@@ -1,7 +1,4 @@
 
-using Domain.Inventories;
-using static Domain.DomainErrors;
-
 namespace Domain.Services.Checkout;
 
 public sealed class CheckoutService
@@ -40,18 +37,10 @@ public sealed class CheckoutService
                 return CheckoutErrors.QuantityLimitExceeded;
             }
 
-            var inventory = l.inventories?.FirstOrDefault(x => x.StockQuantity >= l.Quantity);// get first inventory that has enough stock for the order
+            var reserveQuantityResult = l.Inventory.ReserveQuantity(l.Quantity);
 
-            if (inventory is null)
-            {
-                return CheckoutErrors.QuantityForProductNotAvailable.WithParameters(l.Product.Id);
-            }
-
-            var remvoveQuantityResult = inventory.RemoveQuantity(l.Quantity);
-
-            if (remvoveQuantityResult.Failed)
-                return remvoveQuantityResult.TopError;
-
+            if (reserveQuantityResult.Failed)
+                return reserveQuantityResult.Errors;
 
             var orderLineResult = OrderLine.Create(
                 l.Id,

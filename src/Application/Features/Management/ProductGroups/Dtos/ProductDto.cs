@@ -13,7 +13,7 @@ public sealed record ProductDto
     public ProductDto(ProductId productId, ProductGroupId productGroupId, Money? priceBeforeDiscount,
         Money price, byte? discountPercentage, DateOnly? discountExpiresOn, ProductState status,
         int width, int height, int length, int weight, string sku, string slug, string barCode, bool hasActiveDiscount,
-        Dictionary<string, string> specifications, List<ProductImage> images, List<ProductInventoryDto> stockPerWarehouse)
+        Dictionary<string, string> specifications, List<ProductImage> images, ProductInventoryDto inventory)
     {
         ProductId = productId.Value;
         Price = (double)price.Value;
@@ -30,7 +30,7 @@ public sealed record ProductDto
         BarCode = barCode;
         HasActiveDiscount = hasActiveDiscount;
         Specifications = specifications;
-        StockPerWarehouse = stockPerWarehouse;
+        Inventory = inventory;
         Status = status.ToString();
 
         Images = new List<ProductImageDto>(images.Count);
@@ -57,6 +57,6 @@ public sealed record ProductDto
     public Dictionary<string, string> Specifications { get; }
 
     public List<ProductImageDto> Images { get; init; }
-    public List<ProductInventoryDto> StockPerWarehouse { get; init; }
+    public ProductInventoryDto Inventory { get; init; }
 
 }

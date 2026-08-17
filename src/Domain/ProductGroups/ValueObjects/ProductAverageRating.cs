@@ -1,9 +1,22 @@
 
 
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
+
 namespace Domain.ProductGroups.ValueObjects;
 
 public sealed record ProductAverageRating
 {
+    [JsonConstructor]// for serialization
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("For serializer only.")]
+    public ProductAverageRating(decimal averageRating)
+    {
+            this.Value = averageRating;
+
+    }
+
     private ProductAverageRating()
     {
         
@@ -28,4 +41,6 @@ public sealed record ProductAverageRating
             Value = value
         };
     }
+
+    public static explicit operator float(ProductAverageRating value) => (float)value.Value;
 }

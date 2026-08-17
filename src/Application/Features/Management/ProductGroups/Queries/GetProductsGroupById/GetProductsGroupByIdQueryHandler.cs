@@ -19,16 +19,14 @@ internal sealed class GetProductsGroupByIdQueryHandler(IAppDbContext context) : 
                                                             x.pg.BrandId, x.pg.BrandName, x.pg.CategoryId, x.pg.CategoryName, x.pg.AverageRating, x.pg.LastModifiedAt,
                                                             x.pg.LastModifiedBy, x.u.UserName!,
 
-                                                  x.pg.Products.Select(p => new ProductListItemDto(
-                                                                            p.Id, p.OriginalPrice, p.HasActiveDiscount, p.DiscountPercentage,
-                                                                            p.PriceAfterDiscount, p.DiscountExpiresOn, p.Status, p.Images.FirstOrDefault(),
-                                                                            p.Inventories.OrderBy(x => x.StockQuantity)
-                                                                                               .Select(x => new ProductInventoryDto(
-                                                                                                   x.WarehouseId, x.Warehouse.Name, x.StockQuantity))
-                                                                                               .Take(2)
-                                                                                               .ToList()
-                                                                       ))
-                                                                       .ToList())
+                                                           x.pg.Products.Select(p => new ProductListItemDto(
+                                                                                        p.Id, p.OriginalPrice, p.HasDiscount, p.DiscountPercentage,
+                                                                                        p.DiscountPrice, p.DiscountExpiresOn, p.Status, p.Images.FirstOrDefault(),
+
+                                                                                        new ProductInventoryDto(p.Inventory.WarehouseId,
+                                                                                                                p.Inventory.Warehouse.Name,
+                                                                                                                p.Inventory.StockQuantity)))
+                                                                        .ToList())
                                               );
 
 

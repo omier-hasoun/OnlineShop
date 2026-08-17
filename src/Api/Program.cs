@@ -20,11 +20,9 @@ namespace Api
             config.AddEnvironmentVariables();
             config.AddUserSecrets("7f342e59-c0e1-4ef5-9bd1-126a96fa7a5b");
 
-
             builder.Services.AddApiServices(config, builder.Environment)
                             .AddApplicationServices(config)
-                            .AddInfrastructureServices(config,  builder.Environment);
-
+                            .AddInfrastructureServices(config, builder.Environment);
 
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
@@ -56,8 +54,6 @@ namespace Api
             }
 
             app.UseHttpsRedirection();
-             
-
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
@@ -97,11 +93,10 @@ namespace Api
 
             app.MapControllers();
 
+            app.MapStripeWebhookEndpoints();
             app.MapGroup("/api/auth").
                 MapIdentityApi<AppUser>();
-
-            app.MapStripeWebhookEndpoints();
-
+            Console.WriteLine(builder.Environment.WebRootPath);
             await app.RunAsync();
         }
     }

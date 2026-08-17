@@ -1,6 +1,10 @@
 
+using System.Text;
+using Application.Entities;
 using Infrastructure.Common.Abstractions;
 using Infrastructure.Data.Models;
+using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
@@ -14,6 +18,7 @@ public static class StripeWebhookEndpoints
     {
         // Stripe webhook endpoints must return a response quickly.
         app.MapPost("stripe/webhooks", StripeWebhook);
+
         return app;
     }
 
@@ -35,24 +40,24 @@ public static class StripeWebhookEndpoints
                 context.Request.Headers["Stripe-Signature"],
                 config["STRIPE_WHS"]);
 
-            if (stripeEvent.Type == EventTypes.CheckoutSessionCompleted)
+            if (stripeEvent.Type == EventTypes.CheckoutSessionCompleted || stripeEvent.Type == EventTypes.CheckoutSessionExpired)
             {
                 if (stripeEvent.Data.Object is not Session session ||
                     string.IsNullOrWhiteSpace(session.Id))
                 {
                     logger.LogWarning(
-                        "Invalid CheckoutSessionCompleted payload. EventId: {EventId}",
+                        "Invalid CheckoutSessionCompleted/Expired payload. EventId: {EventId}",
                         stripeEvent.Id);
 
                     return Results.BadRequest();
                 }
 
-                db.StripeEvents.Add(new Infrastructure.Data.Models.StripeEvent()
+                db.StripeEvents.Add(new StripeEvent()
                 {
                     Id = idGen.Generate(),
                     ProcessedAt = null,
                     ReceivedAt = time.GetUtcNow().UtcDateTime,
-                    Status = Infrastructure.Data.Models.StripeEventState.Pending,
+                    Status = StripeEventState.Pending,
                     StripeEventId = stripeEvent.Id,
                     Type = stripeEvent.Type,
                     StripeSessionId = session.Id

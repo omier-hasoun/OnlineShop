@@ -27,7 +27,7 @@ public interface IAppDbContext
     DbSet<AppUser> Users {get; }
 
     DbSet<Order> Orders {get; }
-    DbSet<OrderLine> OrderItems {get; }
+    DbSet<OrderLine> OrderLines {get; }
 
     DbSet<ProductReview> ProductReviews {get; }
     DbSet<ProductGroup> ProductGroups {get; }

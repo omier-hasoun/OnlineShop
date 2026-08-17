@@ -1,10 +1,9 @@
 
-using Application.Common.Dtos;
-
 namespace Application.Common.Abstractions;
 
 public interface ICurrentUserService
 {
-    UserIdentity GetCurrentIdentity();
+    string? GetCurrentUserEmail();
+    CurrentUser GetCurrentIdentity();
     Guid? GetUserId();
 }

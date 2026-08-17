@@ -9,7 +9,7 @@ internal sealed class GetCartQueryHandler(IAppDbContext context) : IRequestHandl
         var cartIdentity = request.CartIdentity;
 
         var baseQuery = context.Carts.AsNoTracking();
-        
+
         if (cartIdentity.IsUser)
         {
             baseQuery = baseQuery.Where(cart => cart.UserId == cartIdentity.UserId);
@@ -41,7 +41,7 @@ internal sealed class GetCartQueryHandler(IAppDbContext context) : IRequestHandl
 
                             p.OriginalPrice,
                             p.DiscountPercentage,
-                            p.PriceAfterDiscount
+                            p.DiscountPrice
                         ))
                         .FirstOrDefault()
 

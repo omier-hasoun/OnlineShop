@@ -17,7 +17,6 @@ public sealed class AppUser : IdentityUser<Guid>, IAggregateRoot, ISoftDelete, I
 
     public IReadOnlyCollection<UserClaim> Claims { get; private set; } = [];
     public IReadOnlyCollection<UserToken> Tokens { get; private set; } = [];
-    public IReadOnlyCollection<Role> Roles { get; private set; } = [];
 
     private List<UserShippingAddress> _addresses = [];
     public IReadOnlyCollection<UserShippingAddress> ShippingAddresses { get { return _addresses.AsReadOnly(); } private set { _addresses = value.ToList(); } }

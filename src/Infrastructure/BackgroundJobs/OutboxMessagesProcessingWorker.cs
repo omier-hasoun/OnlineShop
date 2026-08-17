@@ -15,7 +15,7 @@ internal sealed class OutboxMessagesProcessingWorker(IServiceProvider provider, 
     };
     protected async override Task ExecuteAsync(CancellationToken ct)
     {
-        var timer = new PeriodicTimer(TimeSpan.FromSeconds(15), time);
+        var timer = new PeriodicTimer(TimeSpan.FromSeconds(60), time);
 
         while (await timer.WaitForNextTickAsync(ct))
         {
@@ -23,8 +23,8 @@ internal sealed class OutboxMessagesProcessingWorker(IServiceProvider provider, 
 
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            var messages = await db.OutboxMessages.Where(x => x.ProcessedOnUtc == null)
-                                                  .Take(15)
+            var messages = await db.OutboxMessages.Where(x => x.ProcessedOnUtc == null && x.Error == null)
+                                                  .Take(200)
                                                   .ToListAsync(ct);
             if (messages.Count == 0)
             

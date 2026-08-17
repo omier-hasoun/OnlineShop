@@ -9,6 +9,11 @@ internal sealed class CreateWarehouseCommandHandler(IAppDbContext context, IIdGe
 {
     public async Task<Result<long>> Handle(CreateWarehouseCommand request, CancellationToken ct)
     {
+        if(await context.Warehouses.AnyAsync(ct))
+        {
+            return ApplicationErrors.Validation.YouCannotHaveMoreThanOneWarehouse;
+        }
+
         var addressId = addressIdGen.NewId();
         var addressInfo = request.Address;
         var createAddressResult = Address.Create(addressId,

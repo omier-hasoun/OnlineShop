@@ -51,7 +51,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
 
         var normalizedTitle = RegexHelper.Normalize(title);
 
-        var productGroup = new ProductGroup(id, brandId, brandName, categoryId, categoryName, title, normalizedTitle, description, averageRating, 
+        var productGroup = new ProductGroup(id, brandId, brandName, categoryId, categoryName, title, normalizedTitle, description, averageRating,
             status, isSerialized, attributes, createdAt, lastModifiedAt, createdBy, lastModifiedBy);
 
         return productGroup;
@@ -60,7 +60,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
 
     public CategoryId CategoryId { get; private set; }
     public BrandId BrandId { get; private set; }
-    public ProductId? FeaturedProductId { get; private set; }
+    public ProductId? MainProductId { get; private set; }
 
     public string CategoryName { get; private set; } = null!;
     public string BrandName { get; private set; } = null!;
@@ -79,12 +79,12 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
 
 
     Dictionary<string, string> _attributes = [];
-    public IReadOnlyDictionary<string, string> Attributes { get { return _attributes.AsReadOnly(); } private set { _attributes = value is null ? [] :value.ToDictionary(); } }
+    public IReadOnlyDictionary<string, string> Attributes { get { return _attributes.AsReadOnly(); } private set { _attributes = value is null ? [] : value.ToDictionary(); } }
 
     private List<Product> _products = [];
     public IReadOnlyCollection<Product> Products { get { return _products.AsReadOnly(); } private set { _products = value is null ? [] : value.ToList(); } }
 
-    public Product? FeaturedProduct { get; private set; }
+    public Product? MainProduct { get; private set; }
     public ProductGroupState Status { get; private set; }
 
     private bool CanTransitionTo(ProductGroupState newStatus)
@@ -246,7 +246,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
 
         if (isFirstProductInGroup)
         {
-            FeaturedProductId = productId;
+            MainProductId = productId;
         }
 
         return Result.Success;
@@ -296,7 +296,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
 
     public Result<Updated> PublishProduct(ProductId productId)
     {
-        if(!CanModify())
+        if (!CanModify())
             return DomainErrors.Locked;
 
         var product = _products.FirstOrDefault(x => x.Id == productId);
@@ -304,7 +304,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
         if (product is null)
             return DomainErrors.ProductIdInvalid;
 
-        var featuredProduct = _products.First(x => x.Id == FeaturedProductId);
+        var featuredProduct = _products.First(x => x.Id == MainProductId);
 
         var res = product.Publish();
 
@@ -340,7 +340,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
 
         // when unpublishing the featured product then make another published product the featured one.
 
-        if (FeaturedProductId == productId)
+        if (MainProductId == productId)
         {
             var getAnyPublishedProduct = _products.FirstOrDefault(x => x.IsPublished());
 
@@ -353,7 +353,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
                 this.Status = ProductGroupState.Unpublished;
             }
         }
-           
+
         return Result.Updated;
     }
 
@@ -406,7 +406,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
 
     private void ChangeFeaturedProduct(ProductId productId)
     {
-        FeaturedProductId = productId;
+        MainProductId = productId;
     }
 
 
@@ -430,7 +430,7 @@ public sealed class ProductGroup : AggregateRoot<ProductGroupId>, IFullAudited
         return Result.Success;
     }
 
-    internal static Result<Success> ValidateAttributes(Dictionary<string,string> attributes)
+    internal static Result<Success> ValidateAttributes(Dictionary<string, string> attributes)
     {
         if (attributes is null || attributes.Count == 0)
         {

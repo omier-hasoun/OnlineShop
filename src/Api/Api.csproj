@@ -10,17 +10,21 @@
         <NoWarn>NU1901;NU1902;NU1903;NU1904</NoWarn>
     </PropertyGroup>
     <ItemGroup>
+      <Compile Remove="Pages\**" />
       <Compile Remove="wwwroot\uploads\**" />
+      <Content Remove="Pages\**" />
       <Content Remove="wwwroot\uploads\**" />
+      <EmbeddedResource Remove="Pages\**" />
       <EmbeddedResource Remove="wwwroot\uploads\**" />
+      <None Remove="Pages\**" />
       <None Remove="wwwroot\uploads\**" />
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="wwwroot\Resources\SharedResource.ar.resx" />
-      <EmbeddedResource Include="wwwroot\Resources\SharedResource.de.resx" />
-      <EmbeddedResource Include="wwwroot\Resources\SharedResource.en.resx" />
-      <EmbeddedResource Include="wwwroot\Resources\SharedResource.resx" />
+      <EmbeddedResource Include="wwwroot\resources\SharedResource.ar.resx" />
+      <EmbeddedResource Include="wwwroot\resources\SharedResource.de.resx" />
+      <EmbeddedResource Include="wwwroot\resources\SharedResource.en.resx" />
+      <EmbeddedResource Include="wwwroot\resources\SharedResource.resx" />
     </ItemGroup>
     <ItemGroup>
         <Content Update="appsettings.Development.json">
@@ -49,7 +53,6 @@
       <Folder Include="Common\Helpers\" />
       <Folder Include="Controllers\Categories\" />
       <Folder Include="Controllers\Orders\" />
-      <Folder Include="Controllers\Users\" />
     </ItemGroup>
     
     <PropertyGroup>

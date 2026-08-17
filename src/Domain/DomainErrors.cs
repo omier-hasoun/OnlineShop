@@ -45,7 +45,7 @@ public static class DomainErrors
 
     public static readonly Error GuestIdInvalid = Error.Validation($"{BaseErrorCode}.{nameof(GuestIdInvalid)}");
 
-    public static readonly Error cartItemIdInvalid = Error.Validation($"{BaseErrorCode}.{nameof(cartItemIdInvalid)}");
+    public static readonly Error CartItemIdInvalid = Error.Validation($"{BaseErrorCode}.{nameof(CartItemIdInvalid)}");
 
     public static readonly Error MissingInput = Error.Validation($"{BaseErrorCode}.{nameof(MissingInput)}");
 
@@ -581,7 +581,7 @@ public static class Products
         
         public static readonly Error ProductStockIdInvalid = Error.Validation($"{BaseErrorCode}.ProductStockIdInvalid");
 
-        public static readonly Error QuantityOutOfRange = Error.Validation($"{BaseErrorCode}.{nameof(QuantityOutOfRange)}");
+        public static readonly Error InSufficientStock = Error.Validation($"{BaseErrorCode}.{nameof(InSufficientStock)}");
 
         public static readonly Error UnableToResetStockNow = Error.Validation($"{BaseErrorCode}.{nameof(UnableToResetStockNow)}");
 
@@ -589,13 +589,13 @@ public static class Products
 
         public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
 
-        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error QuantityWasGreaterThanReserved = Error.Validation($"{BaseErrorCode}.{nameof(QuantityWasGreaterThanReserved)}");
 
         public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
 
         public static readonly Error rename7 = Error.Validation($"{BaseErrorCode}.{nameof(rename7)}");
 
-        public static readonly Error rename8 = Error.Validation($"{BaseErrorCode}.{nameof(rename8)}");
+        public static readonly Error QuantityInvalid = Error.Validation($"{BaseErrorCode}.{nameof(QuantityInvalid)}");
 
         public static readonly Error rename9 = Error.Validation($"{BaseErrorCode}.{nameof(rename9)}");
 

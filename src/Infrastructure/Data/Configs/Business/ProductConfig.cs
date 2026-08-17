@@ -47,16 +47,16 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
         builder.Property(x => x.OriginalPrice)
                .IsRequired();
 
-        builder.Property(x => x.HasActiveDiscount)
+        builder.Property(x => x.HasDiscount)
                .IsRequired();
 
-        builder.Property(x => x.PriceAfterDiscount)
+        builder.Property(x => x.DiscountPrice)
                .IsRequired(false);
 
         builder.OwnsMany(x => x.Images, b =>
         {
             b.ToJson();
-        
+
         });
 
         builder.Property("_specifications")

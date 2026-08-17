@@ -9,13 +9,13 @@ public sealed class Product : BaseEntity<ProductId>
     {
     }
 
-    private Product(ProductId id, ProductGroupId productsGroupId, Money? priceAfterDiscount, Money originalPrice, Money currentPrice, byte? discountPercentage, DateOnly? discountExpiresOn, ProductState status,
+    private Product(ProductId id, ProductGroupId productsGroupId, Money? discountPrice, Money originalPrice, Money currentPrice, byte? discountPercentage, DateOnly? discountExpiresOn, ProductState status,
         int width, int height, int length, int weight, string sku, string slug, string barCode, Dictionary<string, string> specifications, List<ProductImage> images)
         : base(id)
     {
         ProductGroupId = productsGroupId;
-                
-        PriceAfterDiscount = priceAfterDiscount;
+
+        DiscountPrice = discountPrice;
         DiscountPercentage = discountPercentage;
         DiscountExpiresOn = discountExpiresOn;
         OriginalPrice = originalPrice;
@@ -57,9 +57,9 @@ public sealed class Product : BaseEntity<ProductId>
         Money currentPrice = originalPrice;
 
         DateOnly? discountExpiresOn = null;
-        
+
         ProductState status = ProductState.Draft;
-        images  ??= [];
+        images ??= [];
 
 
         return new Product(id, productsGroupId, priceBeforeDisount, originalPrice, currentPrice, discountPercentage, discountExpiresOn, status,
@@ -79,11 +79,11 @@ public sealed class Product : BaseEntity<ProductId>
 
     public Money CurrentPrice { get; private set; }
 
-    public Money? PriceAfterDiscount { get; private set; }
+    public Money? DiscountPrice { get; private set; }
 
-    public bool HasActiveDiscount { get; private set; }
+    public bool HasDiscount { get; private set; } = false;
     public DateOnly? DiscountExpiresOn { get; private set; }
-    public byte? DiscountPercentage { get; private set;}
+    public byte? DiscountPercentage { get; private set; }
 
     public ProductState Status { get; private set; }
 
@@ -93,7 +93,7 @@ public sealed class Product : BaseEntity<ProductId>
 
     public string BarCode { get; private init; } = null!;
 
-    public IReadOnlyList<Inventory> Inventories { get; private set { field = value.ToList(); } }
+    public Inventory Inventory { get; private set; }
 
     private bool CanTransitionTo(ProductState newStatus)
     {
@@ -117,7 +117,7 @@ public sealed class Product : BaseEntity<ProductId>
 
 
     private Dictionary<string, string> _specifications = [];
-    public IReadOnlyDictionary<string, string> Specifications { get { return _specifications.AsReadOnly(); } private set { _specifications = value is null ?[] :value.ToDictionary(); } }
+    public IReadOnlyDictionary<string, string> Specifications { get { return _specifications.AsReadOnly(); } private set { _specifications = value is null ? [] : value.ToDictionary(); } }
 
     public Result<Updated> AddImages(List<string> fileNames)
     {
@@ -159,9 +159,9 @@ public sealed class Product : BaseEntity<ProductId>
             {
                 return DomainErrors.Products.InvalidImageFileName.WithParameters(name);
             }
-            
+
         }
-        foreach(var name in fileNames)
+        foreach (var name in fileNames)
         {
             var image = _images.FirstOrDefault(x => x.FileName == name);
 
@@ -174,10 +174,10 @@ public sealed class Product : BaseEntity<ProductId>
         SortImages();
         return Result.Deleted;
     }
-     
+
     public Result<Success> Publish()
     {
-        if(!CanTransitionTo(ProductState.Published))
+        if (!CanTransitionTo(ProductState.Published))
         {
             return DomainErrors.InvalidStateTransition;
         }
@@ -213,7 +213,7 @@ public sealed class Product : BaseEntity<ProductId>
             sortedImages.Add(image.ChangeSortOrder(sortOrder++));
         }
         _images = sortedImages;
-        
+
     }
 
     public Result<Success> UpdateImagesSortOrder(IReadOnlyCollection<ProductImage> images)
@@ -261,11 +261,11 @@ public sealed class Product : BaseEntity<ProductId>
         if (val2Result.Failed)
             return val2Result;
 
-        PriceAfterDiscount = Money.Create(CalculateDiscount(OriginalPrice.Value, discountPercentage));
+        DiscountPrice = Money.Create(CalculateDiscount(OriginalPrice.Value, discountPercentage));
         this.DiscountExpiresOn = discountExpiresOn;
         this.DiscountPercentage = discountPercentage;
-        this.CurrentPrice = PriceAfterDiscount;
-        this.HasActiveDiscount = true;
+        this.CurrentPrice = DiscountPrice;
+        this.HasDiscount = true;
         return Result.Success;
     }
 
@@ -278,7 +278,7 @@ public sealed class Product : BaseEntity<ProductId>
     #region validators
     private static Result<Success> ValidatePrice(Money price)
     {
-        if(ValHelper.IsOutOfRange(price.Value, ProductRules.MinPrice, ProductRules.MaxPrice))
+        if (ValHelper.IsOutOfRange(price.Value, ProductRules.MinPrice, ProductRules.MaxPrice))
         {
             return DomainErrors.Products.PriceOutOfRange;
         }
@@ -319,12 +319,12 @@ public sealed class Product : BaseEntity<ProductId>
 
     private static Result<Success> ValidateBarcode(string barcode)
     {
-        if(string.IsNullOrEmpty(barcode))
+        if (string.IsNullOrEmpty(barcode))
         {
             return DomainErrors.Products.BarCodeRequired;
         }
 
-        if(ValHelper.IsOutOfRange(barcode.Length, ProductRules.MinBarcodeLength, ProductRules.MaxBarcodeLength))
+        if (ValHelper.IsOutOfRange(barcode.Length, ProductRules.MinBarcodeLength, ProductRules.MaxBarcodeLength))
         {
             return DomainErrors.Products.BarCodeOutOfRange;
         }
@@ -352,9 +352,9 @@ public sealed class Product : BaseEntity<ProductId>
         return Result.Success;
     }
 
-    private static Result<Success> ValidateSpecifications(Dictionary<string,string> specifications)
+    private static Result<Success> ValidateSpecifications(Dictionary<string, string> specifications)
     {
-        if(specifications is null || specifications.Count == 0)
+        if (specifications is null || specifications.Count == 0)
         {
             return DomainErrors.Products.AtleastOneSpecificationRequired;
         }
@@ -364,7 +364,7 @@ public sealed class Product : BaseEntity<ProductId>
             return DomainErrors.Products.MaxAllowedSpecificationsNumberExceeded;
         }
 
-        foreach ( var spec in specifications)
+        foreach (var spec in specifications)
         {
             bool invalidKey =
             string.IsNullOrEmpty(spec.Key) || ValHelper.IsOutOfRange(spec.Key.Length, ProductRules.MinSpecificationKeyLength, ProductRules.MaxSpecificationKeyLength);

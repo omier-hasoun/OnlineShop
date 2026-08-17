@@ -12,7 +12,7 @@ public sealed record AddressDetails
     }
     public AddressDetails(string fullName, string phoneNumber, string country, string? houseNo,
         string city, string postalCode, string addressLine1, string? addressLine2 = null, string? stateProvince = null,
-        string? notes = null)
+        string? notes = null, string? company = null)
     {
         FullName = fullName ?? throw new ArgumentNullException();
         PhoneNumber = phoneNumber ?? throw new ArgumentNullException();
@@ -25,6 +25,7 @@ public sealed record AddressDetails
         AddressLine2 = addressLine2;
         StateProvince = stateProvince;
         Notes = notes;
+        Company = company;
     }
 
     public string FullName { get; }
@@ -37,6 +38,7 @@ public sealed record AddressDetails
     public string? AddressLine2 { get; }
     public string? StateProvince { get; }
     public string? Notes { get; }
+    public string? Company { get; }
 
     public override string ToString()
     {

@@ -26,9 +26,11 @@ using Infrastructure.Services.Payment.StripeService;
 using Infrastructure.Services.Storage;
 using Infrastructure.Services.Storage.Images;
 using Infrastructure.Services.UrlProviders;
+using Infrastructure.Services.Users;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Hosting;
+using Shippo;
 using App = Application.Common.Abstractions;
 #endregion
 
@@ -71,6 +73,12 @@ public static class DependencyInjection
 
     private static IServiceCollection AddCustomServices(this IServiceCollection services, IConfiguration config)
     {
+        services.AddSingleton<IShippoSDK, ShippoSDK>(sp =>
+        {
+            var key = config["SHIPPO_TEST_KEY"] ?? throw new InvalidOperationException("shippo api key was not configured.");
+            return new ShippoSDK(key, null, "2018-02-08");
+        });
+
         services.AddTransient<IImageValidator, ImageValidator>();
         services.AddSingleton<IFileStorageService, LocalFileStorageService>();
 
@@ -123,13 +131,15 @@ public static class DependencyInjection
             }
 
             client.BaseAddress = new Uri("https://smtp.maileroo.com/api/v2/");
-            client.Timeout = TimeSpan.FromSeconds(15);
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
 
         }).AddStandardResilienceHandler(options =>
         {
             options.Retry.MaxRetryAttempts = 1;
-            
+
+            options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(15);  
+            options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(20);
+
         });
 
   return services;
@@ -184,13 +194,18 @@ public static class DependencyInjection
     private static IServiceCollection AddIdentityServices(this IServiceCollection services)
     {
 
-        services.AddIdentityCore<AppUser>()
+        services.AddIdentityCore<AppUser>(op =>
+        {
+            op.Tokens.PasswordResetTokenProvider = "UserResetPassToken";
+        })
                     .AddRoles<Role>()
                     .AddEntityFrameworkStores<AppDbContext>()
                     .AddApiEndpoints()
-                    .AddDefaultTokenProviders();
+                    .AddTokenProvider<UserResetPasswordTokenProvider>("UserResetPassToken");
 
-        services.AddTransient<IEmailSender<AppUser>, EmailSenderFaker>();
+
+        services.AddTransient<IEmailSender<AppUser>, SecurityEmailSender>();
+        
         services.AddScoped<IPasswordHasher<AppUser>, UserPasswordHashService>();
 
         return services;

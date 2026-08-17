@@ -56,7 +56,7 @@ internal sealed class ProceedToPaymentCommandHandler(
             string? thumbnailUrl = null;
 
             if (imageFileName != null)
-                thumbnailUrl = thumbnailUrlProvider.GetUrl(imageFileName, ProductThumbnailSize.Small);
+                thumbnailUrl = thumbnailUrlProvider.GetRelativeUrl(imageFileName, ProductThumbnailSize.Small);
 
             return new OrderLineDetailsDto(x.Product.Id.Value, thumbnailUrl, x.Product.CurrentPrice.ToCents(), x.Group.Title, x.Quantity);
         })
@@ -95,7 +95,7 @@ internal sealed class ProceedToPaymentCommandHandler(
         return PaymentProcess.SessionUrl;
     }
 
-    private async Task CancelOrderPaymentProcessAndOrderIfExists(UserIdentity identity, CancellationToken ct)
+    private async Task CancelOrderPaymentProcessAndOrderIfExists(CurrentUser identity, CancellationToken ct)
     {
         var Order = await context.Orders.UserAbandonedOrderQuery(identity)
                                         .FirstOrDefaultAsync(ct);
@@ -107,7 +107,7 @@ internal sealed class ProceedToPaymentCommandHandler(
         }
     }
 
-    private async Task<List<ItemInfo>> GetCartDetails(UserIdentity identity, CancellationToken ct)
+    private async Task<List<ItemInfo>> GetCartDetails(CurrentUser identity, CancellationToken ct)
     {
         return await context.CartItems
                      .Join(context.Carts.GetUserCartQuery(identity), ci => ci.CartId, c => c.Id, (CartItem, Cart) => new { CartItem })
@@ -115,7 +115,7 @@ internal sealed class ProceedToPaymentCommandHandler(
                      .Join(context.ProductGroups, x => x.Product.ProductGroupId, g => g.Id, (cp, g) => new { CartItem = cp.c, Product = cp.Product, Group = g })
                      .Select(x => new ItemInfo(
                          x.Product,
-                         x.Product.Inventories.ToList(),
+                         x.Product.Inventory,
                          x.Group,
                          x.CartItem.Quantity
                      ))

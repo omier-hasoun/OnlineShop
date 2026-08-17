@@ -34,6 +34,23 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
 
     private async Task SeedData()
     {
+        await roleManager.CreateAsync(new Role()
+        {
+            Id = Guid.Parse("45995BD9-F233-4EB3-BDFA-41B012113B85"),
+            Name = "Admin",
+        });
+        await roleManager.CreateAsync(new Role()
+        {
+            Id = Guid.Parse("45995BD9-F233-4EB3-BDFA-41B012113B11"),
+            Name = "Staff",
+
+        });
+        await roleManager.CreateAsync(new Role()
+        {
+            Id = Guid.Parse("45995BD9-F233-4EB3-BDFA-41B012113B91"),
+            Name = "Manager",
+
+        });
         var user1 = new AppUser()
         {
             Id = Guid.Parse("10000000-0000-0000-0000-000000000001"),
@@ -90,7 +107,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await context.SaveAsync();
 
 
-        for (int i = 1; i <= 2000; i++)
+        for (int i = 1; i <= 1000; i++)
         {
             // 1. Create the ProductGroup
             var pgId = new ProductGroupId(i + 10); // Offset to avoid previous IDs

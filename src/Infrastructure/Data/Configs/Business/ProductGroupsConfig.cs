@@ -1,11 +1,12 @@
+#pragma warning disable CS0618
 using Domain.Brands;
 using Domain.Categories;
 using Domain.Common.Rules;
 using Domain.ProductGroups;
 using Domain.ProductGroups.Products;
+using Domain.ProductGroups.ValueObjects;
 using Infrastructure.Common.EfCore.ValueComparers;
 using Infrastructure.Common.EfCore.ValueConverters;
-
 namespace Infrastructure.Data.Configs.Business;
 
 internal sealed class ProductGroupsConfig : BaseEntityConfig<ProductGroup>
@@ -51,14 +52,12 @@ internal sealed class ProductGroupsConfig : BaseEntityConfig<ProductGroup>
                .HasMaxLength(ProductGroupRules.MaxDescriptionLength)
                .IsRequired();
 
-        builder.OwnsOne(x => x.AverageRating, lb =>
-        {
-
-            lb.Property(x => x.Value)
-                .HasColumnType("DECIMAL(9,4)")
-                .HasColumnName("AverageRating")
-                .IsRequired();
-        });
+        builder.Property(x => x.AverageRating)
+               .HasConversion(
+                   averageRating => averageRating.Value,
+                   value => new ProductAverageRating(value)
+               )
+               .ValueGeneratedNever();
 
         builder.Property("_attributes")
                .HasColumnName("Attributes")
@@ -80,12 +79,12 @@ internal sealed class ProductGroupsConfig : BaseEntityConfig<ProductGroup>
                .HasForeignKey(x => x.CategoryId)
                .IsRequired();
 
-        builder.HasOne(x => x.FeaturedProduct)
+        builder.HasOne(x => x.MainProduct)
                .WithMany()
-               .HasForeignKey(x => x.FeaturedProductId)
+               .HasForeignKey(x => x.MainProductId)
                .IsRequired(false);
 
-        builder.HasIndex(x => x.FeaturedProductId)
+        builder.HasIndex(x => x.MainProductId)
                .IsUnique()
                .HasDatabaseName("UX_ProductGroup_FeaturedProductId");
 
@@ -95,14 +94,16 @@ internal sealed class ProductGroupsConfig : BaseEntityConfig<ProductGroup>
             x.NormalizedTitle
         })
         .HasDatabaseName("IX_ProductGroups_Search")
-        .HasFilter($"[{nameof(ProductGroup.FeaturedProductId)}] IS NOT NULL")
+        .HasFilter($"[{nameof(ProductGroup.MainProductId)}] IS NOT NULL")
         .IncludeProperties(x => new
         {
             x.Id,
-            x.FeaturedProductId,
+            x.MainProductId,
             x.Title,
-            x.BrandName
-        }); ;
+            x.BrandName,
+            x.AverageRating
+        });
+
 
         builder.ToTable("ProductGroups", x =>
         {

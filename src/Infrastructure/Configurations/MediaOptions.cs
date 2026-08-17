@@ -5,8 +5,6 @@ public sealed class MediaOptions
 {
     public const string SectionName = "Media";
 
-    public string BaseUrl { get; set; } = string.Empty;
-
     public ImageOptions Images { get; set; } = new();
 }
 
@@ -24,4 +22,10 @@ public sealed class ProductImageOptions
     public string Medium { get; set; } = string.Empty;
 
     public string Small { get; set; } = string.Empty;
+
+    public string DefaultThumbnailSmall { get; set; } = string.Empty;
+    public string DefaultThumbnailMedium { get; set; } = string.Empty;
+    public string DefaultThumbnailLarge { get; set; } = string.Empty;
+
+
 }

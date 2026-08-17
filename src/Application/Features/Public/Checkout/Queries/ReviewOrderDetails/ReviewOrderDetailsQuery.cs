@@ -5,7 +5,7 @@ using Domain.Services.Checkout;
 
 namespace Application.Features.Public.Checkout.Queries.ReviewOrderDetails;
 
-public sealed record ReviewOrderDetailsQuery(UserIdentity Identity) : IRequest<Result<OrderPreview>>
+public sealed record ReviewOrderDetailsQuery(CurrentUser Identity) : IRequest<Result<OrderPreview>>
 {
     
 }

@@ -56,15 +56,11 @@ internal sealed class AppUserConfig : BaseEntityConfig<AppUser>
                .IsRequired();
 
         builder.Property(x => x.PasswordHash)
-               .HasColumnType("VARCHAR(255)")// password hash length is 69
+               .HasColumnType("VARCHAR(255)")
                .IsRequired();
 
         builder.Property(x => x.TwoFactorEnabled)
                .IsRequired();
-
-        builder.HasMany(x => x.Roles)
-               .WithMany()
-               .UsingEntity<IdentityUserRole<Guid>>();
 
         builder.HasMany(x => x.Claims)
                .WithOne()

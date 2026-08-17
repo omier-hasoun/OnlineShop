@@ -66,11 +66,11 @@ public static class ApplicationErrors
 
         public static readonly Error CartIsEmpty = Error.Validation($"{BaseErrorCode}.{nameof(CartIsEmpty)}");
 
-        public static readonly Error rename3 = Error.Validation($"{BaseErrorCode}.{nameof(rename3)}");
+        public static readonly Error RoleInvalid = Error.Validation($"{BaseErrorCode}.{nameof(RoleInvalid)}");
 
         public static readonly Error rename4 = Error.Validation($"{BaseErrorCode}.{nameof(rename4)}");
 
-        public static readonly Error rename5 = Error.Validation($"{BaseErrorCode}.{nameof(rename5)}");
+        public static readonly Error YouCannotHaveMoreThanOneWarehouse = Error.Validation($"{BaseErrorCode}.{nameof(YouCannotHaveMoreThanOneWarehouse)}");
 
         public static readonly Error rename6 = Error.Validation($"{BaseErrorCode}.{nameof(rename6)}");
 
@@ -97,7 +97,7 @@ public static class ApplicationErrors
         public static readonly Error ChangeYourPassword = Error.ActionRequired("Application.ActionRequired.ChangeYourPassword");
 
         public static readonly Error rename1 = Error.Unauthorized(GenerateErrorCode(nameof(rename1)));
-        public static readonly Error rename2 = Error.Unauthorized(GenerateErrorCode(nameof(rename2)));
+        public static readonly Error AccessDenied = Error.Unauthorized(GenerateErrorCode(nameof(AccessDenied)));
         public static readonly Error rename3 = Error.Unauthorized(GenerateErrorCode(nameof(rename3)));
 
     }
@@ -165,7 +165,7 @@ public static class ApplicationErrors
 
         public static readonly Error CouldntSaveImage = Error.Unexpected(GenerateErrorCode(nameof(CouldntSaveImage)));
         public static readonly Error UnableToAddThisItem = Error.Unexpected(GenerateErrorCode(nameof(UnableToAddThisItem)));
-        public static readonly Error rename1 = Error.Validation($"{BaseErrorCode}.{nameof(rename1)}");
+        public static readonly Error OperationFailed = Error.Validation($"{BaseErrorCode}.{nameof(OperationFailed)}");
 
         public static readonly Error CheckoutFailed = Error.Unexpected($"{BaseErrorCode}.{nameof(CheckoutFailed)}");
 

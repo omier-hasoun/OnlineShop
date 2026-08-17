@@ -48,11 +48,13 @@ internal sealed class OrderLineConfig : BaseEntityConfig<OrderLine>
         builder.HasOne<Order>()
                .WithMany(x => x.Lines)
                .HasForeignKey(x => x.OrderId)
+               .OnDelete(DeleteBehavior.Cascade)
                .IsRequired();
 
         builder.HasOne<Product>()
                .WithMany()
                .HasForeignKey(x => x.ProductId)
+               .OnDelete(DeleteBehavior.NoAction)
                .IsRequired();
 
         builder.ToTable("OrderLines");

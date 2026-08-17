@@ -4,7 +4,7 @@ namespace Api.Services;
 
 public sealed class CurrentUserService(IHttpContextAccessor context) : ICurrentUserService
 {
-    public UserIdentity GetCurrentIdentity()
+    public CurrentUser GetCurrentIdentity()
     {
 
         GuestAccountId? guestId = null;
@@ -21,7 +21,12 @@ public sealed class CurrentUserService(IHttpContextAccessor context) : ICurrentU
             }
         }
 
-        return new UserIdentity(userId, guestId);
+        return new CurrentUser(userId, guestId);
+    }
+
+    public string? GetCurrentUserEmail()
+    {
+        return context.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value;
     }
 
     public Guid? GetUserId()

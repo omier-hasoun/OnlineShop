@@ -11,50 +11,92 @@ public sealed class Inventory : IAggregateRoot // i want to a composite id in th
         WarehouseId = warehouseId;
         ProductId = productId;
         StockQuantity = quantity;
+        ReservedQuantity = reservedQuantity;
     }
 
-    public static Result<Inventory> Create(WarehouseId warehouseId, ProductId productId, int quantity)
+    public static Result<Inventory> Create(WarehouseId warehouseId, ProductId productId, int stockQuantity)
     {
         var validationResult = Result.ValidateAll(
                                 () => warehouseId.IsValid(),
                                 () => productId.IsValid(),
-                                () => ValidateQuantity(quantity)
+                                () => ValidateStockQuantity(stockQuantity)
                                );
 
         if (validationResult.Failed)
             return validationResult.Errors;
 
-        return new Inventory(warehouseId, productId, quantity, 0);
+        return new Inventory(warehouseId, productId, stockQuantity, reservedQuantity: 0);
     }
 
 
     public WarehouseId WarehouseId { get; private init; }
     public ProductId ProductId { get; private init; }
     public int StockQuantity { get; private set; }
-
+    public int ReservedQuantity { get; private set; }
     public Warehouse Warehouse { get; private set; } = null!;
 
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
     private readonly List<IDomainEvent> _domainEvents = [];
 
-    public Result<Success> RemoveQuantity(short quantity)
+    public Result<Success> Remove(int quantity)
     {
-        if (quantity <= 0 || quantity > StockQuantity)
-        {
-            return DomainErrors.Inventories.QuantityOutOfRange;
-        }
+        if (quantity < 1)
+            return DomainErrors.Inventories.QuantityInvalid;
+        
+        if (quantity > StockQuantity)
+            return DomainErrors.Inventories.InSufficientStock;
 
         StockQuantity -= quantity;
 
         return Result.Success;
     }
 
-    public Result<Success> Restock(int quantity)
+    public Result<Success> ReserveQuantity(int quantity)
     {
-        if (quantity <= 0)
+        var result = Remove(quantity);
+
+        if (result.Failed)
         {
+            return result;
         }
-        return Result.Success;
+        
+        ReservedQuantity += quantity;
+        return result;
+    }
+
+    public void CancelQuantityReservation(int quantity)
+    {
+        if (ValHelper.IsOutOfRange(quantity, 1, ReservedQuantity))
+        {
+            return;// ignore invalid inputs
+        }
+        ReservedQuantity -= quantity;
+
+        StockQuantity += quantity;// back to stock
+
+    }
+    public void TakeQuantityFromReserved(int quantity)
+    {
+        if (ValHelper.IsOutOfRange(quantity, 1, ReservedQuantity))
+        {
+            return;// ignore invalid inputs
+        }
+
+        ReservedQuantity -= quantity;
+    }
+
+    public Result<Success> Restock(int stockQuantity)
+    {
+
+        var result = ValidateStockQuantity(stockQuantity + StockQuantity);
+
+        if (result.Failed)
+        {
+            return result;
+        }
+        StockQuantity += stockQuantity;
+
+        return result;
     }
 
     public void ResetStock()
@@ -77,10 +119,10 @@ public sealed class Inventory : IAggregateRoot // i want to a composite id in th
     }
 
 
-    private static Result<Success> ValidateQuantity(int quantity)
+    private static Result<Success> ValidateStockQuantity(int stockQuantity)
     {
-        if (quantity <= 0 || quantity > 100000)
-            return DomainErrors.Inventories.QuantityOutOfRange;
+        if (ValHelper.IsOutOfRange(stockQuantity, 0, 1000000))
+            return DomainErrors.Inventories.QuantityInvalid;
 
         return Result.Success; 
     }

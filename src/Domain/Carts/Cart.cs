@@ -115,7 +115,7 @@ public sealed class Cart : AggregateRoot<CartId>, IHasModificationTime
 
         if (cartItem is null)
         {
-            return DomainErrors.cartItemIdInvalid;
+            return DomainErrors.CartItemIdInvalid;
         }
 
         _items.Remove(cartItem);
@@ -132,7 +132,7 @@ public sealed class Cart : AggregateRoot<CartId>, IHasModificationTime
 
         if (item is null)
         {
-            return DomainErrors.cartItemIdInvalid;
+            return DomainErrors.CartItemIdInvalid;
         }
 
         var updateResult = item.UpdateQuantity(newQuantity);

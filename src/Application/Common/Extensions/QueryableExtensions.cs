@@ -1,8 +1,4 @@
 
-using System.Security.Principal;
-using Application.Common.Dtos;
-using Application.Entities;
-using Application.Features.Public.Checkout.Dtos;
 using Domain.Brands;
 using Domain.Carts;
 using Domain.Carts.CartItems;
@@ -17,12 +13,12 @@ internal static class QueryableExtensions
 {
     #region products
     public static IQueryable<Product> ApplyDiscountedProductsFilter(
-        this IQueryable<Product> query , bool apply)
+        this IQueryable<Product> query, bool apply)
     {
         if (apply is false)
             return query;
 
-        return query.Where(p => p.HasActiveDiscount);
+        return query.Where(p => p.HasDiscount);
     }
 
     public static IQueryable<Product> ApplyProductStatusesFilter(
@@ -97,7 +93,7 @@ internal static class QueryableExtensions
 
     #region carts
 
-    public static IQueryable<Cart?> GetUserCartQuery(this IQueryable<Cart> query, UserIdentity identity)
+    public static IQueryable<Cart?> GetUserCartQuery(this IQueryable<Cart> query, CurrentUser identity)
     {
         ArgumentNullException.ThrowIfNull(identity);
 
@@ -115,7 +111,7 @@ internal static class QueryableExtensions
 
     #endregion
 
-    public static IQueryable<Order?> UserAbandonedOrderQuery(this IQueryable<Order> query, UserIdentity identity)
+    public static IQueryable<Order?> UserAbandonedOrderQuery(this IQueryable<Order> query, CurrentUser identity)
     {
         ArgumentNullException.ThrowIfNull(identity);
 
@@ -140,8 +136,12 @@ internal static class QueryableExtensions
         int skip = ((page - 1) * size);
 
         var list = await query.Skip(skip)
-                              .Take(size +1)
+                              .Take(size + 1)
                               .ToListAsync(ct);
+        if (list is null || list.Count == 0)
+        {
+            return PaginatedList<TResult>.Empty;
+        }
 
         var hasMore = list.Count > size;
         if (hasMore)

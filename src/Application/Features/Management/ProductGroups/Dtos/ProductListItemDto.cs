@@ -18,10 +18,10 @@ public sealed record ProductListItemDto
     public string? Image { get; init; }
     public string Status { get; init; } = null!;
 
-    public IReadOnlyCollection<ProductInventoryDto> StockPerWarehouse { get; init; }
+    public ProductInventoryDto Inventory { get; init; }
 
     public ProductListItemDto(ProductId id, Money price, bool hasActiveDiscount, byte? discountPercentage,
-        Money? priceAfterDiscount, DateOnly? discountExpiresOn, ProductState status, ProductImage? image, IReadOnlyCollection<ProductInventoryDto> stockPerWarehouse)
+        Money? priceAfterDiscount, DateOnly? discountExpiresOn, ProductState status, ProductImage? image, ProductInventoryDto inventory)
     {
         Id = id.Value;
 
@@ -30,7 +30,7 @@ public sealed record ProductListItemDto
         Price = (double)price.Value;
 
         HasActiveDiscount = hasActiveDiscount;
-        StockPerWarehouse = stockPerWarehouse.OrderBy(x => x.StockQuantity).ToList();
+        Inventory = inventory;
         DiscountExpiresOn = hasActiveDiscount ? discountExpiresOn : null;
 
         PriceAfterDiscount = hasActiveDiscount ? (double)priceAfterDiscount!.Value : null;

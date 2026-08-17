@@ -8,7 +8,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
     public async Task<Result<ProductDto>> Handle(GetProductByIdQuery request, CancellationToken ct)
     {
         var product = await context.Products.AsNoTracking()
-                                            .Include(x => x.Inventories)
+                                            .Include(x => x.Inventory)
                                             .ThenInclude(x => x.Warehouse)
                                             .FirstOrDefaultAsync(x => x.Id == request.ParsedProductId, ct);
 
@@ -18,7 +18,7 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
         return new ProductDto(
                 product.Id,
                 product.ProductGroupId,
-                product.PriceAfterDiscount,
+                product.DiscountPrice,
                 product.OriginalPrice,
                 product.DiscountPercentage,
                 product.DiscountExpiresOn,
@@ -30,11 +30,12 @@ internal sealed class GetProductByIdQueryHandler(IAppDbContext context) : IReque
                 product.Sku,
                 product.Slug,
                 product.BarCode,
-                product.HasActiveDiscount,
+                product.HasDiscount,
                 product.Specifications.ToDictionary(),
                 [.. product.Images],
-                product.Inventories.Select(x => new ProductInventoryDto(
-                                                    x.WarehouseId, x.Warehouse.Name, x.StockQuantity)).ToList()
+                new ProductInventoryDto(product.Inventory.WarehouseId,
+                                        product.Inventory.Warehouse.Name,
+                                        product.Inventory.StockQuantity)
             );
     }
 }

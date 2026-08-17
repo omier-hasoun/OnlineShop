@@ -1,5 +1,5 @@
 
-using Application.Features.Public.Checkout.Commands.ProcessPaymentSucceeded;
+using Application.Features.Public.Checkout.Commands.ProcessCheckoutCompleted;
 using Infrastructure.Data.Models;
 using MediatR;
 using Microsoft.Extensions.Hosting;
@@ -11,7 +11,7 @@ internal sealed class StripeEventProcessingWorker(IServiceProvider provider, Tim
 {
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
-        var timer = new PeriodicTimer(TimeSpan.FromSeconds(30), time);
+        var timer = new PeriodicTimer(TimeSpan.FromSeconds(60), time);
 
         while(await timer.WaitForNextTickAsync(ct))
         {
@@ -33,7 +33,7 @@ internal sealed class StripeEventProcessingWorker(IServiceProvider provider, Tim
                 await UpdateStatus(db, e.Id, StripeEventState.Processing, ct);
                 try
                 {
-                    await mediator.Send(new ProcessPaymentSucceededCommand(e.StripeSessionId), ct);
+                    await mediator.Send(new ProcessCheckoutCompletedCommand(e.StripeSessionId), ct);
 
                     await UpdateStatus(db, e.Id, StripeEventState.Processed, ct);
                 }
