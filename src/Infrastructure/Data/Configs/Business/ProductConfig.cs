@@ -14,7 +14,7 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
     {
         base.Configure(builder);
 
-        builder.Ignore(x => x.Specifications);
+        builder.Ignore(x => x.VariantSpecifications);
 
         builder.HasKey(e => e.Id)
                .IsClustered();
@@ -59,8 +59,8 @@ internal sealed class ProductConfig : BaseEntityConfig<Product>
 
         });
 
-        builder.Property("_specifications")
-               .HasColumnName("Specifications")
+        builder.Property("_variantSpecifications")
+               .HasColumnName("VariantSpecifications")
                .HasColumnType("NVARCHAR(MAX)")
                .HasConversion<JsonConverter<Dictionary<string, string>>>(new JsonDictionaryValueComparer())
                .IsRequired(false);

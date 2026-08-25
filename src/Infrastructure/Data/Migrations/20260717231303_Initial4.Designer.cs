@@ -727,9 +727,9 @@ namespace Infrastructure.Data.Migrations
                         .HasMaxLength(60)
                         .HasColumnType("NVARCHAR");
 
-                    b.Property<string>("_attributes")
+                    b.Property<string>("_Specifications")
                         .HasColumnType("NVARCHAR(MAX)")
-                        .HasColumnName("Attributes");
+                        .HasColumnName("Specifications");
 
                     b.HasKey("Id");
 

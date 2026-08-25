@@ -727,9 +727,9 @@ namespace Infrastructure.Data.Migrations
                         .HasMaxLength(60)
                         .HasColumnType("NVARCHAR");
 
-                    b.Property<string>("_attributes")
+                    b.Property<string>("_specifications")
                         .HasColumnType("NVARCHAR(MAX)")
-                        .HasColumnName("Attributes");
+                        .HasColumnName("Specifications");
 
                     b.HasKey("Id");
 
@@ -814,9 +814,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("Width")
                         .HasColumnType("int");
 
-                    b.Property<string>("_specifications")
+                    b.Property<string>("_variantSpecifications")
                         .HasColumnType("NVARCHAR(MAX)")
-                        .HasColumnName("Specifications");
+                        .HasColumnName("VariantSpecifications");
 
                     b.HasKey("Id");
 

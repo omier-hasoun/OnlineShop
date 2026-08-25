@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260717221158_Initial")]
-    partial class Initial
+    [Migration("20260825065428_ProductPropsNamesChanged3")]
+    partial class ProductPropsNamesChanged3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -139,6 +139,28 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles", (string)null);
+                });
+
+            modelBuilder.Entity("Application.Entities.RoleClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RoleClaims");
                 });
 
             modelBuilder.Entity("Application.Entities.UserClaim", b =>
@@ -655,6 +677,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
 
+                    b.Property<decimal>("AverageRating")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("BrandId")
                         .HasColumnType("uniqueidentifier");
 
@@ -680,9 +705,6 @@ namespace Infrastructure.Data.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("NVARCHAR");
 
-                    b.Property<long?>("FeaturedProductId")
-                        .HasColumnType("bigint");
-
                     b.Property<bool>("IsSerialized")
                         .HasColumnType("bit");
 
@@ -691,6 +713,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid>("LastModifiedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<long?>("MainProductId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("NormalizedTitle")
                         .IsRequired()
@@ -705,7 +730,7 @@ namespace Infrastructure.Data.Migrations
                         .HasMaxLength(60)
                         .HasColumnType("NVARCHAR");
 
-                    b.Property<string>("_Specifications")
+                    b.Property<string>("_specifications")
                         .HasColumnType("NVARCHAR(MAX)")
                         .HasColumnName("Specifications");
 
@@ -719,18 +744,18 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("CreatedBy");
 
-                    b.HasIndex("FeaturedProductId")
+                    b.HasIndex("LastModifiedBy");
+
+                    b.HasIndex("MainProductId")
                         .IsUnique()
                         .HasDatabaseName("UX_ProductGroup_FeaturedProductId")
-                        .HasFilter("[FeaturedProductId] IS NOT NULL");
-
-                    b.HasIndex("LastModifiedBy");
+                        .HasFilter("[MainProductId] IS NOT NULL");
 
                     b.HasIndex("Status", "NormalizedTitle")
                         .HasDatabaseName("IX_ProductGroups_Search")
-                        .HasFilter("[FeaturedProductId] IS NOT NULL");
+                        .HasFilter("[MainProductId] IS NOT NULL");
 
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Status", "NormalizedTitle"), new[] { "Id", "FeaturedProductId", "Title", "BrandName" });
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Status", "NormalizedTitle"), new[] { "Id", "MainProductId", "Title", "BrandName", "AverageRating" });
 
                     b.ToTable("ProductGroups", null, t =>
                         {
@@ -756,7 +781,10 @@ namespace Infrastructure.Data.Migrations
                     b.Property<byte?>("DiscountPercentage")
                         .HasColumnType("TINYINT");
 
-                    b.Property<bool>("HasActiveDiscount")
+                    b.Property<decimal?>("DiscountPrice")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<bool>("HasDiscount")
                         .HasColumnType("bit");
 
                     b.Property<int>("Height")
@@ -766,9 +794,6 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("OriginalPrice")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal?>("PriceAfterDiscount")
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<long>("ProductGroupId")
@@ -792,9 +817,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("Width")
                         .HasColumnType("int");
 
-                    b.Property<string>("_specifications")
+                    b.Property<string>("_variantSpecifications")
                         .HasColumnType("NVARCHAR(MAX)")
-                        .HasColumnName("Specifications");
+                        .HasColumnName("VariantSpecifications");
 
                     b.HasKey("Id");
 
@@ -1092,19 +1117,17 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("StripeEvents", (string)null);
                 });
 
-            modelBuilder.Entity("UserRoles", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("RoleId", "UserId");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasIndex("UserId");
+                    b.HasKey("UserId", "RoleId");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Application.Entities.UserClaim", b =>
@@ -1390,35 +1413,15 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.ProductGroups.Products.Product", "MainProduct")
-                        .WithMany()
-                        .HasForeignKey("FeaturedProductId");
-
                     b.HasOne("Application.Entities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("LastModifiedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.OwnsOne("Domain.ProductGroups.ValueObjects.ProductAverageRating", "AverageRating", b1 =>
-                        {
-                            b1.Property<long>("ProductGroupId")
-                                .HasColumnType("bigint");
-
-                            b1.Property<decimal>("Value")
-                                .HasColumnType("DECIMAL(9,4)")
-                                .HasColumnName("AverageRating");
-
-                            b1.HasKey("ProductGroupId");
-
-                            b1.ToTable("ProductGroups");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ProductGroupId");
-                        });
-
-                    b.Navigation("AverageRating")
-                        .IsRequired();
+                    b.HasOne("Domain.ProductGroups.Products.Product", "MainProduct")
+                        .WithMany()
+                        .HasForeignKey("MainProductId");
 
                     b.Navigation("MainProduct");
                 });
@@ -1553,21 +1556,6 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Address");
-                });
-
-            modelBuilder.Entity("UserRoles", b =>
-                {
-                    b.HasOne("Application.Entities.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application.Entities.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Application.Entities.AppUser", b =>
